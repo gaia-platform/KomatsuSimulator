@@ -10,8 +10,8 @@ public class DumpTruckController : MonoBehaviour
     [SerializeField] private Camera topDownCamera;
 
     // Axles
-    [SerializeField] private GameObject frontLeftWheel;
     [SerializeField] private GameObject frontRightWheel;
+    [SerializeField] private GameObject frontLeftWheel;
     [SerializeField] private GameObject middleAxle;
 
     [SerializeField] private GameObject backAxle;
@@ -47,6 +47,13 @@ public class DumpTruckController : MonoBehaviour
         {
             truckRigidbody.AddForce(transform.forward * overSpeed * forwardDrive * -1);
         }
+        
+        // Rotate wheels to speed
+        var wheelRotateSpeed = new Vector3(truckRigidbody.velocity.sqrMagnitude * thrust * Time.fixedDeltaTime, 0, 0);
+        backAxle.transform.Rotate(wheelRotateSpeed);
+        middleAxle.transform.Rotate(wheelRotateSpeed);
+        frontRightWheel.transform.Rotate(wheelRotateSpeed);
+        frontLeftWheel.transform.Rotate(wheelRotateSpeed);
 
         // Handle turning
         truckRigidbody.AddTorque(transform.up * torque * turn); // Add torque

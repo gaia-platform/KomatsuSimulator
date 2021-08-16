@@ -299,10 +299,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1731426591284241533, guid: 4fa4a6710f30e170da54ca05b979ef4c, type: 3}
-      propertyPath: torque
-      value: 70
-      objectReference: {fileID: 0}
     - target: {fileID: 4034503822824705954, guid: 4fa4a6710f30e170da54ca05b979ef4c, type: 3}
       propertyPath: m_Name
       value: DumpTruck
@@ -349,14 +345,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4034503822824705955, guid: 4fa4a6710f30e170da54ca05b979ef4c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4034503822824705980, guid: 4fa4a6710f30e170da54ca05b979ef4c, type: 3}
-      propertyPath: m_Mass
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4034503822824705980, guid: 4fa4a6710f30e170da54ca05b979ef4c, type: 3}
-      propertyPath: m_Constraints
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
