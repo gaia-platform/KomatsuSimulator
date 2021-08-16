@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class DumpTruckController : MonoBehaviour
@@ -39,24 +40,20 @@ public class DumpTruckController : MonoBehaviour
         float forwardDrive = Input.GetAxis("Vertical");
         float turn = Input.GetAxis("Horizontal");
 
-
-        truckRigidbody.AddForce(transform.forward * thrust * forwardDrive);
-        float overSpeed = truckRigidbody.velocity.sqrMagnitude - 100;
-        if (overSpeed > 0)
+        // Handle forward/backward driving
+        truckRigidbody.AddForce(transform.forward * thrust * forwardDrive); // Add force
+        float overSpeed = truckRigidbody.velocity.sqrMagnitude - 100; // Check if over speed-limit of 10 m/s
+        if (overSpeed > 0) // If so, apply counter force to keep at 10 m/s
         {
             truckRigidbody.AddForce(transform.forward * overSpeed * forwardDrive * -1);
         }
 
-        truckRigidbody.AddTorque(transform.up * turn);
-        // float overTorque = truckRigidbody.angularVelocity.sqrMagnitude - 0.3f;
-        // if (overTorque > 0)
-        // {
-        //     truckRigidbody.AddTorque(transform.up * overTorque * turn * -1);
-        // }
-        //
-        // Quaternion deltaRotation = Quaternion.Euler(new Vector3(0, angularVelocity, 0) * Time.fixedDeltaTime * turn * forwardDrive);
-        // truckRigidbody.MoveRotation(truckRigidbody.rotation * deltaRotation);
-
-        print(truckRigidbody.velocity.sqrMagnitude + ", " + truckRigidbody.angularVelocity.sqrMagnitude);
+        // Handle turning
+        truckRigidbody.AddTorque(transform.up * torque * turn); // Add torque
+        float overTorque = Mathf.Abs(truckRigidbody.angularVelocity.y) - 0.3f; // check if over speed-limit
+        if (overTorque > 0) // If so, apply counter torque to keep at this speed
+        {
+            truckRigidbody.AddTorque(transform.up * overTorque * torque * turn * -1);
+        }
     }
 }
