@@ -334,7 +334,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4034503821794788414}
   m_Layer: 0
-  m_Name: Cameras
+  m_Name: 3rdPersonCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -352,7 +352,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4034503823083924548}
-  - {fileID: 4034503822724734503}
   m_Father: {fileID: 4034503822824705955}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -748,12 +747,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4034503822724734502}
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 26.85, z: 0}
+  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 10, z: 4.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 4034503821794788414}
-  m_RootOrder: 1
+  m_Father: {fileID: 4034503822824705955}
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!20 &4034503822724734497
 Camera:
@@ -842,6 +841,7 @@ Transform:
   - {fileID: 4034503823150874852}
   - {fileID: 4034503822474414781}
   - {fileID: 4034503821794788414}
+  - {fileID: 4034503822724734503}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -882,6 +882,7 @@ MonoBehaviour:
   truckRigidbody: {fileID: 4034503822824705980}
   thrust: 15
   torque: 50
+  cameraRotationSensitivity: 100
 --- !u!1 &4034503822830117509
 GameObject:
   m_ObjectHideFlags: 0
@@ -1056,7 +1057,7 @@ GameObject:
   - component: {fileID: 4034503823083924550}
   - component: {fileID: 4034503823083924549}
   m_Layer: 0
-  m_Name: 3rdPersonCamera
+  m_Name: Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
