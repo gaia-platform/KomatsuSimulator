@@ -7,58 +7,57 @@ public class DumpTruckController : MonoBehaviour
     public GameObject thirdPersonCamera;
     public GameObject topDownCamera;
 
-    // Axles
-    [SerializeField] private GameObject frontRightWheel;
-    [SerializeField] private GameObject frontLeftWheel;
-    [SerializeField] private GameObject middleAxle;
-
-    [SerializeField] private GameObject backAxle;
+    // Wheel colliders and transforms
+    [SerializeField] private WheelCollider[] wheelColliders;
+    [SerializeField] private Transform[] wheelTransforms;
 
     // RigidBody
     [SerializeField] private Rigidbody truckRigidbody;
 
     // SECTION: Properties
     [SerializeField] private float thrust;
-    [SerializeField] private float torque;
+    [SerializeField] private float maxSteeringAngle;
+    [SerializeField] private float breakForce;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        truckRigidbody.centerOfMass = Vector3.zero;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
+        truckRigidbody.centerOfMass = new Vector3(0, 1.34f, 0);
     }
 
     private void FixedUpdate()
     {
+        // Get user input
         float forwardDrive = Input.GetAxis("Vertical");
         float turn = Input.GetAxis("Horizontal");
+        bool isBreaking = Input.GetKey(KeyCode.Space);
 
-        // Handle forward/backward driving
-        truckRigidbody.AddForce(transform.forward * (thrust * forwardDrive)); // Add force
-        float overSpeed = truckRigidbody.velocity.sqrMagnitude - 100; // Check if over speed-limit of 10 m/s
-        if (overSpeed > 0) // If so, apply counter force to keep at 10 m/s
+        // Handle driving the motors
+        for (int i = 0; i < 2; i++) // Apply motor torque on front two wheels
         {
-            truckRigidbody.AddForce(transform.forward * (overSpeed * forwardDrive * -1));
+            wheelColliders[i].motorTorque = forwardDrive * thrust;
         }
 
-        // Rotate wheels to speed
-        var wheelRotateSpeed = new Vector3(truckRigidbody.velocity.sqrMagnitude * thrust * Time.fixedDeltaTime, 0, 0);
-        backAxle.transform.Rotate(wheelRotateSpeed);
-        middleAxle.transform.Rotate(wheelRotateSpeed);
-        frontRightWheel.transform.Rotate(wheelRotateSpeed);
-        frontLeftWheel.transform.Rotate(wheelRotateSpeed);
-
-        // Handle turning
-        truckRigidbody.AddTorque(transform.up * (torque * turn)); // Add torque
-        float overTorque = Mathf.Abs(truckRigidbody.angularVelocity.y) - 0.3f; // check if over speed-limit
-        if (overTorque > 0) // If so, apply counter torque to keep at this speed
+        float curBreakForce = isBreaking ? breakForce : 0;
+        foreach (WheelCollider wheelCollider in wheelColliders)
         {
-            truckRigidbody.AddTorque(transform.up * (overTorque * torque * turn * -1));
+            wheelCollider.brakeTorque = curBreakForce;
+        }
+
+        // Handle Steering
+        var curSteerAngle = maxSteeringAngle * turn;
+        for (int i = 0; i < 2; i++)
+        {
+            wheelColliders[i].steerAngle = curSteerAngle;
+        }
+
+        // Update wheel visuals
+        for (int i = 0; i < wheelColliders.Length; i++)
+        {
+            wheelColliders[i].GetWorldPose(out Vector3 pos, out Quaternion rot);
+            wheelTransforms[i].position = pos;
+            wheelTransforms[i].rotation = rot;
         }
     }
 }
