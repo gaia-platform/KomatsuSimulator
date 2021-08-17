@@ -1,11 +1,11 @@
 using UnityEngine;
 
-public class DumpTruckController : MonoBehaviour
+public class MachineController : MonoBehaviour
 {
     // SECTION: Component References
     // Cameras
-    public GameObject thirdPersonCamera;
-    public GameObject topDownCamera;
+    [SerializeField] private GameObject[] cameras;
+    [SerializeField] private uint onCameraIndex;
 
     // Wheel colliders and transforms
     [SerializeField] private WheelCollider[] wheelColliders;
@@ -17,13 +17,13 @@ public class DumpTruckController : MonoBehaviour
     // SECTION: Properties
     [SerializeField] private float thrust;
     [SerializeField] private float maxSteeringAngle;
-    [SerializeField] private float breakForce;
 
 
     // Start is called before the first frame update
     void Start()
     {
         truckRigidbody.centerOfMass = new Vector3(0, 1.34f, 0);
+        Activate();
     }
 
     private void FixedUpdate()
@@ -39,7 +39,7 @@ public class DumpTruckController : MonoBehaviour
             wheelColliders[i].motorTorque = forwardDrive * thrust;
         }
 
-        float curBreakForce = isBreaking ? breakForce : 0;
+        float curBreakForce = isBreaking ? thrust : 0;
         foreach (WheelCollider wheelCollider in wheelColliders)
         {
             wheelCollider.brakeTorque = curBreakForce;
@@ -58,6 +58,51 @@ public class DumpTruckController : MonoBehaviour
             wheelColliders[i].GetWorldPose(out Vector3 pos, out Quaternion rot);
             wheelTransforms[i].position = pos;
             wheelTransforms[i].rotation = rot;
+        }
+    }
+    
+    /// Controller Methods
+    // Camera handler
+    public void SwitchCameras()
+    {
+        onCameraIndex++;
+        if (onCameraIndex == cameras.Length)
+        {
+            onCameraIndex = 0;
+        }
+        SwitchToCamera(onCameraIndex);
+    }
+    // Deactivate (on switch to another machine)
+    public void Activate(bool state=true)
+    {
+        if (state)
+        {
+            SwitchToCamera(0);
+        }
+        else
+        {
+            FullStopBrake();
+        }
+    }
+    
+    // Full Stop braking
+    public void FullStopBrake()
+    {
+        
+    }
+    
+    // Get velocity magnitude
+    public float GetSpeed()
+    {
+        return truckRigidbody.velocity.magnitude;
+    }
+    
+    // Private methods
+    private void SwitchToCamera(uint index)
+    {
+        for (int i = 0; i < cameras.Length; i++)
+        {
+            cameras[i].SetActive(i == index);
         }
     }
 }
