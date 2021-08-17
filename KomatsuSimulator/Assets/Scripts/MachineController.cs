@@ -20,7 +20,7 @@ public class MachineController : MonoBehaviour
 
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         truckRigidbody.centerOfMass = new Vector3(0, 1.34f, 0);
         Activate();

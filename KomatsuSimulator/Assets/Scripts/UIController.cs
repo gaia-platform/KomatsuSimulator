@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,12 +14,13 @@ public class UIController : MonoBehaviour
     [SerializeField] private Text speedometerLabel;
 
     // SECTION: Variables
-    private bool _isDetached = false;
+    private bool _isDetached;
 
     // SECTION: Main Loop
     private void FixedUpdate()
     {
-        speedometerLabel.text = "Speed (m/s): " + machines[onMachineIndex].GetSpeed();
+        float round = Mathf.Round(machines[onMachineIndex].GetSpeed() * 100) / 100;
+        speedometerLabel.text = "Speed (m/s): " + round;
     }
 
     // SECTION: UI Actions
