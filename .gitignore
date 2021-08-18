@@ -6,6 +6,8 @@
 !.vscode/extensions.json
 *.code-workspace
 
+KomatsuSimulator/.vscode/*
+
 # Local History for Visual Studio Code
 .history/
 
