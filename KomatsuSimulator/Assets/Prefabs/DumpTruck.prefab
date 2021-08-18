@@ -74,7 +74,7 @@ BoxCollider:
   m_GameObject: {fileID: 1322642765262811877}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 4.4069023, y: 6.8122635, z: 16.143494}
   m_Center: {x: -0.039535522, y: 4.804014, z: -0.21746826}
@@ -119,7 +119,7 @@ WheelCollider:
   m_Center: {x: 0, y: 0, z: 0}
   m_Radius: 1.34
   m_SuspensionSpring:
-    spring: 45000
+    spring: 35000
     damper: 4500
     targetPosition: 0.5
   m_SuspensionDistance: 0.3
@@ -242,7 +242,7 @@ WheelCollider:
   m_Center: {x: 0, y: 0, z: 0}
   m_Radius: 1.34
   m_SuspensionSpring:
-    spring: 45000
+    spring: 35000
     damper: 4500
     targetPosition: 0.5
   m_SuspensionDistance: 0.3
@@ -370,7 +370,7 @@ WheelCollider:
   m_Center: {x: 0, y: 0, z: 0}
   m_Radius: 1.34
   m_SuspensionSpring:
-    spring: 45000
+    spring: 35000
     damper: 4500
     targetPosition: 0.5
   m_SuspensionDistance: 0.3
@@ -837,6 +837,7 @@ GameObject:
   - component: {fileID: 4034503822551887938}
   - component: {fileID: 4034503822551887964}
   - component: {fileID: 4034503822551887939}
+  - component: {fileID: 3296112587891546652}
   m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
@@ -907,6 +908,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &3296112587891546652
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4034503822551887937}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300058, guid: adad12e002bb78f4e866ff1a17509dcb, type: 3}
 --- !u!1 &4034503822595765411
 GameObject:
   m_ObjectHideFlags: 0
@@ -918,6 +933,7 @@ GameObject:
   - component: {fileID: 4034503822595765436}
   - component: {fileID: 4034503822595765438}
   - component: {fileID: 4034503822595765437}
+  - component: {fileID: 5331045080230753862}
   m_Layer: 0
   m_Name: DumpingContainer
   m_TagString: Untagged
@@ -988,6 +1004,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &5331045080230753862
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4034503822595765411}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300042, guid: adad12e002bb78f4e866ff1a17509dcb, type: 3}
 --- !u!1 &4034503822724734502
 GameObject:
   m_ObjectHideFlags: 0
@@ -1152,8 +1182,8 @@ MonoBehaviour:
   - {fileID: 8123996425659186840}
   - {fileID: 3759478834629935090}
   - {fileID: 560194153307253222}
-  truckRigidbody: {fileID: 4034503822824705980}
-  thrust: 10000
+  machineRigidbody: {fileID: 4034503822824705980}
+  thrust: 5000
   maxSteeringAngle: 35
 --- !u!1 &4034503822830117509
 GameObject:
@@ -1166,6 +1196,7 @@ GameObject:
   - component: {fileID: 4034503822830117510}
   - component: {fileID: 4034503822830117504}
   - component: {fileID: 4034503822830117511}
+  - component: {fileID: 6421615262011099538}
   m_Layer: 0
   m_Name: SideMudguard
   m_TagString: Untagged
@@ -1236,6 +1267,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &6421615262011099538
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4034503822830117509}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300044, guid: adad12e002bb78f4e866ff1a17509dcb, type: 3}
 --- !u!1 &4034503823006027394
 GameObject:
   m_ObjectHideFlags: 0
@@ -1472,7 +1517,7 @@ WheelCollider:
   m_Center: {x: 0, y: 0, z: 0}
   m_Radius: 1.34
   m_SuspensionSpring:
-    spring: 45000
+    spring: 35000
     damper: 4500
     targetPosition: 0.5
   m_SuspensionDistance: 0.3
@@ -1533,7 +1578,7 @@ WheelCollider:
   m_Center: {x: 0, y: 0, z: 0}
   m_Radius: 1.34
   m_SuspensionSpring:
-    spring: 45000
+    spring: 35000
     damper: 4500
     targetPosition: 0.5
   m_SuspensionDistance: 0.3
@@ -1689,7 +1734,7 @@ WheelCollider:
   m_Center: {x: 0, y: 0, z: 0}
   m_Radius: 1.34
   m_SuspensionSpring:
-    spring: 45000
+    spring: 35000
     damper: 4500
     targetPosition: 0.5
   m_SuspensionDistance: 0.3

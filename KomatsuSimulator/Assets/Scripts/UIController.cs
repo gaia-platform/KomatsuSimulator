@@ -19,8 +19,8 @@ public class UIController : MonoBehaviour
     // SECTION: Main Loop
     private void FixedUpdate()
     {
-        float round = Mathf.Round(machines[onMachineIndex].GetSpeed() * 100) / 100;
-        speedometerLabel.text = "Speed (m/s): " + round;
+        float round = Mathf.Round(machines[onMachineIndex].GetSpeed() * 2.236936f * 100) / 100;
+        speedometerLabel.text = "Speed (mph): " + round;
     }
 
     // SECTION: UI Actions
