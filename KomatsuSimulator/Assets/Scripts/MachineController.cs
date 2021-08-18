@@ -18,7 +18,7 @@ public class MachineController : MonoBehaviour
     private Rigidbody _machineRigidBody;
 
     private bool _isFullStopBraking;
-
+    private uint _brakingLoop;
 
     // Start is called before the first frame update
     private void Start()
@@ -53,7 +53,12 @@ public class MachineController : MonoBehaviour
                 }
 
                 _machineRigidBody.velocity = Vector3.zero;
-                _isFullStopBraking = false;
+                _brakingLoop++;
+                if (_brakingLoop == 5)
+                {
+                    _brakingLoop = 0;
+                    _isFullStopBraking = false;
+                }
             }
 
             return;
