@@ -34,7 +34,7 @@ public class UIController : MonoBehaviour
 
         if (_isDetached) // Was just set to true
         {
-            detachButtonLabel.text = "Reattached View";
+            detachButtonLabel.text = "Left Click to Reattached View";
             FullStopBrake(); // Stop current machine between detaching
             SwitchToMachine(0); // Disable machines
 
@@ -42,11 +42,15 @@ public class UIController : MonoBehaviour
             Transform activeCameraTransform = machines[onMachineIndex].GetActiveCamera().gameObject.transform;
             detachedCamera.transform.rotation = activeCameraTransform.rotation;
             detachedCamera.transform.position = activeCameraTransform.position;
+
+            // Capture cursor
+            Cursor.lockState = CursorLockMode.Locked;
         }
         else // Switch back to current machine
         {
             detachButtonLabel.text = "Detach View";
             SwitchToMachine(onMachineIndex);
+            Cursor.lockState = CursorLockMode.None; // Reattached cursor
         }
 
         // Finally, de/activate detached camera
