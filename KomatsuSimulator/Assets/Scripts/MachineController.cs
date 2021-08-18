@@ -11,39 +11,73 @@ public class MachineController : MonoBehaviour
     [SerializeField] private WheelCollider[] wheelColliders;
     [SerializeField] private Transform[] wheelTransforms;
 
-    // RigidBody
-    [SerializeField] private Rigidbody truckRigidbody;
-
     // SECTION: Properties
     [SerializeField] private float thrust;
     [SerializeField] private float maxSteeringAngle;
+
+    private Rigidbody _machineRigidBody;
+
+    private bool _isFullStopBraking;
 
 
     // Start is called before the first frame update
     private void Start()
     {
-        truckRigidbody.centerOfMass = new Vector3(0, 1.34f, 0);
+        _machineRigidBody = GetComponent<Rigidbody>();
+        _machineRigidBody.centerOfMass = new Vector3(0, 1.34f, 0);
         Activate();
     }
 
     private void FixedUpdate()
     {
+        if (_isFullStopBraking)
+        {
+            if (_machineRigidBody.velocity.sqrMagnitude > 0)
+            {
+                if (!float.IsPositiveInfinity(wheelColliders[0].brakeTorque))
+                {
+                    foreach (WheelCollider wheelCollider in wheelColliders)
+                    {
+                        wheelCollider.brakeTorque = Mathf.Infinity;
+                    }
+                }
+            }
+            else
+            {
+                foreach (WheelCollider wheelCollider in wheelColliders)
+                {
+                    wheelCollider.brakeTorque = 0;
+                }
+
+                _isFullStopBraking = false;
+            }
+            
+            return;
+        }
+
         // Get user input
         float forwardDrive = Input.GetAxis("Vertical");
         float turn = Input.GetAxis("Horizontal");
-        bool isBreaking = Input.GetKey(KeyCode.Space);
 
         // Handle driving the motors
-        for (int i = 0; i < 2; i++) // Apply motor torque on front two wheels
+        float machineDirection = Vector3.Dot(_machineRigidBody.velocity, transform.forward);
+        if (forwardDrive < 0 && machineDirection > 0 ||
+            forwardDrive > 0 && machineDirection < 0)
         {
-            wheelColliders[i].motorTorque = forwardDrive * thrust;
+            foreach (WheelCollider wheelCollider in wheelColliders)
+            {
+                wheelCollider.brakeTorque = thrust;
+            }
+        }
+        else
+        {
+            foreach (WheelCollider wheelCollider in wheelColliders)
+            {
+                wheelCollider.brakeTorque = 0;
+                wheelCollider.motorTorque = forwardDrive * thrust;
+            }
         }
 
-        float curBreakForce = isBreaking ? thrust : 0;
-        foreach (WheelCollider wheelCollider in wheelColliders)
-        {
-            wheelCollider.brakeTorque = curBreakForce;
-        }
 
         // Handle Steering
         var curSteerAngle = maxSteeringAngle * turn;
@@ -51,6 +85,7 @@ public class MachineController : MonoBehaviour
         {
             wheelColliders[i].steerAngle = curSteerAngle;
         }
+
 
         // Update wheel visuals
         for (int i = 0; i < wheelColliders.Length; i++)
@@ -60,7 +95,7 @@ public class MachineController : MonoBehaviour
             wheelTransforms[i].rotation = rot;
         }
     }
-    
+
     /// Controller Methods
     // Camera handler
     public void SwitchCameras()
@@ -70,10 +105,12 @@ public class MachineController : MonoBehaviour
         {
             onCameraIndex = 0;
         }
+
         SwitchToCamera(onCameraIndex);
     }
+
     // Deactivate (on switch to another machine)
-    public void Activate(bool state=true)
+    public void Activate(bool state = true)
     {
         if (state)
         {
@@ -84,19 +121,19 @@ public class MachineController : MonoBehaviour
             FullStopBrake();
         }
     }
-    
+
     // Full Stop braking
     public void FullStopBrake()
     {
-        
+        _isFullStopBraking = true;
     }
-    
+
     // Get velocity magnitude
     public float GetSpeed()
     {
-        return truckRigidbody.velocity.magnitude;
+        return _machineRigidBody.velocity.magnitude;
     }
-    
+
     // Private methods
     private void SwitchToCamera(uint index)
     {
