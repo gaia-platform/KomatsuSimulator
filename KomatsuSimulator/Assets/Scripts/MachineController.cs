@@ -32,14 +32,17 @@ public class MachineController : MonoBehaviour
     {
         if (_isFullStopBraking)
         {
-            if (_machineRigidBody.velocity.sqrMagnitude > 0)
+            if (Mathf.Round(_machineRigidBody.velocity.sqrMagnitude * 100) / 100 > 0)
             {
-                if (!float.IsPositiveInfinity(wheelColliders[0].brakeTorque))
+                if (wheelColliders[0].brakeTorque == 0)
                 {
                     foreach (WheelCollider wheelCollider in wheelColliders)
                     {
-                        wheelCollider.brakeTorque = Mathf.Infinity;
+                        wheelCollider.motorTorque = 0;
+                        wheelCollider.brakeTorque = Mathf.Pow(thrust, 5);
                     }
+
+                    _machineRigidBody.velocity = Vector3.zero;
                 }
             }
             else
@@ -49,9 +52,10 @@ public class MachineController : MonoBehaviour
                     wheelCollider.brakeTorque = 0;
                 }
 
+                _machineRigidBody.velocity = Vector3.zero;
                 _isFullStopBraking = false;
             }
-            
+
             return;
         }
 
@@ -125,6 +129,13 @@ public class MachineController : MonoBehaviour
     // Full Stop braking
     public void FullStopBrake()
     {
+        // foreach (WheelCollider wheelCollider in wheelColliders)
+        // {
+        //     wheelCollider.motorTorque = 0;
+        //     wheelCollider.brakeTorque = Mathf.Pow(thrust, 5);
+        // }
+        //
+        // _machineRigidBody.velocity = Vector3.zero;
         _isFullStopBraking = true;
     }
 
