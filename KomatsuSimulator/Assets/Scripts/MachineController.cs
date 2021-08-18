@@ -80,10 +80,20 @@ public class MachineController : MonoBehaviour
         }
         else
         {
-            foreach (WheelCollider wheelCollider in wheelColliders)
+            if (forwardDrive != 0 || wheelColliders[0].brakeTorque != 0)
             {
-                wheelCollider.brakeTorque = 0;
-                wheelCollider.motorTorque = forwardDrive * thrust;
+                foreach (WheelCollider wheelCollider in wheelColliders)
+                {
+                    wheelCollider.brakeTorque = 0;
+                    wheelCollider.motorTorque = forwardDrive * thrust;
+                }
+            }
+            else
+            {
+                foreach (WheelCollider wheelCollider in wheelColliders)
+                {
+                    wheelCollider.brakeTorque = thrust;
+                }
             }
         }
 
