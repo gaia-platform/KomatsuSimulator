@@ -189,6 +189,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &327334443 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4156139335598701300, guid: ca81b5e5df6f29051a9653b63cba8147, type: 3}
+  m_PrefabInstance: {fileID: 6100550846665047842}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -282,11 +287,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!1 &1119414930 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4034503821794788413, guid: 4fa4a6710f30e170da54ca05b979ef4c, type: 3}
-  m_PrefabInstance: {fileID: 1853746729}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1431097888
 GameObject:
   m_ObjectHideFlags: 0
@@ -377,7 +377,7 @@ PrefabInstance:
     - target: {fileID: 1731426591284241533, guid: 4fa4a6710f30e170da54ca05b979ef4c, type: 3}
       propertyPath: thirdPersonCamera
       value: 
-      objectReference: {fileID: 1119414930}
+      objectReference: {fileID: 0}
     - target: {fileID: 4034503822824705954, guid: 4fa4a6710f30e170da54ca05b979ef4c, type: 3}
       propertyPath: m_Icon
       value: 
@@ -385,6 +385,10 @@ PrefabInstance:
     - target: {fileID: 4034503822824705954, guid: 4fa4a6710f30e170da54ca05b979ef4c, type: 3}
       propertyPath: m_Name
       value: DumpTruck
+      objectReference: {fileID: 0}
+    - target: {fileID: 4034503822824705954, guid: 4fa4a6710f30e170da54ca05b979ef4c, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4034503822824705955, guid: 4fa4a6710f30e170da54ca05b979ef4c, type: 3}
       propertyPath: m_RootOrder
@@ -459,6 +463,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4156139335598701300, guid: ca81b5e5df6f29051a9653b63cba8147, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6100550846582550105, guid: ca81b5e5df6f29051a9653b63cba8147, type: 3}
       propertyPath: m_Name
       value: UI
@@ -548,8 +556,24 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6100550846582550178, guid: ca81b5e5df6f29051a9653b63cba8147, type: 3}
+      propertyPath: detachedCamera
+      value: 
+      objectReference: {fileID: 327334443}
+    - target: {fileID: 6100550846582550178, guid: ca81b5e5df6f29051a9653b63cba8147, type: 3}
       propertyPath: machines.Array.data[0]
       value: 
       objectReference: {fileID: 2057492771}
+    - target: {fileID: 7982780991108799569, guid: ca81b5e5df6f29051a9653b63cba8147, type: 3}
+      propertyPath: mouseSensitivity
+      value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 7982780991108799569, guid: ca81b5e5df6f29051a9653b63cba8147, type: 3}
+      propertyPath: movementSensitivity
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 7982780991108799569, guid: ca81b5e5df6f29051a9653b63cba8147, type: 3}
+      propertyPath: baseMovementSensitivity
+      value: 30
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ca81b5e5df6f29051a9653b63cba8147, type: 3}

@@ -96,6 +96,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f2d67f3388eb9d4595ac95b9a6d2a14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mouseSensitivity: 180
+  movementSensitivity: 50
 --- !u!1 &6100550845686287837
 GameObject:
   m_ObjectHideFlags: 0
@@ -819,6 +821,7 @@ MonoBehaviour:
   machines:
   - {fileID: 0}
   onMachineIndex: 0
+  detachedCamera: {fileID: 0}
   currentMachineLabel: {fileID: 6100550846614828758}
   detachButtonLabel: {fileID: 6100550845686287395}
   speedometerLabel: {fileID: 6100550846288094410}

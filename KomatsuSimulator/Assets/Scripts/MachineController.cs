@@ -17,8 +17,12 @@ public class MachineController : MonoBehaviour
 
     private Rigidbody _machineRigidBody;
 
+    // Braking
     private bool _isFullStopBraking;
     private uint _brakingLoop;
+
+    // Disabled
+    private bool _isDisabled;
 
     // Start is called before the first frame update
     private void Start()
@@ -30,20 +34,19 @@ public class MachineController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // First, check if we are trying to do a full stop brake
         if (_isFullStopBraking)
         {
             if (Mathf.Round(_machineRigidBody.velocity.sqrMagnitude * 100) / 100 > 0)
             {
-                if (wheelColliders[0].brakeTorque == 0)
+                if (wheelColliders[0].brakeTorque != 0) return;
+                foreach (WheelCollider wheelCollider in wheelColliders)
                 {
-                    foreach (WheelCollider wheelCollider in wheelColliders)
-                    {
-                        wheelCollider.motorTorque = 0;
-                        wheelCollider.brakeTorque = Mathf.Pow(thrust, 5);
-                    }
-
-                    _machineRigidBody.velocity = Vector3.zero;
+                    wheelCollider.motorTorque = 0;
+                    wheelCollider.brakeTorque = Mathf.Pow(thrust, 5);
                 }
+
+                _machineRigidBody.velocity = Vector3.zero;
             }
             else
             {
@@ -54,15 +57,23 @@ public class MachineController : MonoBehaviour
 
                 _machineRigidBody.velocity = Vector3.zero;
                 _brakingLoop++;
-                if (_brakingLoop == 5)
-                {
-                    _brakingLoop = 0;
-                    _isFullStopBraking = false;
-                }
+                if (_brakingLoop != 5) return;
+                _brakingLoop = 0;
+                _isFullStopBraking = false;
             }
 
             return;
         }
+
+
+        // Next check if this machine is disabled
+        if (_isDisabled)
+        {
+            return;
+        }
+
+
+        // Once both disabling and braking are checked, move to control the machine:
 
         // Get user input
         float forwardDrive = Input.GetAxis("Vertical");
@@ -119,13 +130,18 @@ public class MachineController : MonoBehaviour
     // Camera handler
     public void SwitchCameras()
     {
+        // Disable current camera
+        GetActiveCamera().SetActive(false);
+
+        // Increment index
         onCameraIndex++;
         if (onCameraIndex == cameras.Length)
         {
             onCameraIndex = 0;
         }
 
-        SwitchToCamera(onCameraIndex);
+        // Activate new camera
+        GetActiveCamera().SetActive(true);
     }
 
     // Deactivate (on switch to another machine)
@@ -133,24 +149,20 @@ public class MachineController : MonoBehaviour
     {
         if (state)
         {
-            SwitchToCamera(0);
+            GetActiveCamera().SetActive(true);
+            _isDisabled = false;
         }
         else
         {
             FullStopBrake();
+            GetActiveCamera().SetActive(false);
+            _isDisabled = true;
         }
     }
 
     // Full Stop braking
     public void FullStopBrake()
     {
-        // foreach (WheelCollider wheelCollider in wheelColliders)
-        // {
-        //     wheelCollider.motorTorque = 0;
-        //     wheelCollider.brakeTorque = Mathf.Pow(thrust, 5);
-        // }
-        //
-        // _machineRigidBody.velocity = Vector3.zero;
         _isFullStopBraking = true;
     }
 
@@ -160,12 +172,9 @@ public class MachineController : MonoBehaviour
         return _machineRigidBody.velocity.magnitude;
     }
 
-    // Private methods
-    private void SwitchToCamera(uint index)
+    // Get current active camera
+    public GameObject GetActiveCamera()
     {
-        for (int i = 0; i < cameras.Length; i++)
-        {
-            cameras[i].SetActive(i == index);
-        }
+        return cameras[onCameraIndex];
     }
 }
