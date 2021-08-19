@@ -39,7 +39,6 @@ public class MachineController : MonoBehaviour
         {
             if (Mathf.Round(_machineRigidBody.velocity.sqrMagnitude * 100) / 100 > 0)
             {
-                if (wheelColliders[0].brakeTorque != 0) return;
                 foreach (WheelCollider wheelCollider in wheelColliders)
                 {
                     wheelCollider.motorTorque = 0;

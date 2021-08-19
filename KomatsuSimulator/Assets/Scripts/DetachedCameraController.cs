@@ -15,6 +15,7 @@ public class DetachedCameraController : MonoBehaviour
         float mouseY = Input.GetAxis("Mouse Y");
         float moveLateral = Input.GetAxis("Horizontal");
         float moveForward = Input.GetAxis("Vertical");
+        float moveUpDown = Input.GetAxis("UpDown");
 
 
         if (Input.GetMouseButtonDown(0))
@@ -28,8 +29,9 @@ public class DetachedCameraController : MonoBehaviour
         Transform thisFrameTransforms = transform;
 
         // Set position
-        thisFrameTransforms.Translate((Vector3.forward * moveForward + Vector3.right * moveLateral) *
-                                      (movementSensitivity * Time.deltaTime));
+        thisFrameTransforms.Translate(
+            (Vector3.forward * moveForward + Vector3.right * moveLateral + Vector3.up * moveUpDown) *
+            (movementSensitivity * Time.deltaTime));
 
         // Set rotation
         thisFrameTransforms.Rotate((Vector3.right * (mouseY * -1) + Vector3.up * mouseX) *
