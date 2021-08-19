@@ -821,7 +821,7 @@ MonoBehaviour:
   machines:
   - {fileID: 0}
   onMachineIndex: 0
-  detachedCamera: {fileID: 0}
+  detachedCamera: {fileID: 4156139335598701300}
   currentMachineLabel: {fileID: 6100550846614828758}
   detachButtonLabel: {fileID: 6100550845686287395}
   speedometerLabel: {fileID: 6100550846288094410}
