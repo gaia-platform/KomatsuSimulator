@@ -18,7 +18,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5081279397314311285
 Transform:
   m_ObjectHideFlags: 0
@@ -585,7 +585,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 10, y: -10}
-  m_SizeDelta: {x: 230, y: 250}
+  m_SizeDelta: {x: 220, y: 250}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &6100550846391146280
 CanvasRenderer:
@@ -821,7 +821,7 @@ MonoBehaviour:
   machines:
   - {fileID: 0}
   onMachineIndex: 0
-  detachedCamera: {fileID: 0}
+  detachedCamera: {fileID: 4156139335598701300}
   currentMachineLabel: {fileID: 6100550846614828758}
   detachButtonLabel: {fileID: 6100550845686287395}
   speedometerLabel: {fileID: 6100550846288094410}
