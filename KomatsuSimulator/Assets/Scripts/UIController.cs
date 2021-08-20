@@ -5,6 +5,9 @@ using UnityEngine.UI;
 public class UIController : MonoBehaviour
 {
     // SECTION: Component References
+    // Entire control
+    [SerializeField] private GameObject controlsPanel;
+    
     // Machines
     [SerializeField] private MachineController[] machines;
     [SerializeField] private uint onMachineIndex;
@@ -14,7 +17,7 @@ public class UIController : MonoBehaviour
 
     // Labels
     [SerializeField] private Text currentMachineLabel;
-    [SerializeField] private Text detachButtonLabel;
+    [SerializeField] private GameObject reattachViewLabel;
     [SerializeField] private Text speedometerLabel;
 
     // SECTION: Variables
@@ -40,7 +43,6 @@ public class UIController : MonoBehaviour
 
         if (_isDetached) // Was just set to true
         {
-            detachButtonLabel.text = "Left Click to Reattached View";
             FullStopBrake(); // Stop current machine between detaching
             SwitchToMachine(0); // Disable machines
 
@@ -54,11 +56,14 @@ public class UIController : MonoBehaviour
         }
         else // Switch back to current machine
         {
-            detachButtonLabel.text = "Detach View";
             SwitchToMachine(onMachineIndex);
             Cursor.lockState = CursorLockMode.None; // Reattached cursor
         }
 
+        // Show/hide controls panel and reattach label
+        controlsPanel.SetActive(!_isDetached);
+        reattachViewLabel.SetActive(_isDetached);
+        
         // Finally, de/activate detached camera
         detachedCamera.SetActive(_isDetached);
     }
