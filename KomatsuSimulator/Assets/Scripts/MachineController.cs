@@ -29,7 +29,6 @@ public class MachineController : MonoBehaviour
     {
         _machineRigidBody = GetComponent<Rigidbody>();
         _machineRigidBody.centerOfMass = new Vector3(0, 1.34f, 0);
-        Activate();
     }
 
     private void FixedUpdate()
@@ -117,7 +116,7 @@ public class MachineController : MonoBehaviour
 
 
         // Update wheel visuals
-        for (int i = 0; i < wheelColliders.Length; i++)
+        for (int i = 0; i < wheelTransforms.Length; i++)
         {
             wheelColliders[i].GetWorldPose(out Vector3 pos, out Quaternion rot);
             wheelTransforms[i].position = pos;

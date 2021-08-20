@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,14 +20,19 @@ public class UIController : MonoBehaviour
     // SECTION: Variables
     private bool _isDetached;
 
-    // SECTION: Main Loop
+    // SECTION: Init and main loop
+    private void Start()
+    {
+        SwitchToMachine(onMachineIndex);
+    }
+
     private void FixedUpdate()
     {
         float round = Mathf.Round(machines[onMachineIndex].GetSpeed() * 2.236936f * 100) / 100;
         speedometerLabel.text = "Speed (mph): " + round;
     }
 
-    // SECTION: UI Actions
+    // SECTION: UI actions
     public void ToggleDetachView() // Switch between free camera and current machine
     {
         // Change detached value to new state
