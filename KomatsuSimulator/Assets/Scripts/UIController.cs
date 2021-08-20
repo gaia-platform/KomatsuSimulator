@@ -1,9 +1,13 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
     // SECTION: Component References
+    // Entire control
+    [SerializeField] private GameObject controlsPanel;
+    
     // Machines
     [SerializeField] private MachineController[] machines;
     [SerializeField] private uint onMachineIndex;
@@ -13,20 +17,25 @@ public class UIController : MonoBehaviour
 
     // Labels
     [SerializeField] private Text currentMachineLabel;
-    [SerializeField] private Text detachButtonLabel;
+    [SerializeField] private GameObject reattachViewLabel;
     [SerializeField] private Text speedometerLabel;
 
     // SECTION: Variables
     private bool _isDetached;
 
-    // SECTION: Main Loop
+    // SECTION: Init and main loop
+    private void Start()
+    {
+        SwitchToMachine(onMachineIndex);
+    }
+
     private void FixedUpdate()
     {
         float round = Mathf.Round(machines[onMachineIndex].GetSpeed() * 2.236936f * 100) / 100;
         speedometerLabel.text = "Speed (mph): " + round;
     }
 
-    // SECTION: UI Actions
+    // SECTION: UI actions
     public void ToggleDetachView() // Switch between free camera and current machine
     {
         // Change detached value to new state
@@ -34,7 +43,6 @@ public class UIController : MonoBehaviour
 
         if (_isDetached) // Was just set to true
         {
-            detachButtonLabel.text = "Left Click to Reattached View";
             FullStopBrake(); // Stop current machine between detaching
             SwitchToMachine(0); // Disable machines
 
@@ -48,11 +56,14 @@ public class UIController : MonoBehaviour
         }
         else // Switch back to current machine
         {
-            detachButtonLabel.text = "Detach View";
             SwitchToMachine(onMachineIndex);
             Cursor.lockState = CursorLockMode.None; // Reattached cursor
         }
 
+        // Show/hide controls panel and reattach label
+        controlsPanel.SetActive(!_isDetached);
+        reattachViewLabel.SetActive(_isDetached);
+        
         // Finally, de/activate detached camera
         detachedCamera.SetActive(_isDetached);
     }
