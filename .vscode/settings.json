@@ -1,3 +1,23 @@
 {
-    "git.ignoreLimitWarning": true
+    "git.ignoreLimitWarning": true,
+    "python.autoComplete.extraPaths": [
+        "/home/mark/Develop/ros2_other/install/unity_slam_example/lib/python3.8/site-packages",
+        "/home/mark/Develop/ros2_other/install/unity_robotics_demo_msgs/lib/python3.8/site-packages",
+        "/home/mark/Develop/ros2_other/install/unity_robotics_demo/lib/python3.8/site-packages",
+        "/home/mark/Develop/ros2_other/install/ros_tcp_endpoint/lib/python3.8/site-packages",
+        "/home/mark/Develop/ros2_other/install/nmea_msgs/lib/python3.8/site-packages",
+        "/home/mark/Develop/ros2_other/install/gps_tools/lib/python3.8/site-packages",
+        "/home/mark/Develop/ros2_other/install/gps_msgs/lib/python3.8/site-packages",
+        "/opt/ros/foxy/lib/python3.8/site-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/mark/Develop/ros2_other/install/unity_slam_example/lib/python3.8/site-packages",
+        "/home/mark/Develop/ros2_other/install/unity_robotics_demo_msgs/lib/python3.8/site-packages",
+        "/home/mark/Develop/ros2_other/install/unity_robotics_demo/lib/python3.8/site-packages",
+        "/home/mark/Develop/ros2_other/install/ros_tcp_endpoint/lib/python3.8/site-packages",
+        "/home/mark/Develop/ros2_other/install/nmea_msgs/lib/python3.8/site-packages",
+        "/home/mark/Develop/ros2_other/install/gps_tools/lib/python3.8/site-packages",
+        "/home/mark/Develop/ros2_other/install/gps_msgs/lib/python3.8/site-packages",
+        "/opt/ros/foxy/lib/python3.8/site-packages"
+    ]
 }
