@@ -291,7 +291,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetTransform: {fileID: 0}
-  movementSpeed: 10
+  movementSpeed: 1
+  rotationSpeed: 10
 --- !u!136 &4896947169227738398
 CapsuleCollider:
   m_ObjectHideFlags: 0
