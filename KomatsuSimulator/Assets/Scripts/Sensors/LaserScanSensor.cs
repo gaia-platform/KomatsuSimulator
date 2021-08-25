@@ -133,7 +133,7 @@ public class LaserScanSensor : MonoBehaviour
                 frame_id = FrameId,
                 stamp = new TimeMsg
                 {
-                    sec = (uint)timestamp.Seconds,
+                    sec = timestamp.Seconds,
                     nanosec = timestamp.NanoSeconds,
                 }
             },
