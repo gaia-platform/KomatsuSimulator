@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5342614369424376680}
   - component: {fileID: 2609647456678846056}
+  - component: {fileID: 4264351079682373002}
+  - component: {fileID: 4633147335082945097}
   m_Layer: 0
   m_Name: RegPylon
   m_TagString: Obstacle
@@ -56,6 +58,35 @@ LODGroup:
     renderers:
     - renderer: {fileID: 6378581149794195852}
   m_Enabled: 1
+--- !u!54 &4264351079682373002
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4426629532611279214}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!65 &4633147335082945097
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4426629532611279214}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 3.0791943, y: 3.6646445, z: 3.0946171}
+  m_Center: {x: 0, y: 1.7957379, z: 0}
 --- !u!1 &6253912963739180298
 GameObject:
   m_ObjectHideFlags: 0
@@ -67,7 +98,6 @@ GameObject:
   - component: {fileID: 1496137793473344204}
   - component: {fileID: 8622194144342914582}
   - component: {fileID: 6378581149794195852}
-  - component: {fileID: 2242471505888366482}
   m_Layer: 0
   m_Name: Pylon_LOD1
   m_TagString: Untagged
@@ -139,19 +169,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &2242471505888366482
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6253912963739180298}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 3.0801418, y: 3.684066, z: 3.0801413}
-  m_Center: {x: -0.00000017881392, y: 0.39091328, z: 0.000000059604638}
 --- !u!1 &6965793061425988572
 GameObject:
   m_ObjectHideFlags: 0
@@ -163,7 +180,6 @@ GameObject:
   - component: {fileID: 1378327901069847230}
   - component: {fileID: 7271152666791435825}
   - component: {fileID: 1614025926915581615}
-  - component: {fileID: 4049683153422135280}
   m_Layer: 0
   m_Name: Pylon_LOD0
   m_TagString: Untagged
@@ -235,16 +251,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &4049683153422135280
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6965793061425988572}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 3.0801418, y: 3.684066, z: 3.0801413}
-  m_Center: {x: -0.00000017881392, y: 0.39091328, z: 0.00000011920928}
