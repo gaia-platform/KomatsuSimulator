@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 using RosMessageTypes.BuiltinInterfaces;
 
 namespace Unity.Robotics.Core
@@ -32,12 +31,12 @@ namespace Unity.Robotics.Core
         // NOTE: We could define these operators in a transport-specific extension package
         public static implicit operator TimeMsg(TimeStamp stamp)
         {
-            return new TimeMsg((uint)stamp.Seconds, (uint)stamp.NanoSeconds);
+            return new TimeMsg(stamp.Seconds, stamp.NanoSeconds);
         }
 
         public static implicit operator TimeStamp(TimeMsg stamp)
         {
-            return new TimeStamp((int)stamp.sec, stamp.nanosec);
+            return new TimeStamp(stamp.sec, stamp.nanosec);
         }
     }
 }

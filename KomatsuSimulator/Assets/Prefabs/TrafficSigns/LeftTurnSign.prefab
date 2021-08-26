@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5250365465239697700}
   m_Layer: 0
   m_Name: LeftTurnSign
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -69,6 +69,8 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -80,6 +82,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 1
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -92,6 +95,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1001 &8137911464416298411
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -102,6 +106,22 @@ PrefabInstance:
     - target: {fileID: 100000, guid: 8c6cab87e3fbf475faa14887074d80b9, type: 3}
       propertyPath: m_Name
       value: DiamondSign
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: 8c6cab87e3fbf475faa14887074d80b9, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: 8c6cab87e3fbf475faa14887074d80b9, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 4.339218
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: 8c6cab87e3fbf475faa14887074d80b9, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.15638769
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: 8c6cab87e3fbf475faa14887074d80b9, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 4.339218
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 8c6cab87e3fbf475faa14887074d80b9, type: 3}
       propertyPath: m_LocalPosition.x
@@ -116,6 +136,10 @@ PrefabInstance:
       value: 0.55
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 8c6cab87e3fbf475faa14887074d80b9, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: 8c6cab87e3fbf475faa14887074d80b9, type: 3}
       propertyPath: m_LocalRotation.x
       value: 0
       objectReference: {fileID: 0}
@@ -125,14 +149,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 8c6cab87e3fbf475faa14887074d80b9, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 8c6cab87e3fbf475faa14887074d80b9, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 8c6cab87e3fbf475faa14887074d80b9, type: 3}
-      propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 8c6cab87e3fbf475faa14887074d80b9, type: 3}
@@ -146,18 +162,6 @@ PrefabInstance:
     - target: {fileID: 400000, guid: 8c6cab87e3fbf475faa14887074d80b9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 8c6cab87e3fbf475faa14887074d80b9, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 4.339218
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 8c6cab87e3fbf475faa14887074d80b9, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.15638769
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 8c6cab87e3fbf475faa14887074d80b9, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 4.339218
       objectReference: {fileID: 0}
     - target: {fileID: 2300002, guid: 8c6cab87e3fbf475faa14887074d80b9, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -179,7 +183,6 @@ PrefabInstance:
   m_SourcePrefab: {fileID: 100100000, guid: 8c6cab87e3fbf475faa14887074d80b9, type: 3}
 --- !u!4 &8137911464416173867 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 400000, guid: 8c6cab87e3fbf475faa14887074d80b9,
-    type: 3}
+  m_CorrespondingSourceObject: {fileID: 400000, guid: 8c6cab87e3fbf475faa14887074d80b9, type: 3}
   m_PrefabInstance: {fileID: 8137911464416298411}
   m_PrefabAsset: {fileID: 0}
