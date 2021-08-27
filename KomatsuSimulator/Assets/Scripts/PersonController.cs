@@ -4,6 +4,7 @@ using UnityEngine;
 public class PersonController : MonoBehaviour
 {
     // SECTION: Variables
+    [SerializeField] private Animator animator;
     [SerializeField] private Transform targetTransform; // Get target location from editor
 
     // Movement properties
@@ -17,6 +18,7 @@ public class PersonController : MonoBehaviour
     private Vector3 _lookDirection;
     private Quaternion _lookRotation;
     private bool _stopMovement;
+    private static readonly int IsMoving = Animator.StringToHash("isMoving");
 
 
     // Start is called before the first frame update
@@ -34,6 +36,7 @@ public class PersonController : MonoBehaviour
     void Update()
     {
         if (!targetTransform) return; // Skip out if no transform
+        animator.SetBool(IsMoving, !_stopMovement);
         if (_stopMovement) return; // Skip if collided
 
         // Get this frame's transform
@@ -42,6 +45,7 @@ public class PersonController : MonoBehaviour
         // Rotate while not facing right direction
         if (thisFrameTransform.rotation != _lookRotation)
         {
+            animator.SetBool(IsMoving, false);
             thisFrameTransform.rotation = Quaternion.Slerp(thisFrameTransform.rotation, _lookRotation,
                 Time.deltaTime * rotationSpeed);
             return;
