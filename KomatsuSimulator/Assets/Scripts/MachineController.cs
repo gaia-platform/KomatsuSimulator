@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class MachineController : MonoBehaviour
@@ -15,20 +16,36 @@ public class MachineController : MonoBehaviour
     [SerializeField] private float thrust;
     [SerializeField] private float maxSteeringAngle;
 
-    private Rigidbody _machineRigidBody;
-
-    // Braking
-    private bool _isFullStopBraking;
+    // Automatic movement items
+    [SerializeField] private Transform targetTransform;
+    private readonly Vector3[] _goalLocations = new Vector3[2];
     private uint _brakingLoop;
 
     // Disabled
     private bool _isDisabled;
+
+    // Braking
+    private bool _isFullStopBraking;
+    private Vector3 _lookDirection;
+    private Quaternion _lookRotation;
+
+    private Rigidbody _machineRigidBody;
+    private Vector3 _moveDirection;
+    private bool _stopMovement;
 
     // Start is called before the first frame update
     private void Start()
     {
         _machineRigidBody = GetComponent<Rigidbody>();
         _machineRigidBody.centerOfMass = new Vector3(0, 1.34f, 0);
+
+        // Setup automation stuff (copy from PersonController)
+        if (!targetTransform) return;
+        _goalLocations[0] = transform.position;
+        _goalLocations[1] = targetTransform.position;
+        _moveDirection = (_goalLocations[1] - _goalLocations[0]).normalized;
+        _lookDirection = _moveDirection;
+        _lookRotation = Quaternion.LookRotation(_lookDirection);
     }
 
     private void FixedUpdate()
@@ -67,6 +84,38 @@ public class MachineController : MonoBehaviour
         // Next check if this machine is disabled
         if (_isDisabled)
         {
+            return;
+        }
+
+        // Then check for automation items
+        if (targetTransform)
+        {
+            if (_stopMovement) return;
+
+            // Get this frame's transform
+            Transform thisFrameTransform = transform;
+
+            // Rotate while not facing right direction
+            if (thisFrameTransform.rotation != _lookRotation)
+            {
+                thisFrameTransform.rotation = Quaternion.Slerp(thisFrameTransform.rotation, _lookRotation,
+                    Time.deltaTime * maxSteeringAngle);
+                return;
+            }
+
+            // If not rotating, continue moving
+            foreach (WheelCollider wheelCollider in wheelColliders)
+            {
+                wheelCollider.brakeTorque = thrust;
+            }
+
+            // Switch direction when close to goal location
+            Vector3 curDirectionToGoalLocation = _goalLocations[1] - thisFrameTransform.position;
+            if (Vector3.Dot(curDirectionToGoalLocation, _lookDirection) > 0) return; // Skip if not there yet
+            Array.Reverse(_goalLocations);
+            _lookDirection *= -1;
+            _lookRotation = Quaternion.LookRotation(_lookDirection);
+            FullStopBrake(); // Stop before turn
             return;
         }
 
