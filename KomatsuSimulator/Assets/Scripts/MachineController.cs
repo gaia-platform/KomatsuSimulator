@@ -80,13 +80,6 @@ public class MachineController : MonoBehaviour
             return;
         }
 
-
-        // Next check if this machine is disabled
-        if (_isDisabled)
-        {
-            return;
-        }
-
         // Then check for automation items
         if (targetTransform)
         {
@@ -96,17 +89,17 @@ public class MachineController : MonoBehaviour
             Transform thisFrameTransform = transform;
 
             // Rotate while not facing right direction
-            if (thisFrameTransform.rotation != _lookRotation)
+            if (Vector3.Dot(thisFrameTransform.forward, _lookDirection) < 0.99999)
             {
-                thisFrameTransform.rotation = Quaternion.Slerp(thisFrameTransform.rotation, _lookRotation,
-                    Time.deltaTime * maxSteeringAngle);
+                thisFrameTransform.rotation = Quaternion.Lerp(thisFrameTransform.rotation, _lookRotation,
+                    Time.fixedDeltaTime * 10);
                 return;
             }
 
             // If not rotating, continue moving
             foreach (WheelCollider wheelCollider in wheelColliders)
             {
-                wheelCollider.brakeTorque = thrust;
+                wheelCollider.motorTorque = thrust;
             }
 
             // Switch direction when close to goal location
@@ -119,8 +112,14 @@ public class MachineController : MonoBehaviour
             return;
         }
 
+        // Next check if this machine is disabled
+        if (_isDisabled)
+        {
+            return;
+        }
 
-        // Once both disabling and braking are checked, move to control the machine:
+
+        // If not braking, driving automatically, or disabled:
 
         // Get user input
         float forwardDrive = Input.GetAxis("Vertical");
@@ -201,7 +200,11 @@ public class MachineController : MonoBehaviour
         }
         else
         {
-            FullStopBrake();
+            if (!targetTransform)
+            {
+                FullStopBrake();
+            }
+
             GetActiveCamera().SetActive(false);
             _isDisabled = true;
         }
