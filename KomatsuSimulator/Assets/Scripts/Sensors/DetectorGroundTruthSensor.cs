@@ -1,16 +1,34 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+
+#pragma warning disable 219
 
 public class DetectorGroundTruthSensor : MonoBehaviour
 {
     // the name of the ros topic which to publish
     public string topic;
-    
+
     // the name of the tag which marks game objects as detectable
     public string tagName;
 
     Unity.Robotics.ROSTCPConnector.ROSConnection m_Ros;
+
+    void Start()
+    {
+        // get the ROS connection
+        m_Ros = Unity.Robotics.ROSTCPConnector.ROSConnection.instance;
+
+        // register the publisher
+        m_Ros.RegisterPublisher(topic, RosMessageTypes.Vision.Detection3DArrayMsg.k_RosMessageName);
+    }
+
+    void Update()
+    {
+        //*** TODO : maybe we should find on a different thread
+        var msg = FindAllObjects(tagName);
+
+        // publish
+        m_Ros.Send(topic, msg);
+    }
 
     public RosMessageTypes.Vision.Detection3DArrayMsg FindAllObjects(string tagName)
     {
@@ -49,10 +67,11 @@ public class DetectorGroundTruthSensor : MonoBehaviour
                 Quaternion.identity.x, Quaternion.identity.y, Quaternion.identity.z, Quaternion.identity.w);
 
             // set bbox pose and size
-            RosMessageTypes.Geometry.PoseMsg center = new RosMessageTypes.Geometry.PoseMsg(bbPosition,bbOrientation);
-            RosMessageTypes.Geometry.Vector3Msg size = new  RosMessageTypes.Geometry.Vector3Msg( objSize.x, objSize.y, objSize.z);
+            RosMessageTypes.Geometry.PoseMsg center = new RosMessageTypes.Geometry.PoseMsg(bbPosition, bbOrientation);
+            RosMessageTypes.Geometry.Vector3Msg size =
+                new RosMessageTypes.Geometry.Vector3Msg(objSize.x, objSize.y, objSize.z);
 
-            detectedObjectArray.detections[index].bbox = new RosMessageTypes.Vision.BoundingBox3DMsg(center,size);
+            detectedObjectArray.detections[index].bbox = new RosMessageTypes.Vision.BoundingBox3DMsg(center, size);
             detectedObjectArray.detections[index].is_tracking = false;
             detectedObjectArray.detections[index].results = new RosMessageTypes.Vision.ObjectHypothesisWithPoseMsg[1];
             //detectedObjectArray.detections[index].source_cloud
@@ -64,24 +83,7 @@ public class DetectorGroundTruthSensor : MonoBehaviour
 
             index++;
         }
+
         return detectedObjectArray;
-    }
-
-    void Start()
-    {
-        // get the ROS connection
-        m_Ros = Unity.Robotics.ROSTCPConnector.ROSConnection.instance;
-
-        // register the publisher
-        m_Ros.RegisterPublisher(topic, RosMessageTypes.Vision.Detection3DArrayMsg.k_RosMessageName);
-    }
-
-    void Update()
-    {
-        //*** TODO : maybe we should find on a different thread
-        var msg = FindAllObjects(tagName);
-
-        // publish
-        m_Ros.Send(topic, msg);
     }
 }
