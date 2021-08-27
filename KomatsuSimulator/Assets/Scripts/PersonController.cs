@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class PersonController : MonoBehaviour
 {
+    private static readonly int IsMoving = Animator.StringToHash("isMoving");
+
     // SECTION: Variables
     [SerializeField] private Animator animator;
     [SerializeField] private Transform targetTransform; // Get target location from editor
@@ -14,11 +16,9 @@ public class PersonController : MonoBehaviour
 
     // General properties
     private readonly Vector3[] _goalLocations = new Vector3[2];
-    private Vector3 _moveDirection;
-    private Vector3 _lookDirection;
     private Quaternion _lookRotation;
+    private Vector3 _moveDirection;
     private bool _stopMovement;
-    private static readonly int IsMoving = Animator.StringToHash("isMoving");
 
 
     // Start is called before the first frame update
@@ -29,8 +29,7 @@ public class PersonController : MonoBehaviour
         _goalLocations[0] = transform.position;
         _goalLocations[1] = targetTransform.position;
         _moveDirection = (_goalLocations[1] - _goalLocations[0]).normalized;
-        _lookDirection = _moveDirection;
-        _lookRotation = Quaternion.LookRotation(_lookDirection);
+        _lookRotation = Quaternion.LookRotation(_moveDirection);
     }
 
     void Update()
@@ -52,14 +51,14 @@ public class PersonController : MonoBehaviour
         }
 
         // If not rotating, continue moving
-        thisFrameTransform.Translate(_moveDirection * (movementSpeed * Time.deltaTime));
+        thisFrameTransform.Translate(_moveDirection * (movementSpeed * Time.deltaTime), Space.World);
 
         // Switch direction when close to goal location
         Vector3 curDirectionToGoalLocation = _goalLocations[1] - thisFrameTransform.position;
-        if (Vector3.Dot(curDirectionToGoalLocation, _lookDirection) > 0) return; // Skip if not there yet
+        if (Vector3.Dot(curDirectionToGoalLocation, _moveDirection) > 0) return; // Skip if not there yet
         Array.Reverse(_goalLocations);
-        _lookDirection *= -1;
-        _lookRotation = Quaternion.LookRotation(_lookDirection);
+        _moveDirection *= -1;
+        _lookRotation = Quaternion.LookRotation(_moveDirection);
     }
 
     // Update is called once per frame
