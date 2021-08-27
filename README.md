@@ -13,7 +13,7 @@ This section assumes you have Gaia (March release) and ROS2 (Foxy) installed and
 
 1. [Git clone the app](https://github.com/gaia-platform/gaia_detect3d_ros.git) into your ROS workspace `src` folder.
 2. Compile the code as a Gaia app. 
-3. After sourcing your ROS environment or your workspace, run `rosdep install -y -i --from-paths src` to pickup any dependencies.
+3. After sourcing your ROS environment and all your workspaces, run `rosdep install -y -i --from-paths src` to pickup any dependencies.
 4. Run `colcon build` to build the app.
 5. If you get an error saying `vision_msgs` is missing...
    1. [Git clone the package](https://github.com/ros-perception/vision_msgs.git) into your ROS workspace `src` folder.
