@@ -13,18 +13,15 @@ namespace RosMessageTypes.Vision
         public const string k_RosMessageName = "vision_msgs/ObjectHypothesisWithPose";
         public override string RosMessageName => k_RosMessageName;
 
-        //  An object hypothesis that contains position information.
-        //  The unique ID of the object class. To get additional information about
-        //    this ID, such as its human-readable class name, listeners should perform a
-        //    lookup in a metadata database. See vision_msgs/VisionInfo.msg for more detail.
-        public string id;
-        //  The probability or confidence value of the detected object. By convention,
-        //    this value should lie in the range [0-1].
-        public double score;
+        //  An object hypothesis that contains pose information.
+        //  If you would like to define an array of ObjectHypothesisWithPose messages,
+        //    please see the Detection2D or Detection3D message types.
+        //  The object hypothesis (ID and score).
+        public ObjectHypothesisMsg hypothesis;
         //  The 6D pose of the object hypothesis. This pose should be
-        //    defined as the pose of some fixed reference point on the object, such a
-        //    the geometric center of the bounding box or the center of mass of the
-        //    object.
+        //    defined as the pose of some fixed reference point on the object, such as
+        //    the geometric center of the bounding box, the center of mass of the
+        //    object or the origin of a reference mesh of the object.
         //  Note that this pose is not stamped; frame information can be defined by
         //    parent messages.
         //  Also note that different classes predicted for the same input data may have
@@ -33,15 +30,13 @@ namespace RosMessageTypes.Vision
 
         public ObjectHypothesisWithPoseMsg()
         {
-            this.id = "";
-            this.score = 0.0;
+            this.hypothesis = new ObjectHypothesisMsg();
             this.pose = new Geometry.PoseWithCovarianceMsg();
         }
 
-        public ObjectHypothesisWithPoseMsg(string id, double score, Geometry.PoseWithCovarianceMsg pose)
+        public ObjectHypothesisWithPoseMsg(ObjectHypothesisMsg hypothesis, Geometry.PoseWithCovarianceMsg pose)
         {
-            this.id = id;
-            this.score = score;
+            this.hypothesis = hypothesis;
             this.pose = pose;
         }
 
@@ -49,23 +44,20 @@ namespace RosMessageTypes.Vision
 
         private ObjectHypothesisWithPoseMsg(MessageDeserializer deserializer)
         {
-            deserializer.Read(out this.id);
-            deserializer.Read(out this.score);
+            this.hypothesis = ObjectHypothesisMsg.Deserialize(deserializer);
             this.pose = Geometry.PoseWithCovarianceMsg.Deserialize(deserializer);
         }
 
         public override void SerializeTo(MessageSerializer serializer)
         {
-            serializer.Write(this.id);
-            serializer.Write(this.score);
+            serializer.Write(this.hypothesis);
             serializer.Write(this.pose);
         }
 
         public override string ToString()
         {
             return "ObjectHypothesisWithPoseMsg: " +
-            "\nid: " + id.ToString() +
-            "\nscore: " + score.ToString() +
+            "\nhypothesis: " + hypothesis.ToString() +
             "\npose: " + pose.ToString();
         }
 
