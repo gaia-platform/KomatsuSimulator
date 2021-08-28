@@ -18,7 +18,7 @@ namespace RosMessageTypes.Vision
         //    another package, such as geometry_msgs, in the future.
         //  The 3D position and orientation of the bounding box center
         public Geometry.PoseMsg center;
-        //  The size of the bounding box, in meters, surrounding the object's center
+        //  The total size of the bounding box, in meters, surrounding the object's center
         //    pose.
         public Geometry.Vector3Msg size;
 
