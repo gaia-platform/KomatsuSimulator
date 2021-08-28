@@ -50,6 +50,17 @@ public class MachineController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        void UpdateWheelVisuals()
+        {
+            // Update wheel visuals
+            for (int i = 0; i < wheelTransforms.Length; i++)
+            {
+                wheelColliders[i].GetWorldPose(out Vector3 pos, out Quaternion rot);
+                wheelTransforms[i].position = pos;
+                wheelTransforms[i].rotation = rot;
+            }
+        }
+
         // First, check if we are trying to do a full stop brake
         if (_isFullStopBraking)
         {
@@ -101,6 +112,8 @@ public class MachineController : MonoBehaviour
             {
                 wheelCollider.motorTorque = thrust;
             }
+
+            UpdateWheelVisuals();
 
             // Switch direction when close to goal location
             Vector3 curDirectionToGoalLocation = _goalLocations[1] - thisFrameTransform.position;
@@ -163,13 +176,18 @@ public class MachineController : MonoBehaviour
         }
 
 
-        // Update wheel visuals
-        for (int i = 0; i < wheelTransforms.Length; i++)
-        {
-            wheelColliders[i].GetWorldPose(out Vector3 pos, out Quaternion rot);
-            wheelTransforms[i].position = pos;
-            wheelTransforms[i].rotation = rot;
-        }
+        UpdateWheelVisuals();
+    }
+
+    // SECTION: Collider signals
+    private void OnCollisionEnter(Collision other)
+    {
+        _stopMovement = true;
+    }
+
+    private void OnCollisionExit(Collision other)
+    {
+        _stopMovement = false;
     }
 
     /// Controller Methods
