@@ -1,0 +1,20 @@
+#include <atomic>
+#include <algorithm>
+#include <string.h>
+#include <memory>
+
+void show_message(const std::string message)
+{
+    printf("%s", message.c_str());
+}
+
+// Here we define our declarative rules
+//
+ruleset danger_zone_ruleset
+{
+    OnInsert(dobject)
+    {
+        show_message( std::string("Object seen : ") + dobject.class_id );
+    }  
+}
+
