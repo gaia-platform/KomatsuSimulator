@@ -1,1 +1,0 @@
-KomatsuSimulator/Obstacle[] obstacles
