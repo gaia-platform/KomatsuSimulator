@@ -27,6 +27,7 @@ find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(vision_msgs REQUIRED)
+find_package(danger_zone_msgs REQUIRED)
 
 set(GAIA_INC "/opt/gaia/include")                     #TODO: remove fixed path
 set(GAIA_BIN "/opt/gaia/bin")                         #TODO: remove fixed path
@@ -43,6 +44,7 @@ set(DANGER_ZONE_INCLUDES
   ${GAIA_INC}/gaia/rules
   ${FLATBUFFERS_INC}
   ${GENERATED_OUTPUTS}
+  "/media/mark/Data1/U20/develop/Unity/KomatsuSimulator/Ros/install/danger_zone_msgs/include"
 )
 
 set(GAIA_GENERATE ${GAIA_BIN}/gaiac)                             
@@ -77,9 +79,9 @@ configure_file("${PROJECT_SOURCE_DIR}/src/log_conf.toml" "${PROJECT_BINARY_DIR}/
 add_library(gaia SHARED IMPORTED GLOBAL)
 set_target_properties(gaia PROPERTIES IMPORTED_LOCATION ${GAIA_LIB}/libgaia.so) 
 
-#add_executable(danger_zone src/danger_zone.cpp ${GENERATED_OUTPUTS}/danger_zone_rules.cpp)
-add_executable(danger_zone src/danger_zone.cpp )
-ament_target_dependencies(danger_zone rclcpp std_msgs sensor_msgs vision_msgs)
+add_executable(danger_zone src/danger_zone.cpp ${GENERATED_OUTPUTS}/danger_zone_ruleset.cpp)
+#add_executable(danger_zone src/danger_zone.cpp )
+ament_target_dependencies(danger_zone rclcpp std_msgs sensor_msgs vision_msgs danger_zone_msgs)
 target_link_libraries(danger_zone gaia)
 target_include_directories(danger_zone PRIVATE ${DANGER_ZONE_INCLUDES})
 

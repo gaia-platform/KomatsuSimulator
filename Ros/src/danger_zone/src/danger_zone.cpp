@@ -5,7 +5,10 @@
 #include "std_msgs/msg/string.hpp"
 #include <vision_msgs/msg/detection3_d.hpp>
 #include <vision_msgs/msg/detection3_d_array.hpp>
-#include <vision_msgs/msg/object_hypothesis_with_pose.h>
+#include <danger_zone_msgs/msg/obstacle.hpp>
+#include <danger_zone_msgs/msg/obstacle_array.hpp>
+
+//#include "/media/mark/Data1/U20/develop/Unity/KomatsuSimulator/Ros/install/danger_zone_msgs/include/danger_zone_msgs/msg/obstacle.hpp"
 
 #include "../generated/gaia_danger_zone.h"
 
@@ -13,6 +16,8 @@
 #include "system.hpp"
 
 using std::placeholders::_1;
+
+template <typename... Args> inline void unused(Args&&...) {}
 
 class DirectAccess
 {
@@ -128,12 +133,17 @@ public:
   {
     m_detection3d_subscription = this->create_subscription<vision_msgs::msg::Detection3DArray>(
       m_detected_topic_name, 10, std::bind(&SubscriberNode::detection3d_callback, this, _1));
+
+    m_obstacles_pub_ = this->create_publisher<danger_zone_msgs::msg::ObstacleArray>(
+      m_obstacles_topic_name, 1);
   }
 
 private:
 
-  const std::string m_detected_topic_name = "/detections"; 
+  const std::string m_detected_topic_name = "/komatsu/detections"; 
+  const std::string m_obstacles_topic_name = "/komatsu/obstacles"; 
   rclcpp::Subscription<vision_msgs::msg::Detection3DArray>::SharedPtr m_detection3d_subscription;
+  rclcpp::Publisher<danger_zone_msgs::msg::ObstacleArray>::SharedPtr m_obstacles_pub_;
 
   //*****************************************************************************
   //*
@@ -150,6 +160,8 @@ private:
     // add detected object row to DB
     auto id = gaia::danger_zone::dobject_t::insert_row(object_id, 
       class_id.c_str(), score, pos_x, pos_y, size_x, size_y);
+
+    unused(id, pos_z, size_z);
 
     gaia::db::commit_transaction();
   }
@@ -192,7 +204,87 @@ private:
         detection.bbox.size.x, detection.bbox.size.y, detection.bbox.size.z);
     }
   }
+
+  //*****************************************************************************
+  //*
+  //*
+  //*
+  //*****************************************************************************
+
+  danger_zone_msgs::msg::ObstacleArray::UniquePtr build_obstacleArray_message(
+    std::vector<danger_zone_msgs::msg::Obstacle> obstacles, 
+    std::string frame_id, int32_t sec, uint32_t nsec)
+  {
+    danger_zone_msgs::msg::ObstacleArray::UniquePtr obstacle_array(new danger_zone_msgs::msg::ObstacleArray);
+
+    obstacle_array->header = std_msgs::msg::Header();
+    obstacle_array->header.frame_id = frame_id;
+    obstacle_array->header.stamp.sec = sec;
+    obstacle_array->header.stamp.nanosec = nsec;
+
+    for(auto obstacle : obstacles)
+      obstacle_array->obstacles.push_back(obstacle);
+
+    return obstacle_array;
+  }  
+  
+  //*****************************************************************************
+  //*
+  //*
+  //*
+  //*****************************************************************************
+
+  danger_zone_msgs::msg::Obstacle::UniquePtr build_test_obstacle_message()
+  {
+    danger_zone_msgs::msg::Obstacle::UniquePtr obst(new danger_zone_msgs::msg::Obstacle);
+
+    geometry_msgs::msg::Point::UniquePtr point(new geometry_msgs::msg::Point);
+    point->x = 1.0;
+    point->y = 1.0;
+    point->z = 1.0;
+
+    geometry_msgs::msg::Vector3::UniquePtr size(new geometry_msgs::msg::Vector3);
+    size->x = 1.0;
+    size->y = 1.0;
+    size->z = 1.0;
+
+    geometry_msgs::msg::Pose::UniquePtr pose(new geometry_msgs::msg::Pose);
+    pose->position = *point;
+
+    vision_msgs::msg::BoundingBox3D::UniquePtr bbox(new vision_msgs::msg::BoundingBox3D);
+    bbox->center = *pose;
+    bbox->size = *size;
+
+    obst->type = "theType";
+    obst->roi = danger_zone_msgs::msg::Obstacle::RED;
+    obst->direction = danger_zone_msgs::msg::Obstacle::FRONT_LEFT;
+    obst->bounds = *bbox;
+
+    return obst;
+  }
+
+  //*****************************************************************************
+  //*
+  //*
+  //*
+  //*****************************************************************************
+
+  void send_test_obstacleArray_message()
+  {
+    std::vector<danger_zone_msgs::msg::Obstacle> obstacles;
+    obstacles.push_back(*(build_test_obstacle_message()));
+
+    auto obstacleArray = build_obstacleArray_message(obstacles,"theFrame", 1, 1);
+
+    m_obstacles_pub_->publish(std::move(obstacleArray));
+  }
 };
+
+//*****************************************************************************
+//*
+//*
+//*
+//*****************************************************************************
 
 int main(int argc, char * argv[])
 {
