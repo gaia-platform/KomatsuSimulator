@@ -62,7 +62,9 @@ public class RoiVisualizer : MonoBehaviour
             QuaternionMsg boundsOri = curObstacle.bounds.center.orientation;
             Vector3Msg boundsSize = curObstacle.bounds.size;
 
-            curRoiBox.transform.position = new Vector3((float)boundsPos.x, (float)boundsPos.y, (float)boundsPos.z);
+            Vector3 position = new Vector3((float)boundsPos.x, (float)boundsPos.y, (float)boundsPos.z) + transform.position;
+
+            curRoiBox.transform.position = position;
             curRoiBox.transform.rotation = new Quaternion((float)boundsOri.x, (float)boundsOri.y,
                 (float)boundsOri.z, (float)boundsOri.w);
             curRoiBox.transform.localScale = new Vector3((float)boundsSize.x, (float)boundsSize.y, (float)boundsSize.z);
