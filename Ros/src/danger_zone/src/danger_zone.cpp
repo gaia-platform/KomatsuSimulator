@@ -152,15 +152,20 @@ private:
   //*
   //*****************************************************************************
 
-  void insert_seen_object(int object_id, std::string class_id, 
-    float score, float pos_x, float pos_y, float pos_z, 
-    float size_x, float size_y, float size_z) const
+  void insert_seen_object(int object_id, std::string class_id, float score, 
+    const char* frame_id, int32_t range_id, int32_t direction_id,
+    int32_t seconds, int32_t nseconds,
+    float pos_x, float pos_y, float pos_z, 
+    float size_x, float size_y, float size_z,
+    float orient_x, float orient_y, float orient_z, float orient_w) const
   {
     gaia::db::begin_transaction();
 
     // add detected object row to DB
-    auto id = gaia::danger_zone::dobject_t::insert_row(object_id, 
-      class_id.c_str(), score, pos_x, pos_y, size_x, size_y);
+    auto id = gaia::danger_zone::dobject_t::insert_row(
+      object_id, class_id.c_str(), score, frame_id, range_id, direction_id, seconds, nseconds,
+      pos_x, pos_y, pos_z, size_x, size_y, size_z,
+      orient_x, orient_y, orient_z, orient_w);
 
     unused(id, pos_z, size_z);
 
@@ -184,28 +189,32 @@ private:
       //RCLCPP_INFO(this->get_logger(), "I saw: '%s'", detection.id.c_str());      
       RCLCPP_INFO(this->get_logger(), "I saw: '%s'", "something");
 
-      std::string max_class = "";
-      float max_score = 0.0;
+      vision_msgs::msg::ObjectHypothesisWithPose max_hyp;
+
+      max_hyp.hypothesis.class_id = "";
+      max_hyp.hypothesis.score = 0.0;
 
       for( auto result : detection.results )
       {
-        if( result.hypothesis.score > max_score )
-        {
-          max_score = result.hypothesis.score;
-          max_class = result.hypothesis.class_id;
+        if( result.hypothesis.score > max_hyp.hypothesis.score )
+        {         
+          max_hyp = result;
         }
       }
             
-      if( max_class == "" )
+      if( max_hyp.hypothesis.class_id == "" )
       {
         return; // TODO : Log this?
       }
 
       //auto md = detection.header;
       
-      insert_seen_object(0, max_class, max_score, 
+      insert_seen_object(0, max_hyp.hypothesis.class_id, max_hyp.hypothesis.score, 
+        detection.header.frame_id.c_str(), 0, 0, 
+        detection.header.stamp.sec, detection.header.stamp.nanosec,
         detection.bbox.center.position.x, detection.bbox.center.position.y, detection.bbox.center.position.z, 
-        detection.bbox.size.x, detection.bbox.size.y, detection.bbox.size.z);
+        detection.bbox.size.x, detection.bbox.size.y, detection.bbox.size.z,
+        max_hyp.pose.pose.orientation.x,max_hyp.pose.pose.orientation.y,max_hyp.pose.pose.orientation.z,max_hyp.pose.pose.orientation.w);
     }
   }
 
@@ -285,13 +294,32 @@ private:
   //*
   //*****************************************************************************
 
-  void send_test_obstacleArray_message() const
+  danger_zone_msgs::msg::ObstacleArray::UniquePtr build_obstacleArray_message(
+    std::string type_name, uint roi, uint direction,
+    double posx, double posy, double posz, 
+    double sizex, double sizey, double sizez, 
+    double orientx, double orienty, double orientz, double orientw,
+    std::string frame_id, int32_t sec, uint32_t nsec 
+    ) const 
   {
     std::vector<danger_zone_msgs::msg::Obstacle> obstacles;
     obstacles.push_back(*(build_obstacle_message(
-      "theType",1,1,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0)));
+      type_name, roi, direction, posx, posy, posz, 
+      sizex, sizey, sizez, orientx, orienty, orientz, orientw)));
 
-    auto obstacleArray = build_obstacleArray_message(obstacles,"theFrame", 1, 1);
+    return build_obstacleArray_message(obstacles, frame_id,  sec, nsec);
+  }
+
+  //*****************************************************************************
+  //*
+  //*
+  //*
+  //*****************************************************************************
+
+  void send_test_obstacleArray_message() const
+  {
+    auto obstacleArray = build_obstacleArray_message(
+      "theType",1,1,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,"theFrame", 1, 1);
 
     m_obstacles_pub_->publish(std::move(obstacleArray));
   }
