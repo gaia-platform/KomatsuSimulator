@@ -60,7 +60,8 @@ private:
     try
       {
           //Initialize Gaia
-          gaia::system::initialize(m_config_file_name.c_str());
+          //gaia::system::initialize(m_config_file_name.c_str());
+          gaia::system::initialize();
 
           init_storage();
       }
@@ -174,6 +175,9 @@ private:
 
   void detection3d_callback(const vision_msgs::msg::Detection3DArray::SharedPtr msg) const
   {
+    //TODO : just a test, remove this
+    send_test_obstacleArray_message();
+
     for(vision_msgs::msg::Detection3D detection : msg->detections)
     {
       //TODO MW : To get past build
@@ -213,7 +217,7 @@ private:
 
   danger_zone_msgs::msg::ObstacleArray::UniquePtr build_obstacleArray_message(
     std::vector<danger_zone_msgs::msg::Obstacle> obstacles, 
-    std::string frame_id, int32_t sec, uint32_t nsec)
+    std::string frame_id, int32_t sec, uint32_t nsec) const
   {
     danger_zone_msgs::msg::ObstacleArray::UniquePtr obstacle_array(new danger_zone_msgs::msg::ObstacleArray);
 
@@ -234,25 +238,30 @@ private:
   //*
   //*****************************************************************************
 
-  danger_zone_msgs::msg::Obstacle::UniquePtr build_obstacle_message()
+  danger_zone_msgs::msg::Obstacle::UniquePtr build_obstacle_message(
+    std::string type_name, uint roi, uint direction,
+    double posx, double posy, double posz, 
+    double sizex, double sizey, double sizez, 
+    double orientx, double orienty, double orientz, double orientw 
+  ) const
   {
     danger_zone_msgs::msg::Obstacle::UniquePtr obst(new danger_zone_msgs::msg::Obstacle);
 
     geometry_msgs::msg::Point::UniquePtr point(new geometry_msgs::msg::Point);
-    point->x = 1.0;
-    point->y = 1.0;
-    point->z = 1.0;
+    point->x = posx;
+    point->y = posy;
+    point->z = posz;
 
     geometry_msgs::msg::Vector3::UniquePtr size(new geometry_msgs::msg::Vector3);
-    size->x = 1.0;
-    size->y = 1.0;
-    size->z = 1.0;
+    size->x = sizex;
+    size->y = sizey;
+    size->z = sizez;
 
     geometry_msgs::msg::Quaternion::UniquePtr orient(new geometry_msgs::msg::Quaternion);
-    orient->x = 0.0;
-    orient->y = 0.0;
-    orient->z = 0.0;
-    orient->w = 1.0;
+    orient->x = orientx;
+    orient->y = orienty;
+    orient->z = orientz;
+    orient->w = orientw;
 
     geometry_msgs::msg::Pose::UniquePtr pose(new geometry_msgs::msg::Pose);
     pose->position = *point;
@@ -262,9 +271,9 @@ private:
     bbox->center = *pose;
     bbox->size = *size;
 
-    obst->type = "theType";
-    obst->roi = danger_zone_msgs::msg::Obstacle::RED;
-    obst->direction = danger_zone_msgs::msg::Obstacle::FRONT_LEFT;
+    obst->type = type_name;
+    obst->roi = roi;
+    obst->direction = direction;
     obst->bounds = *bbox;
 
     return obst;
@@ -276,52 +285,11 @@ private:
   //*
   //*****************************************************************************
 
-  danger_zone_msgs::msg::Obstacle::UniquePtr build_test_obstacle_message()
-  {
-    danger_zone_msgs::msg::Obstacle::UniquePtr obst(new danger_zone_msgs::msg::Obstacle);
-
-    geometry_msgs::msg::Point::UniquePtr point(new geometry_msgs::msg::Point);
-    point->x = 1.0;
-    point->y = 1.0;
-    point->z = 1.0;
-
-    geometry_msgs::msg::Vector3::UniquePtr size(new geometry_msgs::msg::Vector3);
-    size->x = 1.0;
-    size->y = 1.0;
-    size->z = 1.0;
-
-    geometry_msgs::msg::Quaternion::UniquePtr orient(new geometry_msgs::msg::Quaternion);
-    orient->x = 0.0;
-    orient->y = 0.0;
-    orient->z = 0.0;
-    orient->w = 1.0;
-
-    geometry_msgs::msg::Pose::UniquePtr pose(new geometry_msgs::msg::Pose);
-    pose->position = *point;
-    pose->orientation = *orient;
-
-    vision_msgs::msg::BoundingBox3D::UniquePtr bbox(new vision_msgs::msg::BoundingBox3D);
-    bbox->center = *pose;
-    bbox->size = *size;
-
-    obst->type = "theType";
-    obst->roi = danger_zone_msgs::msg::Obstacle::RED;
-    obst->direction = danger_zone_msgs::msg::Obstacle::FRONT_LEFT;
-    obst->bounds = *bbox;
-
-    return obst;
-  }
-
-  //*****************************************************************************
-  //*
-  //*
-  //*
-  //*****************************************************************************
-
-  void send_test_obstacleArray_message()
+  void send_test_obstacleArray_message() const
   {
     std::vector<danger_zone_msgs::msg::Obstacle> obstacles;
-    obstacles.push_back(*(build_test_obstacle_message()));
+    obstacles.push_back(*(build_obstacle_message(
+      "theType",1,1,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0)));
 
     auto obstacleArray = build_obstacleArray_message(obstacles,"theFrame", 1, 1);
 
@@ -339,7 +307,6 @@ int main(int argc, char * argv[])
 {
   DirectAccess da;
   da.init();
-
 
   rclcpp::init(argc, argv);
   rclcpp::spin(std::make_shared<SubscriberNode>());
