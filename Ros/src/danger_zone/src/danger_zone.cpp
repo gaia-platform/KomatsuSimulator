@@ -141,6 +141,7 @@ public:
 
 private:
 
+  bool m_simple_echo = true;
   const std::string m_detected_topic_name = "/komatsu/detections"; 
   const std::string m_obstacles_topic_name = "/komatsu/obstacles"; 
   rclcpp::Subscription<vision_msgs::msg::Detection3DArray>::SharedPtr m_detection3d_subscription;
@@ -167,8 +168,6 @@ private:
       pos_x, pos_y, pos_z, size_x, size_y, size_z,
       orient_x, orient_y, orient_z, orient_w);
 
-    unused(id, pos_z, size_z);
-
     gaia::db::commit_transaction();
   }
 
@@ -181,7 +180,9 @@ private:
   void detection3d_callback(const vision_msgs::msg::Detection3DArray::SharedPtr msg) const
   {
     //TODO : just a test, remove this
-    send_test_obstacleArray_message();
+    //send_test_obstacleArray_message();
+
+    std::vector<danger_zone_msgs::msg::Obstacle> obstacles;
 
     for(vision_msgs::msg::Detection3D detection : msg->detections)
     {
@@ -206,16 +207,25 @@ private:
       {
         return; // TODO : Log this?
       }
-
-      //auto md = detection.header;
-      
+     
       insert_seen_object(0, max_hyp.hypothesis.class_id, max_hyp.hypothesis.score, 
         detection.header.frame_id.c_str(), 0, 0, 
         detection.header.stamp.sec, detection.header.stamp.nanosec,
         detection.bbox.center.position.x, detection.bbox.center.position.y, detection.bbox.center.position.z, 
         detection.bbox.size.x, detection.bbox.size.y, detection.bbox.size.z,
         max_hyp.pose.pose.orientation.x,max_hyp.pose.pose.orientation.y,max_hyp.pose.pose.orientation.z,max_hyp.pose.pose.orientation.w);
+
+      if(m_simple_echo)
+        obstacles.push_back(*(build_obstacle_message(
+          max_hyp.hypothesis.class_id, 0, 0, 
+          detection.bbox.center.position.x, detection.bbox.center.position.y, detection.bbox.center.position.z, 
+          detection.bbox.size.x, detection.bbox.size.y, detection.bbox.size.z,
+          max_hyp.pose.pose.orientation.x,max_hyp.pose.pose.orientation.y,max_hyp.pose.pose.orientation.z,max_hyp.pose.pose.orientation.w)));
     }
+
+    if(m_simple_echo)
+      m_obstacles_pub_->publish(build_obstacleArray_message(
+        obstacles, msg->header.frame_id,  msg->header.stamp.sec, msg->header.stamp.nanosec));
   }
 
   //*****************************************************************************
