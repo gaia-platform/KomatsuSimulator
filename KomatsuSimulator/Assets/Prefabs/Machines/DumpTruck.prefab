@@ -1067,6 +1067,7 @@ GameObject:
   - component: {fileID: 4034503822824705955}
   - component: {fileID: 4034503822824705980}
   - component: {fileID: 1731426591284241533}
+  - component: {fileID: 6595714325484622823}
   m_Layer: 0
   m_Name: DumpTruck
   m_TagString: Obstacle
@@ -1140,6 +1141,20 @@ MonoBehaviour:
   - {fileID: 560194153307253222}
   thrust: 500
   maxSteeringAngle: 30
+  targetTransform: {fileID: 0}
+--- !u!114 &6595714325484622823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4034503822824705954}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6939fb52894d4502872c88613823a16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  roiPrefab: {fileID: 4226648879488128554, guid: 468ad9d0acbb29153a1331270972e5bf, type: 3}
 --- !u!1 &4034503822830117509
 GameObject:
   m_ObjectHideFlags: 0
