@@ -234,6 +234,48 @@ private:
   //*
   //*****************************************************************************
 
+  danger_zone_msgs::msg::Obstacle::UniquePtr build_obstacle_message()
+  {
+    danger_zone_msgs::msg::Obstacle::UniquePtr obst(new danger_zone_msgs::msg::Obstacle);
+
+    geometry_msgs::msg::Point::UniquePtr point(new geometry_msgs::msg::Point);
+    point->x = 1.0;
+    point->y = 1.0;
+    point->z = 1.0;
+
+    geometry_msgs::msg::Vector3::UniquePtr size(new geometry_msgs::msg::Vector3);
+    size->x = 1.0;
+    size->y = 1.0;
+    size->z = 1.0;
+
+    geometry_msgs::msg::Quaternion::UniquePtr orient(new geometry_msgs::msg::Quaternion);
+    orient->x = 0.0;
+    orient->y = 0.0;
+    orient->z = 0.0;
+    orient->w = 1.0;
+
+    geometry_msgs::msg::Pose::UniquePtr pose(new geometry_msgs::msg::Pose);
+    pose->position = *point;
+    pose->orientation = *orient;
+
+    vision_msgs::msg::BoundingBox3D::UniquePtr bbox(new vision_msgs::msg::BoundingBox3D);
+    bbox->center = *pose;
+    bbox->size = *size;
+
+    obst->type = "theType";
+    obst->roi = danger_zone_msgs::msg::Obstacle::RED;
+    obst->direction = danger_zone_msgs::msg::Obstacle::FRONT_LEFT;
+    obst->bounds = *bbox;
+
+    return obst;
+  }
+
+  //*****************************************************************************
+  //*
+  //*
+  //*
+  //*****************************************************************************
+
   danger_zone_msgs::msg::Obstacle::UniquePtr build_test_obstacle_message()
   {
     danger_zone_msgs::msg::Obstacle::UniquePtr obst(new danger_zone_msgs::msg::Obstacle);
@@ -248,8 +290,15 @@ private:
     size->y = 1.0;
     size->z = 1.0;
 
+    geometry_msgs::msg::Quaternion::UniquePtr orient(new geometry_msgs::msg::Quaternion);
+    orient->x = 0.0;
+    orient->y = 0.0;
+    orient->z = 0.0;
+    orient->w = 1.0;
+
     geometry_msgs::msg::Pose::UniquePtr pose(new geometry_msgs::msg::Pose);
     pose->position = *point;
+    pose->orientation = *orient;
 
     vision_msgs::msg::BoundingBox3D::UniquePtr bbox(new vision_msgs::msg::BoundingBox3D);
     bbox->center = *pose;
