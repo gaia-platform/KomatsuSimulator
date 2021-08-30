@@ -3,9 +3,16 @@ using UnityEngine;
 public class DetachedCameraController : MonoBehaviour
 {
     // SECTION: Properties
+    [SerializeField] private Terrain terrain;
     [SerializeField] private float mouseSensitivity;
     [SerializeField] private float baseMovementSensitivity;
 
+    private Bounds _terrainBounds;
+
+    private void Start()
+    {
+        _terrainBounds = terrain.terrainData.bounds;
+    }
 
     // Update is called once per frame
     void Update()
@@ -29,9 +36,16 @@ public class DetachedCameraController : MonoBehaviour
         Transform thisFrameTransforms = transform;
 
         // Set position
-        thisFrameTransforms.Translate(
+        Vector3 proposedTranslation =
             (Vector3.forward * moveForward + Vector3.right * moveLateral + Vector3.up * moveUpDown) *
-            (movementSensitivity * Time.deltaTime));
+            (movementSensitivity * Time.deltaTime);
+        Vector3 futurePoint = thisFrameTransforms.position + proposedTranslation;
+
+        if (_terrainBounds.Contains(futurePoint)) // If the translation won't go out of bounds, then do it
+        {
+            thisFrameTransforms.Translate(proposedTranslation);
+        }
+
 
         // Set rotation
         thisFrameTransforms.Rotate((Vector3.right * (mouseY * -1) + Vector3.up * mouseX) *

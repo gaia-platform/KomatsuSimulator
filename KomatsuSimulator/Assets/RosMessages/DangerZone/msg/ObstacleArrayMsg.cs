@@ -4,27 +4,31 @@ using System;
 using System.Linq;
 using Unity.Robotics.ROSTCPConnector.MessageGeneration;
 
-namespace RosMessageTypes.KomatsuSimulator
+namespace RosMessageTypes.DangerZone
 {
     [Serializable]
     public class ObstacleArrayMsg : Message
     {
-        public const string k_RosMessageName = "KomatsuSimulator/ObstacleArray";
-
+        public const string k_RosMessageName = "danger_zone_msgs/ObstacleArray";
         public ObstacleMsg[] obstacles;
+
+        public Std.HeaderMsg header;
 
         public ObstacleArrayMsg()
         {
+            this.header = new Std.HeaderMsg();
             this.obstacles = new ObstacleMsg[0];
         }
 
-        public ObstacleArrayMsg(ObstacleMsg[] obstacles)
+        public ObstacleArrayMsg(Std.HeaderMsg header, ObstacleMsg[] obstacles)
         {
+            this.header = header;
             this.obstacles = obstacles;
         }
 
         private ObstacleArrayMsg(MessageDeserializer deserializer)
         {
+            this.header = Std.HeaderMsg.Deserialize(deserializer);
             deserializer.Read(out this.obstacles, ObstacleMsg.Deserialize, deserializer.ReadLength());
         }
 
@@ -35,6 +39,7 @@ namespace RosMessageTypes.KomatsuSimulator
 
         public override void SerializeTo(MessageSerializer serializer)
         {
+            serializer.Write(this.header);
             serializer.WriteLength(this.obstacles);
             serializer.Write(this.obstacles);
         }
@@ -42,6 +47,7 @@ namespace RosMessageTypes.KomatsuSimulator
         public override string ToString()
         {
             return "ObstacleArrayMsg: " +
+                   "\nheader: " + header.ToString() +
                    "\nobstacles: " + System.String.Join(", ", obstacles.ToList());
         }
 

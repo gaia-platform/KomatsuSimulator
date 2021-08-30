@@ -12,6 +12,9 @@ public class MachineController : MonoBehaviour
     [SerializeField] private WheelCollider[] wheelColliders;
     [SerializeField] private Transform[] wheelTransforms;
 
+    // Roi Visualizer
+    [SerializeField] private RoiVisualizer visualizerScript;
+
     // SECTION: Properties
     [SerializeField] private float thrust;
     [SerializeField] private float maxSteeringAngle;
@@ -50,6 +53,17 @@ public class MachineController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        void UpdateWheelVisuals()
+        {
+            // Update wheel visuals
+            for (int i = 0; i < wheelTransforms.Length; i++)
+            {
+                wheelColliders[i].GetWorldPose(out Vector3 pos, out Quaternion rot);
+                wheelTransforms[i].position = pos;
+                wheelTransforms[i].rotation = rot;
+            }
+        }
+
         // First, check if we are trying to do a full stop brake
         if (_isFullStopBraking)
         {
@@ -101,6 +115,8 @@ public class MachineController : MonoBehaviour
             {
                 wheelCollider.motorTorque = thrust;
             }
+
+            UpdateWheelVisuals();
 
             // Switch direction when close to goal location
             Vector3 curDirectionToGoalLocation = _goalLocations[1] - thisFrameTransform.position;
@@ -163,13 +179,18 @@ public class MachineController : MonoBehaviour
         }
 
 
-        // Update wheel visuals
-        for (int i = 0; i < wheelTransforms.Length; i++)
-        {
-            wheelColliders[i].GetWorldPose(out Vector3 pos, out Quaternion rot);
-            wheelTransforms[i].position = pos;
-            wheelTransforms[i].rotation = rot;
-        }
+        UpdateWheelVisuals();
+    }
+
+    // SECTION: Collider signals
+    private void OnCollisionEnter()
+    {
+        _stopMovement = true;
+    }
+
+    private void OnCollisionExit()
+    {
+        _stopMovement = false;
     }
 
     /// Controller Methods
@@ -193,21 +214,17 @@ public class MachineController : MonoBehaviour
     // Deactivate (on switch to another machine)
     public void Activate(bool state = true)
     {
-        if (state)
-        {
-            GetActiveCamera().SetActive(true);
-            _isDisabled = false;
-        }
-        else
+        if (!state)
         {
             if (!targetTransform)
             {
                 FullStopBrake();
             }
-
-            GetActiveCamera().SetActive(false);
-            _isDisabled = true;
         }
+
+        GetActiveCamera().SetActive(state);
+        visualizerScript.enabled = state;
+        _isDisabled = !state;
     }
 
     // Full Stop braking

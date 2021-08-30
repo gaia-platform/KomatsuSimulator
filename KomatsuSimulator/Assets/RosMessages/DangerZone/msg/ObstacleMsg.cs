@@ -3,12 +3,12 @@
 using System;
 using Unity.Robotics.ROSTCPConnector.MessageGeneration;
 
-namespace RosMessageTypes.KomatsuSimulator
+namespace RosMessageTypes.DangerZone
 {
     [Serializable]
     public class ObstacleMsg : Message
     {
-        public const string k_RosMessageName = "KomatsuSimulator/Obstacle";
+        public const string k_RosMessageName = "danger_zone_msgs/Obstacle";
 
         public const byte RED = 0;
         public const byte YELLOW = 1;
