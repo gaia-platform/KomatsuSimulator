@@ -15,44 +15,37 @@ namespace RosMessageTypes.Vision
 
         //  Defines a 3D detection result.
         // 
-        //  This extends a basic 3D classification by including position information,
-        //    allowing a classification result for a specific position in an image to
-        //    to be located in the larger image.
+        //  This extends a basic 3D classification by including the pose of the
+        //  detected object.
         public Std.HeaderMsg header;
         //  Class probabilities. Does not have to include hypotheses for all possible
         //    object ids, the scores for any ids not listed are assumed to be 0.
         public ObjectHypothesisWithPoseMsg[] results;
         //  3D bounding box surrounding the object.
         public BoundingBox3DMsg bbox;
-        //  The 3D data that generated these results (i.e. region proposal cropped out of
-        //    the image). This information is not required for all detectors, so it may
-        //    be empty.
-        public Sensor.PointCloud2Msg source_cloud;
-        //  If this message was tracking result, this field set true.
-        public bool is_tracking;
-        //  ID used for consistency across multiple detection messages. This value will
-        //    likely differ from the id field set in each individual ObjectHypothesis.
-        //  If you set this field, be sure to also set is_tracking to True.
-        public string tracking_id;
+        //  ID used for consistency across multiple detection messages. Detections
+        //  of the same object in different detection messages should have the same id.
+        //  This field may be empty.
+        public string id;
+        //  Source data that generated this classification are not a part of the message.
+        //  If you need to access them, use an exact or approximate time synchronizer in
+        //  your code, as this message's header should match the header of the source
+        //  data.
 
         public Detection3DMsg()
         {
             this.header = new Std.HeaderMsg();
             this.results = new ObjectHypothesisWithPoseMsg[0];
             this.bbox = new BoundingBox3DMsg();
-            this.source_cloud = new Sensor.PointCloud2Msg();
-            this.is_tracking = false;
-            this.tracking_id = "";
+            this.id = "";
         }
 
-        public Detection3DMsg(Std.HeaderMsg header, ObjectHypothesisWithPoseMsg[] results, BoundingBox3DMsg bbox, Sensor.PointCloud2Msg source_cloud, bool is_tracking, string tracking_id)
+        public Detection3DMsg(Std.HeaderMsg header, ObjectHypothesisWithPoseMsg[] results, BoundingBox3DMsg bbox, string id)
         {
             this.header = header;
             this.results = results;
             this.bbox = bbox;
-            this.source_cloud = source_cloud;
-            this.is_tracking = is_tracking;
-            this.tracking_id = tracking_id;
+            this.id = id;
         }
 
         public static Detection3DMsg Deserialize(MessageDeserializer deserializer) => new Detection3DMsg(deserializer);
@@ -62,9 +55,7 @@ namespace RosMessageTypes.Vision
             this.header = Std.HeaderMsg.Deserialize(deserializer);
             deserializer.Read(out this.results, ObjectHypothesisWithPoseMsg.Deserialize, deserializer.ReadLength());
             this.bbox = BoundingBox3DMsg.Deserialize(deserializer);
-            this.source_cloud = Sensor.PointCloud2Msg.Deserialize(deserializer);
-            deserializer.Read(out this.is_tracking);
-            deserializer.Read(out this.tracking_id);
+            deserializer.Read(out this.id);
         }
 
         public override void SerializeTo(MessageSerializer serializer)
@@ -73,9 +64,7 @@ namespace RosMessageTypes.Vision
             serializer.WriteLength(this.results);
             serializer.Write(this.results);
             serializer.Write(this.bbox);
-            serializer.Write(this.source_cloud);
-            serializer.Write(this.is_tracking);
-            serializer.Write(this.tracking_id);
+            serializer.Write(this.id);
         }
 
         public override string ToString()
@@ -84,9 +73,7 @@ namespace RosMessageTypes.Vision
             "\nheader: " + header.ToString() +
             "\nresults: " + System.String.Join(", ", results.ToList()) +
             "\nbbox: " + bbox.ToString() +
-            "\nsource_cloud: " + source_cloud.ToString() +
-            "\nis_tracking: " + is_tracking.ToString() +
-            "\ntracking_id: " + tracking_id.ToString();
+            "\nid: " + id.ToString();
         }
 
 #if UNITY_EDITOR

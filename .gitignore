@@ -88,3 +88,10 @@ install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
 _deps
+.vscode/settings.json
+Ros/.vscode/c_cpp_properties.json
+Ros/src/.vscode/c_cpp_properties.json
+Ros/src/.vscode/colcon.env
+Ros/.vscode/colcon.env
+.vscode/settings.json
+Ros/src/retro_log/.gitignore
