@@ -18,7 +18,7 @@ public:
   //*
   //*****************************************************************************
 
-  SubscriberNode(): Node("danger_zone_ros")
+  SubscriberNode(): Node("retro_log")
   {
     m_command_subscription = this->create_subscription<retro_log::msg::Command>(
       m_command_topic_name, 10, std::bind(&SubscriberNode::command_callback, this, _1));
