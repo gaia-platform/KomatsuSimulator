@@ -43,6 +43,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca27074809abace769403a9a3e28f8bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rosTopic: /komatsu/obstacles
+  rosTopic: /komatsu/detections
   tagName: Obstacle
   rosFrame: truck
