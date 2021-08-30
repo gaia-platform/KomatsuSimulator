@@ -50,9 +50,9 @@ public class RoiVisualizer : MonoBehaviour
             // Set ROI color
             _roiBoxRenderers[i].material.color = curObstacle.roi switch
             {
-                ObstacleMsg.RED => Color.red,
-                ObstacleMsg.YELLOW => Color.yellow,
-                _ => Color.green
+                ObstacleMsg.RED => new Color(1, 0, 0, 0.3f),
+                ObstacleMsg.YELLOW => new Color(1, 1, 0, 0.3f),
+                _ => new Color(0, 1, 0, 0.3f)
             };
 
             // Set box
@@ -62,7 +62,8 @@ public class RoiVisualizer : MonoBehaviour
             QuaternionMsg boundsOri = curObstacle.bounds.center.orientation;
             Vector3Msg boundsSize = curObstacle.bounds.size;
 
-            Vector3 position = new Vector3((float)boundsPos.x, (float)boundsPos.y, (float)boundsPos.z) + transform.position;
+            Vector3 position = new Vector3((float)boundsPos.x, (float)boundsPos.y, (float)boundsPos.z) +
+                               transform.position;
 
             curRoiBox.transform.position = position;
             curRoiBox.transform.rotation = new Quaternion((float)boundsOri.x, (float)boundsOri.y,
