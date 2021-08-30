@@ -1,41 +1,71 @@
 using System.Collections.Generic;
-using System.Linq;
 using RosMessageTypes.DangerZone;
+using RosMessageTypes.Geometry;
 using Unity.Robotics.ROSTCPConnector;
 using UnityEngine;
 
 public class RoiVisualizer : MonoBehaviour
 {
-    // SECTION: Nodes and properties
-    [SerializeField] private GameObject roiPrefab;
-    private string _obstacles_topic_name = "/komatsu/obstacles"; // Topic to subscribe to
+    private const string ObstaclesTopicName = "/komatsu/obstacles"; // Topic to subscribe to
 
-    private Dictionary<GameObject, Renderer> _roiBoxesAndRenderers; // Registry of ROI boxes and their renderers
+    // SECTION: Nodes and properties
+    [SerializeField] private GameObject roiBoxPrefab;
+
+    private readonly List<GameObject> _roiBoxes = new List<GameObject>(); // List of ROI Boxes
+    private readonly List<Renderer> _roiBoxRenderers = new List<Renderer>(); // Associated list of renderers
 
 
     // Start is called before the first frame update
     private void Start()
     {
-        ROSConnection.instance.Subscribe<ObstacleArrayMsg>(_obstacles_topic_name, VisualizeObstacles);
+        ROSConnection.instance.Subscribe<ObstacleArrayMsg>(ObstaclesTopicName, VisualizeObstacles);
     }
 
     private void VisualizeObstacles(ObstacleArrayMsg obstacleArray)
     {
         // Add or remove prefabs
-        int deltaSize = obstacleArray.obstacles.Length - _roiBoxesAndRenderers.Count;
+        int deltaSize = obstacleArray.obstacles.Length - _roiBoxes.Count;
         for (int i = 0; i < Mathf.Abs(deltaSize); i++)
         {
             if (deltaSize > 0) // New obstacles in array
             {
-                GameObject roiBoxInstance = Instantiate(roiPrefab);
-                _roiBoxesAndRenderers.Add(roiBoxInstance, roiBoxInstance.GetComponent<Renderer>());
+                GameObject roiBoxInstance = Instantiate(roiBoxPrefab);
+                _roiBoxes.Add(roiBoxInstance);
+                _roiBoxRenderers.Add(roiBoxInstance.GetComponent<Renderer>());
             }
             else // Otherwise, shrink dictionary
             {
-                GameObject lastBoxInstance = _roiBoxesAndRenderers.Keys.Last();
-                _roiBoxesAndRenderers.Remove(lastBoxInstance);
-                Destroy(lastBoxInstance);
+                int removeIndex = _roiBoxes.Count - 1;
+                _roiBoxes.RemoveAt(removeIndex);
+                _roiBoxRenderers.RemoveAt(removeIndex);
             }
+        }
+
+        // Loop through each obstacle
+        for (int i = 0; i < obstacleArray.obstacles.Length; i++)
+        {
+            // Get current obstacle
+            ObstacleMsg curObstacle = obstacleArray.obstacles[i];
+
+            // Set ROI color
+            _roiBoxRenderers[i].material.color = curObstacle.roi switch
+            {
+                ObstacleMsg.RED => Color.red,
+                ObstacleMsg.YELLOW => Color.yellow,
+                _ => Color.green
+            };
+
+            // Set box
+            GameObject curRoiBox = _roiBoxes[i];
+
+            PointMsg boundsPos = curObstacle.bounds.center.position;
+            QuaternionMsg boundsOri = curObstacle.bounds.center.orientation;
+            Vector3Msg boundsSize = curObstacle.bounds.size;
+
+            curRoiBox.transform.position = new Vector3((float)boundsPos.x, (float)boundsPos.y, (float)boundsPos.z);
+            curRoiBox.transform.rotation = new Quaternion((float)boundsOri.x, (float)boundsOri.y,
+                (float)boundsOri.z, (float)boundsOri.w);
+            curRoiBox.transform.localScale = new Vector3((float)boundsSize.x, (float)boundsSize.y, (float)boundsSize.z);
         }
     }
 }

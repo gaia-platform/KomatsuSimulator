@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7478921059162179582}
   - component: {fileID: 4369404856652492782}
   m_Layer: 0
-  m_Name: RoiDisplay
+  m_Name: RoiBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

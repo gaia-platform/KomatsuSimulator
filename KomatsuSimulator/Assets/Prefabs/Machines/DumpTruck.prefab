@@ -1139,6 +1139,7 @@ MonoBehaviour:
   - {fileID: 8123996425659186840}
   - {fileID: 3759478834629935090}
   - {fileID: 560194153307253222}
+  visualizerScript: {fileID: 6595714325484622823}
   thrust: 500
   maxSteeringAngle: 30
   targetTransform: {fileID: 0}
@@ -1149,12 +1150,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4034503822824705954}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a6939fb52894d4502872c88613823a16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roiPrefab: {fileID: 4226648879488128554, guid: 468ad9d0acbb29153a1331270972e5bf, type: 3}
+  roiBoxPrefab: {fileID: 4226648879488128554, guid: 468ad9d0acbb29153a1331270972e5bf, type: 3}
 --- !u!1 &4034503822830117509
 GameObject:
   m_ObjectHideFlags: 0
