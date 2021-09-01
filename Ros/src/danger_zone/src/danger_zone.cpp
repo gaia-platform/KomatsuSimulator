@@ -10,10 +10,10 @@
 
 //#include "/media/mark/Data1/U20/develop/Unity/KomatsuSimulator/Ros/install/danger_zone_msgs/include/danger_zone_msgs/msg/obstacle.hpp"
 
-#include "../generated/gaia_danger_zone.h"
+#include "gaia/rules/rules.hpp"
+#include "gaia/system.hpp"
 
-#include "rules.hpp"
-#include "system.hpp"
+#include "gaia_danger_zone.h"
 
 using std::placeholders::_1;
 
@@ -88,7 +88,7 @@ private:
   gaia::common::gaia_id_t insert_detected_object(int id)
   {
       gaia::danger_zone::dobject_writer ow;
-      ow.id = id;
+      ow.obid = id;
       return ow.insert_row();
   }
 
@@ -104,12 +104,12 @@ private:
 
       gaia::direct_access::auto_transaction_t tx(gaia::direct_access::auto_transaction_t::no_auto_begin);
 
-      if (gaia::danger_zone::detected_t::get_first())
+      /*if (gaia::danger_zone::detected_t::get_first())
       {
           //remove_everything();
           tx.commit();
           return;
-      }
+      }*/
 
       tx.commit();
   }
@@ -167,6 +167,8 @@ private:
       object_id, class_id.c_str(), score, frame_id, range_id, direction_id, seconds, nseconds,
       pos_x, pos_y, pos_z, size_x, size_y, size_z,
       orient_x, orient_y, orient_z, orient_w);
+
+    unused(id);
 
     gaia::db::commit_transaction();
   }
