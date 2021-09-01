@@ -11,17 +11,19 @@ Follow the instructions from [here](https://github.com/Unity-Technologies/Unity-
 
 This section assumes you have Gaia (March release) and ROS2 (Foxy) installed and properly configured.
 
-1. [Git clone the app](https://github.com/gaia-platform/gaia_detect3d_ros.git) into your ROS workspace `src` folder.
-2. Compile the code as a Gaia app. 
-3. After sourcing your ROS environment and all your workspaces, run `rosdep install -y -i --from-paths src` to pickup any dependencies.
-4. Run `colcon build` to build the app.
-5. If you get an error saying `vision_msgs` is missing...
-   1. [Git clone the package](https://github.com/ros-perception/vision_msgs.git) into your ROS workspace `src` folder.
-   2. `cd [path_to_ROS_ws]/src/vision_msgs`
-   3. `git fetch --all`
-   4. `git checkout ros2`
-   5. Then `colcon build` again.
-   6. If the error persists, source your workspace again and build once more.
-
-
-
+1. `git clone` this repo someplace.
+2. `cd [path_to_where_you_cloned_this_repo]/Ros/src`. You should see 3 directories: `danger_zone`, `danger_zone_msgs`,
+   and `retro_log`. Copy these three into your ROS workspace `src` folder.
+3. If you don't already have `visions_msgs`...
+    1. [Git clone the package](https://github.com/ros-perception/vision_msgs.git) into your ROS workspace `src` folder.
+    2. `cd vision_msgs`
+    3. `git fetch --all`
+    4. `git checkout ros2`
+4. After sourcing your ROS environment and all your workspaces, run `rosdep install -y -i --from-paths src` at the root
+   of your ROS workspace to pickup any dependencies.
+5. Run `colcon build --packages-select [name_of_package]` several times, replacing `[name_of_package]` with these
+   packages in this order:
+    1. `vision_msgs`
+    2. `danger_zone_msgs`
+    3. `danger_zone`
+    4. `retro_log`

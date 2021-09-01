@@ -102,10 +102,13 @@ public class MachineController : MonoBehaviour
             // Get this frame's transform
             Transform thisFrameTransform = transform;
 
+            // Update wheel visuals before any returns
+            UpdateWheelVisuals();
+
             // Rotate while not facing right direction
             if (Vector3.Dot(thisFrameTransform.forward, _lookDirection) < 0.99999)
             {
-                thisFrameTransform.rotation = Quaternion.Lerp(thisFrameTransform.rotation, _lookRotation,
+                thisFrameTransform.rotation = Quaternion.Slerp(thisFrameTransform.rotation, _lookRotation,
                     Time.fixedDeltaTime * 10);
                 return;
             }
@@ -116,11 +119,10 @@ public class MachineController : MonoBehaviour
                 wheelCollider.motorTorque = thrust;
             }
 
-            UpdateWheelVisuals();
-
             // Switch direction when close to goal location
             Vector3 curDirectionToGoalLocation = _goalLocations[1] - thisFrameTransform.position;
             if (Vector3.Dot(curDirectionToGoalLocation, _lookDirection) > 0) return; // Skip if not there yet
+            thisFrameTransform.position = _goalLocations[1]; // Forcefully recalibrate position
             Array.Reverse(_goalLocations);
             _lookDirection *= -1;
             _lookRotation = Quaternion.LookRotation(_lookDirection);
