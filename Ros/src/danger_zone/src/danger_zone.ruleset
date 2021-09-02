@@ -12,7 +12,7 @@ void show_message(const std::string message)
 //
 ruleset danger_zone_ruleset
 {
-    OnInsert(dobject)
+    on_insert(dobject)
     {
         show_message( std::string("Object seen : ") + dobject.class_id );
     }  

@@ -1,5 +1,9 @@
+create database if not exists danger_zone;
+
+use danger_zone;
+
 create table if not exists detectron (
-      id string active
+      detid string active
 );
 
 create table if not exists detected (
@@ -8,7 +12,7 @@ create table if not exists detected (
 );
 
 create table if not exists dobject (
-      id int32,
+      obid int32,
       class_id string,
       score float,
       frame_id string,
@@ -25,8 +29,12 @@ create table if not exists dobject (
       orient_x float,
       orient_y float,
       orient_z float,
-      orient_w float,
-      dobject__detected references detected
+      orient_w float
+);
+
+create relationship if not exists detected_dobjects (
+    detected.dobjects -> dobject[],
+    dobject.detected -> detected
 );
 
 
