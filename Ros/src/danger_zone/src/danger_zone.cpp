@@ -1,3 +1,10 @@
+//*****************************************************************************
+//*
+//* Dependencies: Requires Gaia preview (without libc++) or later, Gaia March 
+//* 2021 will not work
+//*
+//*****************************************************************************
+
 #include <functional>
 #include <memory>
 
@@ -7,8 +14,6 @@
 #include <vision_msgs/msg/detection3_d_array.hpp>
 #include <danger_zone_msgs/msg/obstacle.hpp>
 #include <danger_zone_msgs/msg/obstacle_array.hpp>
-
-//#include "/media/mark/Data1/U20/develop/Unity/KomatsuSimulator/Ros/install/danger_zone_msgs/include/danger_zone_msgs/msg/obstacle.hpp"
 
 #include "gaia/rules/rules.hpp"
 #include "gaia/system.hpp"
@@ -190,7 +195,7 @@ private:
     {
       //TODO MW : To get past build
       //RCLCPP_INFO(this->get_logger(), "I saw: '%s'", detection.id.c_str());      
-      RCLCPP_INFO(this->get_logger(), "I saw: '%s'", "something");
+      //RCLCPP_INFO(this->get_logger(), "I saw: '%s'", "something");
 
       vision_msgs::msg::ObjectHypothesisWithPose max_hyp;
 
