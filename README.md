@@ -27,3 +27,9 @@ This section assumes you have Gaia (March release) and ROS2 (Foxy) installed and
     2. `danger_zone_msgs`
     3. `danger_zone`
     4. `retro_log`
+
+* Special Gaia.Preview build instructions 
+
+As of 20210901 if building against Gaia.Preview, as special sans libc++ build of GaiaPlatform is needed. 
+This is not an official or supported realease, it is just here for a limited time to work around the Gaia/ROS build issue.
+The build can be found at: https://drive.google.com/file/d/1GkT4SqxW3cwAwHLpi4nznjWUkFjPWFwp/view?usp=sharing 
