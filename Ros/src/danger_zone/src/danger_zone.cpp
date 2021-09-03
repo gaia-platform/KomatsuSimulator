@@ -20,6 +20,8 @@
 
 #include "gaia_danger_zone.h"
 
+#include "../inc/zones.hpp"
+
 using std::placeholders::_1;
 
 template <typename... Args> inline void unused(Args&&...) {}
@@ -216,7 +218,7 @@ private:
       }
      
       insert_seen_object(0, max_hyp.hypothesis.class_id, max_hyp.hypothesis.score, 
-        detection.header.frame_id.c_str(), 0, 0, 
+        detection.header.frame_id.c_str(),0,0, 
         detection.header.stamp.sec, detection.header.stamp.nanosec,
         detection.bbox.center.position.x, detection.bbox.center.position.y, detection.bbox.center.position.z, 
         detection.bbox.size.x, detection.bbox.size.y, detection.bbox.size.z,
@@ -224,7 +226,9 @@ private:
 
       if(m_simple_echo)
         obstacles.push_back(*(build_obstacle_message(
-          max_hyp.hypothesis.class_id, 0, 0, 
+          max_hyp.hypothesis.class_id, 
+          (int)Zones::get_singleton()->get_range_zone_id(detection.bbox.center.position.x,detection.bbox.center.position.z), 
+          (int)Zones::get_singleton()->get_direction_zone_id(detection.bbox.center.position.z,detection.bbox.center.position.x), 
           detection.bbox.center.position.x, detection.bbox.center.position.y, detection.bbox.center.position.z, 
           detection.bbox.size.x, detection.bbox.size.y, detection.bbox.size.z,
           max_hyp.pose.pose.orientation.x,max_hyp.pose.pose.orientation.y,max_hyp.pose.pose.orientation.z,max_hyp.pose.pose.orientation.w)));

@@ -2,19 +2,36 @@
 #include <algorithm>
 #include <string.h>
 #include <memory>
+#include "../inc/zones.hpp"
 
 void show_message(const std::string message)
 {
     //printf("%s", message.c_str());
 }
 
+double red_zone = 10.0;
+double yellow_zone = 20.0;
+double green_zone = 1000.0;
 // Here we define our declarative rules
 //
 ruleset danger_zone_ruleset
 {
     on_insert(dobject)
     {
-        show_message( std::string("Object seen : ") + dobject.class_id );
+        double range = Zones::get_range(dobject.pos_x, dobject.pos_z);
+        
+        if( red_zone > range )
+        {
+            show_message( std::string("Red zone : ") + dobject.class_id );
+        }
+        else if( yellow_zone > range )
+        {
+            show_message( std::string("Yellow zone : ") + dobject.class_id );
+        }
+        else if( green_zone > range )
+        {
+            show_message( std::string("Green zone : ") + dobject.class_id );
+        }
     }  
 }
 
