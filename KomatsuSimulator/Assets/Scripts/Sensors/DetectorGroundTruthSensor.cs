@@ -70,6 +70,11 @@ public class DetectorGroundTruthSensor : MonoBehaviour
         // make an array of length equal to number of found game objects
         detectedObjectArray.detections = new RosMessageTypes.Vision.Detection3DMsg[gos.GetLength(0)];
 
+        Collider coll;
+        Renderer rend;
+        MeshRenderer mr;
+        MeshCollider mc;
+
         // for each found game object
         foreach (GameObject go in gos)
         {
@@ -78,6 +83,26 @@ public class DetectorGroundTruthSensor : MonoBehaviour
 
             //*** TODO : get game object size
             Vector3 objSize = new Vector3(1.0f, 1.0f, 1.0f);
+            //Vector3 objSize = go.GetComponent<Renderer>().bounds.size;
+
+            coll = go.GetComponent<Collider>();
+            
+            if(coll != null)
+                objSize = coll.bounds.size;
+            /*else
+            {
+                rend = go.GetComponent<Renderer>();
+                
+                if(rend != null)
+                    objSize = rend.bounds.size;
+                else
+                {
+                    mr = go.GetComponent<MeshRenderer>();
+                    mc = go.GetComponent<MeshCollider>();
+
+                    objSize = new Vector3(1.0f, 1.0f, 1.0f);    
+                }
+            }*/
 
             float curDistance = objPos.sqrMagnitude;
 

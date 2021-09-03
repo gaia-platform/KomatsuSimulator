@@ -5,7 +5,7 @@
 
 void show_message(const std::string message)
 {
-    printf("%s", message.c_str());
+    //printf("%s", message.c_str());
 }
 
 // Here we define our declarative rules

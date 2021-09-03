@@ -2571,7 +2571,7 @@ GameObject:
   - component: {fileID: 1424572562}
   m_Layer: 0
   m_Name: Terrain
-  m_TagString: Obstacle
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
@@ -2692,6 +2692,10 @@ PrefabInstance:
     - target: {fileID: 4034503822824705955, guid: 4fa4a6710f30e170da54ca05b979ef4c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6703190232975005467, guid: 4fa4a6710f30e170da54ca05b979ef4c, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4fa4a6710f30e170da54ca05b979ef4c, type: 3}
