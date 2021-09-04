@@ -88,6 +88,8 @@ install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
 _deps
+
+### Custom
 .vscode/settings.json
 Ros/.vscode/c_cpp_properties.json
 Ros/src/.vscode/c_cpp_properties.json
@@ -95,3 +97,5 @@ Ros/src/.vscode/colcon.env
 Ros/.vscode/colcon.env
 .vscode/settings.json
 Ros/src/retro_log/.gitignore
+KomatsuSimulator/Assets/Resources/ROSConnectionPrefab.prefab
+KomatsuSimulator/Assets/Resources/ROSConnectionPrefab.prefab.meta

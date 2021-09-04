@@ -1068,7 +1068,6 @@ GameObject:
   - component: {fileID: 4034503822824705980}
   - component: {fileID: 1731426591284241533}
   - component: {fileID: 6595714325484622823}
-  - component: {fileID: 6703190232975005467}
   m_Layer: 0
   m_Name: DumpTruck
   m_TagString: Obstacle
@@ -1157,19 +1156,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roiBoxPrefab: {fileID: 4226648879488128554, guid: 468ad9d0acbb29153a1331270972e5bf, type: 3}
---- !u!65 &6703190232975005467
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4034503822824705954}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  serializedVersion: 2
-  m_Size: {x: 6, y: 2, z: 15}
-  m_Center: {x: 0.5, y: 6.5, z: 0}
 --- !u!1 &4034503822830117509
 GameObject:
   m_ObjectHideFlags: 0
