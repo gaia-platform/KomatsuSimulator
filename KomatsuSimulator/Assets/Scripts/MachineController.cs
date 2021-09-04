@@ -35,8 +35,6 @@ public class MachineController : MonoBehaviour
     private Rigidbody _machineRigidBody;
     private Vector3 _moveDirection;
 
-    // Bounds
-    private Bounds _overallBounds;
     private bool _stopMovement;
 
     // Start is called before the first frame update
@@ -44,13 +42,6 @@ public class MachineController : MonoBehaviour
     {
         _machineRigidBody = GetComponent<Rigidbody>();
         _machineRigidBody.centerOfMass = new Vector3(0, 1.34f, 0);
-
-        // Calculate overall bounds
-        foreach (Collider colliderInChild in GetComponentsInChildren<Collider>())
-        {
-            _overallBounds.Encapsulate(colliderInChild.bounds);
-        }
-
 
         // Setup automation stuff (copy from PersonController)
         if (!targetTransform) return;
@@ -255,11 +246,5 @@ public class MachineController : MonoBehaviour
     public GameObject GetActiveCamera()
     {
         return cameras[onCameraIndex];
-    }
-
-    // Get overall bounds
-    public Bounds GetOverallBounds()
-    {
-        return _overallBounds;
     }
 }

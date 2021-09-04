@@ -1035,22 +1035,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: SpeedLimit25Sign (1)
       objectReference: {fileID: 0}
-    - target: {fileID: 8834616022540908030, guid: ab7c8606ead429347af7e39cfde3def9, type: 3}
-      propertyPath: m_Size.x
-      value: 8.723292
-      objectReference: {fileID: 0}
-    - target: {fileID: 8834616022540908030, guid: ab7c8606ead429347af7e39cfde3def9, type: 3}
-      propertyPath: m_Size.z
-      value: 1.1313598
-      objectReference: {fileID: 0}
-    - target: {fileID: 8834616022540908030, guid: ab7c8606ead429347af7e39cfde3def9, type: 3}
-      propertyPath: m_Center.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8834616022540908030, guid: ab7c8606ead429347af7e39cfde3def9, type: 3}
-      propertyPath: m_Center.z
-      value: 0.06567992
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ab7c8606ead429347af7e39cfde3def9, type: 3}
 --- !u!4 &672738201 stripped

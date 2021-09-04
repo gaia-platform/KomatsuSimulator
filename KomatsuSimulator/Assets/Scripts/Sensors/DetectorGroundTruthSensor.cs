@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 #pragma warning disable 219
@@ -80,15 +79,7 @@ public class DetectorGroundTruthSensor : MonoBehaviour
         foreach (GameObject go in gos)
         {
             // Get object bounds
-            Bounds thisGoBounds;
-            try
-            {
-                thisGoBounds = go.GetComponent<Collider>().bounds;
-            }
-            catch (Exception e)
-            {
-                thisGoBounds = go.GetComponent<MachineController>().GetOverallBounds();
-            }
+            Bounds thisGoBounds = go.GetComponent<Collider>().bounds;
 
             // transform position relative to ego
             Vector3 objPos = thisGoBounds.center - position;
