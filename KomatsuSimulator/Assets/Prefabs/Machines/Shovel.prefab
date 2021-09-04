@@ -491,7 +491,6 @@ GameObject:
   - component: {fileID: 49401416633602855}
   - component: {fileID: 49401416633602854}
   - component: {fileID: 49401416633602873}
-  - component: {fileID: 49401416633602852}
   m_Layer: 0
   m_Name: Tread
   m_TagString: Untagged
@@ -566,19 +565,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &49401416633602852
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 49401416633602872}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.062209904, y: 0.046814002, z: 0.01060672}
-  m_Center: {x: -0.011103317, y: 0.000000057220458, z: 0.0038110882}
 --- !u!1 &49401416660429748
 GameObject:
   m_ObjectHideFlags: 0
@@ -1210,7 +1196,7 @@ GameObject:
   - component: {fileID: 49401417434762007}
   - component: {fileID: 49401417434762004}
   - component: {fileID: 6827636927757794439}
-  - component: {fileID: 5245584189896761545}
+  - component: {fileID: 7785519709868541445}
   m_Layer: 0
   m_Name: Shovel
   m_TagString: Obstacle
@@ -1297,7 +1283,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roiBoxPrefab: {fileID: 4226648879488128554, guid: 468ad9d0acbb29153a1331270972e5bf, type: 3}
---- !u!65 &5245584189896761545
+--- !u!65 &7785519709868541445
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1305,11 +1291,11 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 49401417434762025}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
+  m_IsTrigger: 1
+  m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 5, y: 2, z: 12}
-  m_Center: {x: 0, y: 5.5, z: 2.5}
+  m_Size: {x: 4.7819977, y: 7.0753546, z: 12.380659}
+  m_Center: {x: 0, y: 3.474753, z: 2.553506}
 --- !u!1 &49401417497056511
 GameObject:
   m_ObjectHideFlags: 0

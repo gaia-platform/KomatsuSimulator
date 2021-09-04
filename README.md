@@ -19,17 +19,27 @@ This section assumes you have Gaia (March release) and ROS2 (Foxy) installed and
     2. `cd vision_msgs`
     3. `git fetch --all`
     4. `git checkout ros2`
-4. After sourcing your ROS environment and all your workspaces, run `rosdep install -y -i --from-paths src` at the root
+4. If you don't already have `ros_tcp_endpoint`...
+   1. [Git clone the package](https://github.com/Unity-Technologies/ROS-TCP-Endpoint/tree/ROS2) into your ROS workspace `src` folder.
+   2. `cd ROS-TCP-Endpoint`
+   3. `git fetch --all`
+   4. `git checkout ROS2`
+5. After sourcing your ROS environment and all your workspaces, run `rosdep install -y -i --from-paths src` at the root
    of your ROS workspace to pickup any dependencies.
-5. Run `colcon build --packages-select [name_of_package]` several times, replacing `[name_of_package]` with these
-   packages in this order:
-    1. `vision_msgs`
-    2. `danger_zone_msgs`
-    3. `danger_zone`
-    4. `retro_log`
+6. Run `colcon build` to build all packages
 
 * Special Gaia.Preview build instructions 
 
 As of 20210901 if building against Gaia.Preview, as special sans libc++ build of GaiaPlatform is needed. 
 This is not an official or supported realease, it is just here for a limited time to work around the Gaia/ROS build issue.
 The build can be found at: https://drive.google.com/file/d/1GkT4SqxW3cwAwHLpi4nznjWUkFjPWFwp/view?usp=sharing 
+
+# Running the simulation
+
+1. On the ROS/Gaia hosting machine
+   1. Source your ROS under/overlays
+   2. Start ROS-TCP-Endpoint: `ros2 run ros_tcp_endpoint default_server_endpoint --ros-args -p ROS_IP:=[HOST_MACHINE_IP_ADDRESS]`
+      1. You can get your host machine's IP address by running `hostname -I`
+   3. Start `danger_zone`: `ros2 run danger_zone danger_zone `
+   4. On the machine with the Unity simulation, simply start run the simulation and it will automatically connect to ROS. If not, make sure `HOST_MACHINE_IP_ADDRESS` matches the one supplied inside Unity
+

@@ -78,31 +78,13 @@ public class DetectorGroundTruthSensor : MonoBehaviour
         // for each found game object
         foreach (GameObject go in gos)
         {
+            // Get object bounds
+            Bounds thisGoBounds = go.GetComponent<Collider>().bounds;
+
             // transform position relative to ego
-            Vector3 objPos = go.transform.position - position;
+            Vector3 objPos = thisGoBounds.center - position;
 
-            //*** TODO : get game object size
-            Vector3 objSize = new Vector3(1.0f, 1.0f, 1.0f);
-            //Vector3 objSize = go.GetComponent<Renderer>().bounds.size;
-
-            coll = go.GetComponent<Collider>();
-            
-            if(coll != null)
-                objSize = coll.bounds.size;
-            /*else
-            {
-                rend = go.GetComponent<Renderer>();
-                
-                if(rend != null)
-                    objSize = rend.bounds.size;
-                else
-                {
-                    mr = go.GetComponent<MeshRenderer>();
-                    mc = go.GetComponent<MeshCollider>();
-
-                    objSize = new Vector3(1.0f, 1.0f, 1.0f);    
-                }
-            }*/
+            Vector3 objSize = thisGoBounds.size;
 
             float curDistance = objPos.sqrMagnitude;
 
@@ -110,8 +92,11 @@ public class DetectorGroundTruthSensor : MonoBehaviour
             var bbPosition = new RosMessageTypes.Geometry.PointMsg(objPos.x, objPos.y, objPos.z);
 
             // set orientation to identity, maybe we can improve this, not sure if it makes sense to do so
-            var bbOrientation = new RosMessageTypes.Geometry.QuaternionMsg(
-                Quaternion.identity.x, Quaternion.identity.y, Quaternion.identity.z, Quaternion.identity.w);
+            Quaternion thisGoRotation = go.transform.rotation;
+            var bbOrientation = new RosMessageTypes.Geometry.QuaternionMsg(thisGoRotation.x, thisGoRotation.y,
+                thisGoRotation.z, thisGoRotation.w);
+            // var bbOrientation = new RosMessageTypes.Geometry.QuaternionMsg(
+            //     Quaternion.identity.x, Quaternion.identity.y, Quaternion.identity.z, Quaternion.identity.w);
 
             // set bbox pose and size
             RosMessageTypes.Geometry.PoseMsg center = new RosMessageTypes.Geometry.PoseMsg(bbPosition, bbOrientation);
