@@ -70,14 +70,25 @@ public class DetectorGroundTruthSensor : MonoBehaviour
         // make an array of length equal to number of found game objects
         detectedObjectArray.detections = new RosMessageTypes.Vision.Detection3DMsg[gos.GetLength(0)];
 
+
         // for each found game object
         foreach (GameObject go in gos)
         {
-            // transform position relative to ego
-            Vector3 objPos = go.transform.position - position;
+            Collider collider = go.GetComponent<Collider>();
 
-            //*** TODO : get game object size
-            Vector3 objSize = new Vector3(1.0f, 1.0f, 1.0f);
+            if(null == collider)
+            {
+                // TODO * Log This
+                continue;
+            }
+
+            // Get object bounds
+            Bounds bounds = collider.bounds;
+
+            // transform position relative to ego
+            Vector3 objPos = bounds.center - position;
+
+            Vector3 objSize = bounds.size;
 
             float curDistance = objPos.sqrMagnitude;
 
@@ -85,8 +96,11 @@ public class DetectorGroundTruthSensor : MonoBehaviour
             var bbPosition = new RosMessageTypes.Geometry.PointMsg(objPos.x, objPos.y, objPos.z);
 
             // set orientation to identity, maybe we can improve this, not sure if it makes sense to do so
-            var bbOrientation = new RosMessageTypes.Geometry.QuaternionMsg(
-                Quaternion.identity.x, Quaternion.identity.y, Quaternion.identity.z, Quaternion.identity.w);
+            Quaternion thisGoRotation = go.transform.rotation;
+            var bbOrientation = new RosMessageTypes.Geometry.QuaternionMsg(thisGoRotation.x, thisGoRotation.y,
+                thisGoRotation.z, thisGoRotation.w);
+            // var bbOrientation = new RosMessageTypes.Geometry.QuaternionMsg(
+            //     Quaternion.identity.x, Quaternion.identity.y, Quaternion.identity.z, Quaternion.identity.w);
 
             // set bbox pose and size
             RosMessageTypes.Geometry.PoseMsg center = new RosMessageTypes.Geometry.PoseMsg(bbPosition, bbOrientation);

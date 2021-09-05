@@ -34,6 +34,7 @@ public class MachineController : MonoBehaviour
 
     private Rigidbody _machineRigidBody;
     private Vector3 _moveDirection;
+
     private bool _stopMovement;
 
     // Start is called before the first frame update
