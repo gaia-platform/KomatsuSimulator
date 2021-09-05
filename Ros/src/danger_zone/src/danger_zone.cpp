@@ -19,8 +19,8 @@
 #include "gaia/system.hpp"
 
 #include "gaia_danger_zone.h"
-
 #include "zones.hpp"
+#include "idanger_zone.hpp"
 
 using std::placeholders::_1;
 
@@ -127,7 +127,7 @@ public:
 
 };
 
-class SubscriberNode : public rclcpp::Node
+class SubscriberNode : public rclcpp::Node, iDangerZone
 {
 public:
 
@@ -139,6 +139,9 @@ public:
 
   SubscriberNode(): Node("danger_zone_ros")
   {
+    //TODO : yes, I know, make this modern
+    danger_zone_p = static_cast<iDangerZone*>(this);
+
     m_detection3d_subscription = this->create_subscription<vision_msgs::msg::Detection3DArray>(
       m_detected_topic_name, 10, std::bind(&SubscriberNode::detection3d_callback, this, _1));
 
@@ -146,9 +149,34 @@ public:
       m_obstacles_topic_name, 1);
   }
 
+  //*** iDangerZone interface ***
+
+  //*****************************************************************************
+  //*
+  //*
+  //*
+  //*****************************************************************************
+
+  void cb_send_obstacleArray_message(
+    std::string type_name, uint roi, uint direction,
+    double posx, double posy, double posz, 
+    double sizex, double sizey, double sizez, 
+    double orientx, double orienty, double orientz, double orientw,
+    std::string frame_id, int32_t sec, uint32_t nsec 
+    ) const 
+  {
+    std::vector<danger_zone_msgs::msg::Obstacle> obstacles;
+    obstacles.push_back(*(build_obstacle_message(
+      type_name, roi, direction, posx, posy, posz, 
+      sizex, sizey, sizez, orientx, orienty, orientz, orientw)));
+
+    // TODO : get this out of the thread
+    m_obstacles_pub_->publish(build_obstacleArray_message(obstacles, frame_id,  sec, nsec));
+  }
+
 private:
 
-  bool m_simple_echo = true;
+  bool m_simple_echo = false;
   const std::string m_detected_topic_name = "/komatsu/detections"; 
   const std::string m_obstacles_topic_name = "/komatsu/obstacles"; 
   rclcpp::Subscription<vision_msgs::msg::Detection3DArray>::SharedPtr m_detection3d_subscription;
