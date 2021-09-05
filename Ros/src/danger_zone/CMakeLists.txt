@@ -50,6 +50,10 @@ set(DANGER_ZONE_RULESET ${PROJECT_SOURCE_DIR}/src/danger_zone.ruleset)
 configure_file("${PROJECT_SOURCE_DIR}/src/gaia_conf.toml" "${PROJECT_BINARY_DIR}/gaia_conf.toml")
 configure_file("${PROJECT_SOURCE_DIR}/src/log_conf.toml" "${PROJECT_BINARY_DIR}/log_conf.toml")
 
+# --- add and link ---
+add_executable(danger_zone src/danger_zone.cpp)
+target_include_directories(danger_zone PRIVATE ${GAIA_INC} ${PROJECT_SOURCE_DIR}/inc)
+
 # --- Generate EDC from DDL---
 process_schema(DDL_FILE ${DANGER_ZONE_DDL})
 
@@ -57,11 +61,11 @@ process_schema(DDL_FILE ${DANGER_ZONE_DDL})
 translate_ruleset(RULESET_FILE ${DANGER_ZONE_RULESET})
 
 # --- add and link ---
-add_executable(danger_zone src/danger_zone.cpp)
+#add_executable(danger_zone src/danger_zone.cpp)
 target_add_gaia_generated_sources(danger_zone)
 add_dependencies(danger_zone translate_danger_zone_ruleset)
 ament_target_dependencies(danger_zone rclcpp std_msgs sensor_msgs vision_msgs danger_zone_msgs)
-target_include_directories(danger_zone PRIVATE ${GAIA_INC})
+#target_include_directories(danger_zone PRIVATE ${GAIA_INC} ${PROJECT_SOURCE_DIR}/inc)
 target_link_libraries(danger_zone gaia)
 
 install(TARGETS

@@ -20,7 +20,7 @@
 
 #include "gaia_danger_zone.h"
 
-#include "../inc/zones.hpp"
+#include "zones.hpp"
 
 using std::placeholders::_1;
 

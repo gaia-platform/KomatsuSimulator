@@ -2,11 +2,25 @@
 #include <algorithm>
 #include <string.h>
 #include <memory>
-#include "../inc/zones.hpp"
+#include <cmath>
+//#include <zones.hpp>
 
 void show_message(const std::string message)
 {
     //printf("%s", message.c_str());
+}
+
+//*****************************************************************************
+//*
+//* args: 
+//*   double x : one axis
+//*   double y : the other axis  
+//*
+//*****************************************************************************
+
+double get_range(double x, double y) 
+{
+    return std::sqrt(x*x + y*y);
 }
 
 double red_zone = 10.0;
@@ -18,7 +32,7 @@ ruleset danger_zone_ruleset
 {
     on_insert(dobject)
     {
-        double range = Zones::get_range(dobject.pos_x, dobject.pos_z);
+        double range = get_range(dobject.pos_x, dobject.pos_z);
         
         if( red_zone > range )
         {
