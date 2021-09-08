@@ -67,7 +67,7 @@ public:
         double sizex, double sizey, double sizez, 
         double orientx, double orienty, double orientz, double orientw,
         std::string frame_id, int32_t sec, uint32_t nsec 
-        ) const = 0;
+        ) = 0;
 
     /**
      * Constructor
