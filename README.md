@@ -43,6 +43,6 @@ The build can be found at: https://drive.google.com/file/d/1GkT4SqxW3cwAwHLpi4nz
       - or -
       `ros2 run ros_tcp_endpoint default_server_endpoint --ros-args -p ROS_IP:=[HOST_MACHINE_IP_ADDRESS]`
       1. You can get your host machine's IP address by running `hostname -I`
-   3. Start `danger_zone`: `ros2 launch danger_zone sans_bridge_launch.py`
+   3. Start `danger_zone`: `ros2 launch danger_zone node_launch.py`
    4. On the machine with the Unity simulation, simply start run the simulation and it will automatically connect to ROS. If not, make sure `HOST_MACHINE_IP_ADDRESS` matches the one supplied inside Unity
 
