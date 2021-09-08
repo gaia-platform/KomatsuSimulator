@@ -7,6 +7,8 @@
 
 #include <functional>
 #include <memory>
+#include <thread>        
+#include <mutex>          
 
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
@@ -157,7 +159,7 @@ public:
   //*
   //*****************************************************************************
 
-  void cb_send_obstacleArray_message(
+  void cb_send_obstacleArray_message_old(
     std::string type_name, uint roi, uint direction,
     double posx, double posy, double posz, 
     double sizex, double sizey, double sizez, 
@@ -174,6 +176,25 @@ public:
     m_obstacles_pub_->publish(build_obstacleArray_message(obstacles, frame_id,  sec, nsec));
   }
 
+  void cb_send_obstacleArray_message(
+    std::string type_name, uint roi, uint direction,
+    double posx, double posy, double posz, 
+    double sizex, double sizey, double sizez, 
+    double orientx, double orienty, double orientz, double orientw,
+    std::string frame_id, int32_t sec, uint32_t nsec 
+    )  
+  {
+    //std::vector<danger_zone_msgs::msg::Obstacle> obstacles;
+    m_obstacles.push_back(*(build_obstacle_message(
+      type_name, roi, direction, posx, posy, posz, 
+      sizex, sizey, sizez, orientx, orienty, orientz, orientw)));
+
+    unused(frame_id, sec, nsec);
+
+    // TODO : get this out of the thread
+    //m_obstacles_pub_->publish(build_obstacleArray_message(obstacles, frame_id,  sec, nsec));
+  }
+
 private:
 
   bool m_simple_echo = false;
@@ -181,6 +202,12 @@ private:
   const std::string m_obstacles_topic_name = "/komatsu/obstacles"; 
   rclcpp::Subscription<vision_msgs::msg::Detection3DArray>::SharedPtr m_detection3d_subscription;
   rclcpp::Publisher<danger_zone_msgs::msg::ObstacleArray>::SharedPtr m_obstacles_pub_;
+
+  // mutex to lock down detection3d_callback
+  std::mutex m_mtx; 
+
+  // the list of Gaia processed obstacles, cleared a dnrefilled with each detection3d_callback
+  std::vector<danger_zone_msgs::msg::Obstacle> m_obstacles;
 
   //*****************************************************************************
   //*
@@ -214,10 +241,18 @@ private:
   //*
   //*****************************************************************************
 
-  void detection3d_callback(const vision_msgs::msg::Detection3DArray::SharedPtr msg) const
+  void detection3d_callback(const vision_msgs::msg::Detection3DArray::SharedPtr msg) 
   {
     //TODO : just a test, remove this
     //send_test_obstacleArray_message();
+
+    //std::unique_lock<std::mutex> lck (mtx,std::defer_lock);
+
+    // prevent two threads from operating on this method simultaneously
+    std::lock_guard<std::mutex> lck(m_mtx);
+
+    // upon entry, clear all obstacles from list
+    m_obstacles.clear();
 
     std::vector<danger_zone_msgs::msg::Obstacle> obstacles;
 
@@ -241,7 +276,7 @@ private:
       }
             
       if( max_hyp.hypothesis.class_id == "" )
-      {
+            {
         return; // TODO : Log this?
       }
      
@@ -265,8 +300,11 @@ private:
     if(m_simple_echo)
       m_obstacles_pub_->publish(build_obstacleArray_message(
         obstacles, msg->header.frame_id,  msg->header.stamp.sec, msg->header.stamp.nanosec));
+    else
+      if(!m_obstacles.empty())
+        m_obstacles_pub_->publish(build_obstacleArray_message(
+          m_obstacles, msg->header.frame_id,  msg->header.stamp.sec, msg->header.stamp.nanosec));
   }
-
   //*****************************************************************************
   //*
   //*
