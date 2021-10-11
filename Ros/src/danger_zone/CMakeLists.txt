@@ -49,6 +49,7 @@ set(DANGER_ZONE_INCLUDES ${PROJECT_SOURCE_DIR}/inc ${CMAKE_CURRENT_SOURCE_DIR}/i
 #message(WARNING "------------------- {GAIA_INC}: ${GAIA_INC}")
 #message(WARNING "------------------- {GAIA_DEFAULT_DIRECT_ACCESS_GENERATED_DIR}: ${GAIA_DEFAULT_DIRECT_ACCESS_GENERATED_DIR}")
 
+set(DANGER_ZONE_DB_NAME danger_zone)
 set(DANGER_ZONE_DDL ${PROJECT_SOURCE_DIR}/src/danger_zone.ddl)
 set(DANGER_ZONE_RULESET ${PROJECT_SOURCE_DIR}/src/danger_zone.ruleset)
 
@@ -68,10 +69,16 @@ add_executable(danger_zone src/danger_zone.cpp)
 target_include_directories(danger_zone PRIVATE ${GAIA_INC} ${DANGER_ZONE_INCLUDES})
 
 # --- Generate EDC from DDL---
-process_schema(DDL_FILE ${DANGER_ZONE_DDL})
+process_schema(
+  DDL_FILE ${DANGER_ZONE_DDL}
+  DATABASE_NAME ${DANGER_ZONE_DB_NAME}
+)
 
 # -- Translate ruleset into CPP --
-translate_ruleset(RULESET_FILE ${DANGER_ZONE_RULESET})
+translate_ruleset(
+  RULESET_FILE ${DANGER_ZONE_RULESET}
+  DATABASE_NAME ${DANGER_ZONE_DB_NAME}
+)
 
 # --- add and link ---
 target_add_gaia_generated_sources(danger_zone)
