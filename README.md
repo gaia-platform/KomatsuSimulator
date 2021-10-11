@@ -9,24 +9,22 @@ Follow the instructions from [here](https://github.com/Unity-Technologies/Unity-
 
 ## ROS2/Gaia app setup
 
-This section assumes you have the sans libc++ build of Gaia (install .deb from [here](https://drive.google.com/file/d/1GkT4SqxW3cwAwHLpi4nznjWUkFjPWFwp/view?usp=sharing) and ROS2 (Foxy) installed and properly configured.
+This section assumes you have the sans libc++ build of Gaia (install .deb from [here](https://drive.google.com/file/d/1GkT4SqxW3cwAwHLpi4nznjWUkFjPWFwp/view?usp=sharing) and ROS2 (Galactic) installed and properly configured.
 
 1. `git clone` this repo someplace.
 2. `cd [path_to_where_you_cloned_this_repo]/Ros/src`. You should see 3 directories: `danger_zone`, `danger_zone_msgs`,
    and `retro_log`. Copy these three into your ROS workspace `src` folder.
-3. If you don't already have `visions_msgs`...
-    1. [Git clone the package](https://github.com/ros-perception/vision_msgs.git) into your ROS workspace `src` folder.
-    2. `cd vision_msgs`
-    3. `git fetch --all`
-    4. `git checkout ros2`
-4. If you don't already have `ros_tcp_endpoint`...
+3. If you don't already have `ros_tcp_endpoint`...
    1. [Git clone the package](https://github.com/Unity-Technologies/ROS-TCP-Endpoint/tree/ROS2) into your ROS workspace `src` folder.
    2. `cd ROS-TCP-Endpoint`
    3. `git fetch --all`
    4. `git checkout ROS2`
-5. After sourcing your ROS environment and all your workspaces, run `rosdep install -y -i --from-paths src` at the root
+4. After sourcing your ROS environment and all your workspaces, run `rosdep install -y -i --from-paths src` at the root
    of your ROS workspace to pickup any dependencies.
-6. Run `colcon build` to build all packages.
+5. Run `colcon build` to build all packages.
+
+## Releases
+If you prefer to not install and build with Unity, you download the Simulator binaries [here](https://github.com/gaia-platform/KomatsuSimulator/releases)
 
 ## Unity setup
 1. Install the latest 20x LTS build of the Unity Editor.
