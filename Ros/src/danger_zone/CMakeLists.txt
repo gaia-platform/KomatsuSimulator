@@ -84,10 +84,10 @@ translate_ruleset(
 target_add_gaia_generated_sources(danger_zone)
 add_dependencies(danger_zone translate_danger_zone_ruleset)
 ament_target_dependencies(danger_zone rclcpp std_msgs sensor_msgs vision_msgs danger_zone_msgs)
-target_link_libraries(danger_zone gaia)
+target_link_libraries(danger_zone ${GAIA_LIB})
 
 install(TARGETS
-danger_zone
+  danger_zone
   DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY 
