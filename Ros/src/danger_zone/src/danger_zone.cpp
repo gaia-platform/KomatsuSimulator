@@ -16,6 +16,7 @@
 #include <vision_msgs/msg/detection3_d_array.hpp>
 #include <danger_zone_msgs/msg/obstacle.hpp>
 #include <danger_zone_msgs/msg/obstacle_array.hpp>
+#include "../inc/snapshot_client.hpp"
 
 #include "gaia/rules/rules.hpp"
 #include "gaia/system.hpp"
@@ -195,11 +196,37 @@ public:
     //m_obstacles_pub_->publish(build_obstacleArray_message(obstacles, frame_id,  sec, nsec));
   }
 
+  void cb_trigger_log( int start_sec, uint32_t start_nsec, 
+        int end_sec, uint32_t end_nsec, std::string file_name, 
+        std::vector<std::string>topics)
+  {
+    //TODO: we need to debounce this, figure out how to properly handle overlaps
+
+    auto sc = new SnapshotClient();
+    sc->connect(this, m_snapshot_service_name);
+    sc->send_request( start_sec, start_nsec, 
+      end_sec, end_nsec, file_name, topics);
+  }
+
+  void cb_trigger_log( int seconds_past, int seconds_forward, 
+        std::string file_name, std::vector<std::string>topics)
+  {
+    auto base_time = get_clock()->now();
+    auto base_sec = base_time.seconds();
+    auto base_nsec = base_time.nanoseconds();
+    
+    cb_trigger_log(base_sec - seconds_past, base_nsec, 
+      base_sec + seconds_forward, base_nsec, file_name, topics);
+  }
+
 private:
 
   bool m_simple_echo = false;
   const std::string m_detected_topic_name = "/komatsu/detections"; 
   const std::string m_obstacles_topic_name = "/komatsu/obstacles"; 
+  const std::string m_snapshot_service_name = "trigger_snapshot"; // name found in snapshotter.cpp
+
+
   rclcpp::Subscription<vision_msgs::msg::Detection3DArray>::SharedPtr m_detection3d_subscription;
   rclcpp::Publisher<danger_zone_msgs::msg::ObstacleArray>::SharedPtr m_obstacles_pub_;
 
