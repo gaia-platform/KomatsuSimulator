@@ -38,10 +38,16 @@ endif()
 # --- find dependencies ---
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_components REQUIRED)
+find_package(rclcpp_action REQUIRED)
+#find_package(rclcpp_server REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(vision_msgs REQUIRED)
 find_package(danger_zone_msgs REQUIRED)
+find_package(rosbag2_cpp REQUIRED)
+find_package(rosbag2_snapshot_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
 
 set(DANGER_ZONE_INCLUDES ${PROJECT_SOURCE_DIR}/inc ${CMAKE_CURRENT_SOURCE_DIR}/inc)
 
@@ -49,6 +55,7 @@ set(DANGER_ZONE_INCLUDES ${PROJECT_SOURCE_DIR}/inc ${CMAKE_CURRENT_SOURCE_DIR}/i
 #message(WARNING "------------------- {GAIA_INC}: ${GAIA_INC}")
 #message(WARNING "------------------- {GAIA_DEFAULT_DIRECT_ACCESS_GENERATED_DIR}: ${GAIA_DEFAULT_DIRECT_ACCESS_GENERATED_DIR}")
 
+set(DANGER_ZONE_DB_NAME danger_zone)
 set(DANGER_ZONE_DDL ${PROJECT_SOURCE_DIR}/src/danger_zone.ddl)
 set(DANGER_ZONE_RULESET ${PROJECT_SOURCE_DIR}/src/danger_zone.ruleset)
 
@@ -64,19 +71,25 @@ file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/inc/idanger_zone.hpp"
   DESTINATION "${GAIA_DEFAULT_DIRECT_ACCESS_GENERATED_DIR}/danger_zone")
 
 # --- add and link ---
-add_executable(danger_zone src/danger_zone.cpp)
+add_executable(danger_zone src/danger_zone.cpp src/snapshot_client.cpp)
 target_include_directories(danger_zone PRIVATE ${GAIA_INC} ${DANGER_ZONE_INCLUDES})
 
 # --- Generate EDC from DDL---
-process_schema(DDL_FILE ${DANGER_ZONE_DDL})
+process_schema(
+  DDL_FILE ${DANGER_ZONE_DDL}
+  DATABASE_NAME ${DANGER_ZONE_DB_NAME}
+)
 
 # -- Translate ruleset into CPP --
-translate_ruleset(RULESET_FILE ${DANGER_ZONE_RULESET})
+translate_ruleset(
+  RULESET_FILE ${DANGER_ZONE_RULESET}
+  DATABASE_NAME ${DANGER_ZONE_DB_NAME}
+)
 
 # --- add and link ---
 target_add_gaia_generated_sources(danger_zone)
 add_dependencies(danger_zone translate_danger_zone_ruleset)
-ament_target_dependencies(danger_zone rclcpp std_msgs sensor_msgs vision_msgs danger_zone_msgs)
+ament_target_dependencies(danger_zone rclcpp rclcpp_action std_msgs sensor_msgs vision_msgs danger_zone_msgs rosbag2_snapshot_msgs)
 target_link_libraries(danger_zone gaia)
 
 install(TARGETS

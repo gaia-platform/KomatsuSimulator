@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 /**
 * @brief Interface used to expose danger_zone core methods inside a Gaia ruleset rules
@@ -68,6 +69,37 @@ public:
         double orientx, double orienty, double orientz, double orientw,
         std::string frame_id, int32_t sec, uint32_t nsec 
         ) = 0;
+
+    /**
+     * Call this from within a ruleset rule to trigger a log event
+     * 
+     * @param[in] int start_sec
+     * @param[in] uint32_t start_nsec
+     * @param[in] int end_sec
+     * @param[in] uint32_t end_nsec
+     * @param[in] std::string file_name
+     * @param[in] std::vector<std::string>topics
+     * @return void
+     * @throws 
+     * @exceptsafe yes
+     */       
+    virtual void cb_trigger_log( int start_sec, uint32_t start_nsec, 
+        int end_sec, uint32_t end_nsec, std::string file_name, 
+        std::vector<std::string>topics) = 0;
+
+    /**
+     * Call this from within a ruleset rule to trigger a log event
+     * 
+     * @param[in] int seconds_past
+     * @param[in] int seconds_forward
+     * @param[in] std::string file_name
+     * @param[in] std::vector<std::string>topics
+     * @return void
+     * @throws 
+     * @exceptsafe yes
+     */    
+    virtual void cb_trigger_log( int seconds_past, int seconds_forward, 
+        std::string file_name, std::vector<std::string>topics) = 0;
 
     /**
      * Constructor
