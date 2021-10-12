@@ -61,7 +61,7 @@ configure_file("${PROJECT_SOURCE_DIR}/src/log_conf.toml" "${PROJECT_BINARY_DIR}/
 # --- target_add_gaia_generated_sources. I have a header that I want the ruleset to take in, so
 # --- I add it to a place where I know the build is looking. This is a blunt force solution which
 # --- should be improved sometime soon.
-file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/inc/idanger_zone.hpp" 
+file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/inc/danger_zone.hpp"
   DESTINATION "${GAIA_DEFAULT_DIRECT_ACCESS_GENERATED_DIR}/danger_zone")
 
 # --- add and link ---
