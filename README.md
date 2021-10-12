@@ -18,7 +18,7 @@ To install ROS2 Galactic:
 
 1. Follow instructions here: [Installing ROS 2 via Debian Packages](https://docs.ros.org/en/galactic/Installation/Ubuntu-Install-Debians.html)
 
-2. Add the ROS environment to your shell init script `.bashrc` (not required but highly recommended). If you have a previous version of ROS installed be carful to not source them both (eg. remove `source /opt/ros/foxy/setup.bash` from your `~/bashrc`).
+2. Add the ROS environment to your shell init script `.bashrc` (not required but highly recommended). If you have a previous version of ROS installed be careful to not source them both (eg. remove `source /opt/ros/foxy/setup.bash` from your `~/bashrc`).
     ```bash
     echo 'source /opt/ros/galactic/setup.bash' >> ~/.bashrc
     ```
