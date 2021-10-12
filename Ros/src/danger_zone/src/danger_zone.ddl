@@ -11,9 +11,9 @@ table detected (
 )
 
 table dobject (
-    -- This id arrives from the simulation and it is a not unique string.
+    -- This id arrives from the simulation and it is a non-unique string.
     -- It most likely denotes the ID of an object within the simulation
-    -- and it can't be used as ID of an "observer object" since the same object
+    -- and it can't be used as ID of an "observer object" because the same object
     -- can be observed many times.
     object_id string,
     class_id string,
