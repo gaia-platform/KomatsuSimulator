@@ -67,7 +67,7 @@ configure_file("${PROJECT_SOURCE_DIR}/src/log_conf.toml" "${PROJECT_BINARY_DIR}/
 # --- target_add_gaia_generated_sources. I have a header that I want the ruleset to take in, so
 # --- I add it to a place where I know the build is looking. This is a blunt force solution which
 # --- should be improved sometime soon.
-file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/inc/idanger_zone.hpp" 
+file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/inc/danger_zone.hpp"
   DESTINATION "${GAIA_DEFAULT_DIRECT_ACCESS_GENERATED_DIR}/danger_zone")
 
 # --- add and link ---
@@ -89,11 +89,12 @@ translate_ruleset(
 # --- add and link ---
 target_add_gaia_generated_sources(danger_zone)
 add_dependencies(danger_zone translate_danger_zone_ruleset)
+
 ament_target_dependencies(danger_zone rclcpp rclcpp_action std_msgs sensor_msgs vision_msgs danger_zone_msgs rosbag2_snapshot_msgs)
-target_link_libraries(danger_zone gaia)
+target_link_libraries(danger_zone ${GAIA_LIB})
 
 install(TARGETS
-danger_zone
+  danger_zone
   DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY 
