@@ -18,6 +18,7 @@
 #include <vision_msgs/msg/detection3_d.hpp>
 #include <vision_msgs/msg/detection3_d_array.hpp>
 
+#include "gaia/logger.hpp"
 #include "gaia/rules/rules.hpp"
 #include "gaia/system.hpp"
 
@@ -121,16 +122,21 @@ private:
     std::vector<danger_zone_msgs::msg::Obstacle> m_obstacles;
 
     void insert_seen_object(
-        int object_id, std::string class_id, float score, const char* frame_id,
+        std::string object_id, std::string class_id, float score, const char* frame_id,
         int32_t range_id, int32_t direction_id, int32_t seconds, int32_t nseconds,
         float pos_x, float pos_y, float pos_z, float size_x, float size_y, float size_z,
         float orient_x, float orient_y, float orient_z, float orient_w) const
     {
         gaia::db::begin_transaction();
 
+//        gaia_log::app().info(
+//            "insert_seen_object: {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}",
+//            object_id, class_id, score, frame_id, range_id, direction_id, seconds,
+//            nseconds, pos_x, pos_y, pos_z, size_x, size_y, size_z, orient_x, orient_y, orient_z, orient_w);
+
         // add detected object row to DB
         auto id = gaia::danger_zone::dobject_t::insert_row(
-            object_id, class_id.c_str(), score, frame_id, range_id, direction_id, seconds, nseconds,
+            object_id.c_str(), class_id.c_str(), score, frame_id, range_id, direction_id, seconds, nseconds,
             pos_x, pos_y, pos_z, size_x, size_y, size_z,
             orient_x, orient_y, orient_z, orient_w);
 
@@ -178,8 +184,9 @@ private:
                 return; // TODO : Log this?
             }
 
+            // Note: detection.id.c_str() is non-unique ATM, it doe snot seem an ID either.
             insert_seen_object(
-                0, max_hyp.hypothesis.class_id, max_hyp.hypothesis.score, detection.header.frame_id.c_str(), 0, 0,
+                detection.id.c_str(), max_hyp.hypothesis.class_id, max_hyp.hypothesis.score, detection.header.frame_id.c_str(), 0, 0,
                 detection.header.stamp.sec, detection.header.stamp.nanosec, detection.bbox.center.position.x,
                 detection.bbox.center.position.y, detection.bbox.center.position.z, detection.bbox.size.x,
                 detection.bbox.size.y, detection.bbox.size.z, max_hyp.pose.pose.orientation.x,
@@ -189,8 +196,8 @@ private:
             {
                 obstacles.push_back(*(build_obstacle_message(
                     max_hyp.hypothesis.class_id,
-                    (int)zones_t::get_singleton()->get_range_zone_id(detection.bbox.center.position.x, detection.bbox.center.position.z),
-                    (int)zones_t::get_singleton()->get_direction_zone_id(detection.bbox.center.position.z, detection.bbox.center.position.x),
+                    static_cast<int>(zones_t::get_singleton()->get_range_zone_id(detection.bbox.center.position.x, detection.bbox.center.position.z)),
+                    static_cast<int>(zones_t::get_singleton()->get_direction_zone_id(detection.bbox.center.position.z, detection.bbox.center.position.x)),
                     detection.bbox.center.position.x, detection.bbox.center.position.y, detection.bbox.center.position.z,
                     detection.bbox.size.x, detection.bbox.size.y, detection.bbox.size.z,
                     max_hyp.pose.pose.orientation.x, max_hyp.pose.pose.orientation.y, max_hyp.pose.pose.orientation.z, max_hyp.pose.pose.orientation.w)));
