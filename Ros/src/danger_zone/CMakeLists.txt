@@ -67,9 +67,13 @@ translate_ruleset(
 )
 
 # --- add and link ---
-add_executable(danger_zone src/danger_zone.cpp)
+add_executable(danger_zone
+  src/danger_zone.cpp
+  src/snapshot_client.cpp
+)
 
 target_add_gaia_generated_sources(danger_zone)
+ament_target_dependencies(danger_zone rclcpp rclcpp_action std_msgs sensor_msgs vision_msgs danger_zone_msgs rosbag2_snapshot_msgs)
 target_include_directories(danger_zone PRIVATE ${GAIA_INC} ${DANGER_ZONE_INCLUDES})
 target_link_libraries(danger_zone ${GAIA_LIB})
 
