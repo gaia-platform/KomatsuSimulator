@@ -65,8 +65,12 @@ public:
         auto distance = get_range(x, y);
 
         for (auto rid : m_range_id)
+        {
             if (distance < rid[0])
+            {
                 return rid[1];
+            }
+        }
 
         return m_default_range_id;
     }
@@ -97,16 +101,22 @@ public:
         auto angle = get_direction(z, x);
 
         for (auto rid : m_direction_id)
+        {
             if (angle < rid[0])
+            {
                 return rid[1];
+            }
+        }
 
         return m_default_angle_id;
     }
 
     static std::shared_ptr<zones_t> get_singleton()
     {
-        if (NULL == m_singleton)
+        if (nullptr == m_singleton)
+        {
             m_singleton = std::make_shared<zones_t>();
+        }
 
         return m_singleton;
     }

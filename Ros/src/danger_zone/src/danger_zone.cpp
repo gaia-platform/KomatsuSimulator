@@ -5,13 +5,15 @@
 //*
 //*****************************************************************************
 
+#include "danger_zone.hpp"
+
 #include <functional>
 #include <memory>
 #include <mutex>
 
-#include <rclcpp/rclcpp.hpp>
 #include <danger_zone_msgs/msg/obstacle.hpp>
 #include <danger_zone_msgs/msg/obstacle_array.hpp>
+#include <rclcpp/rclcpp.hpp>
 #include <vision_msgs/msg/detection3_d.hpp>
 #include <vision_msgs/msg/detection3_d_array.hpp>
 
@@ -19,7 +21,6 @@
 #include "gaia/system.hpp"
 
 #include "gaia_danger_zone.h"
-#include "idanger_zone.hpp"
 #include "zones.hpp"
 
 using std::placeholders::_1;
@@ -41,7 +42,7 @@ public:
         m_detection3d_subscription = this->create_subscription<vision_msgs::msg::Detection3DArray>(
             m_detected_topic_name, 10, std::bind(&subscriber_node_t::detection3d_callback, this, _1));
 
-        m_obstacles_pub_ = this->create_publisher<danger_zone_msgs::msg::ObstacleArray>(
+        m_obstacles_pub = this->create_publisher<danger_zone_msgs::msg::ObstacleArray>(
             m_obstacles_topic_name, 1);
     }
 
@@ -49,36 +50,36 @@ public:
 
     void cb_send_obstacle_array_message_old(
         std::string type_name, uint roi, uint direction,
-        double posx, double posy, double posz,
-        double sizex, double sizey, double sizez,
-        double orientx, double orienty, double orientz, double orientw,
+        double pos_x, double pos_y, double pos_z,
+        double size_x, double size_y, double size_z,
+        double orient_x, double orient_y, double orient_z, double orient_w,
         std::string frame_id, int32_t sec, uint32_t nsec) const
     {
         std::vector<danger_zone_msgs::msg::Obstacle> obstacles;
         obstacles.push_back(*(build_obstacle_message(
-            type_name, roi, direction, posx, posy, posz,
-            sizex, sizey, sizez, orientx, orienty, orientz, orientw)));
+            type_name, roi, direction, pos_x, pos_y, pos_z,
+            size_x, size_y, size_z, orient_x, orient_y, orient_z, orient_w)));
 
         // TODO : get this out of the thread
-        m_obstacles_pub_->publish(build_obstacleArray_message(obstacles, frame_id, sec, nsec));
+        m_obstacles_pub->publish(build_obstacle_array_message(obstacles, frame_id, sec, nsec));
     }
 
     void cb_send_obstacle_array_message(
         std::string type_name, uint roi, uint direction,
-        double posx, double posy, double posz,
-        double sizex, double sizey, double sizez,
-        double orientx, double orienty, double orientz, double orientw,
+        double pos_x, double pos_y, double pos_z,
+        double size_x, double size_y, double size_z,
+        double orient_x, double orient_y, double orient_z, double orient_w,
         std::string frame_id, int32_t sec, uint32_t nsec) override
     {
         // std::vector<danger_zone_msgs::msg::Obstacle> obstacles;
         m_obstacles.push_back(*(build_obstacle_message(
-            type_name, roi, direction, posx, posy, posz,
-            sizex, sizey, sizez, orientx, orienty, orientz, orientw)));
+            type_name, roi, direction, pos_x, pos_y, pos_z,
+            size_x, size_y, size_z, orient_x, orient_y, orient_z, orient_w)));
 
         unused(frame_id, sec, nsec);
 
         // TODO : get this out of the thread
-        // m_obstacles_pub_->publish(build_obstacleArray_message(obstacles, frame_id,  sec, nsec));
+        // m_obstacles_pub_->publish(build_obstacle_array_message(obstacles, frame_id,  sec, nsec));
     }
 
 private:
@@ -86,7 +87,7 @@ private:
     const std::string m_detected_topic_name = "/komatsu/detections";
     const std::string m_obstacles_topic_name = "/komatsu/obstacles";
     rclcpp::Subscription<vision_msgs::msg::Detection3DArray>::SharedPtr m_detection3d_subscription;
-    rclcpp::Publisher<danger_zone_msgs::msg::ObstacleArray>::SharedPtr m_obstacles_pub_;
+    rclcpp::Publisher<danger_zone_msgs::msg::ObstacleArray>::SharedPtr m_obstacles_pub;
 
     // Mutex to lock down detection3d_callback.
     std::mutex m_mtx;
@@ -94,7 +95,11 @@ private:
     // The list of Gaia processed obstacles, cleared a dnrefilled with each detection3d_callback.
     std::vector<danger_zone_msgs::msg::Obstacle> m_obstacles;
 
-    void insert_seen_object(int object_id, std::string class_id, float score, const char* frame_id, int32_t range_id, int32_t direction_id, int32_t seconds, int32_t nseconds, float pos_x, float pos_y, float pos_z, float size_x, float size_y, float size_z, float orient_x, float orient_y, float orient_z, float orient_w) const
+    void insert_seen_object(
+        int object_id, std::string class_id, float score, const char* frame_id,
+        int32_t range_id, int32_t direction_id, int32_t seconds, int32_t nseconds,
+        float pos_x, float pos_y, float pos_z, float size_x, float size_y, float size_z,
+        float orient_x, float orient_y, float orient_z, float orient_w) const
     {
         gaia::db::begin_transaction();
 
@@ -148,9 +153,15 @@ private:
                 return; // TODO : Log this?
             }
 
-            insert_seen_object(0, max_hyp.hypothesis.class_id, max_hyp.hypothesis.score, detection.header.frame_id.c_str(), 0, 0, detection.header.stamp.sec, detection.header.stamp.nanosec, detection.bbox.center.position.x, detection.bbox.center.position.y, detection.bbox.center.position.z, detection.bbox.size.x, detection.bbox.size.y, detection.bbox.size.z, max_hyp.pose.pose.orientation.x, max_hyp.pose.pose.orientation.y, max_hyp.pose.pose.orientation.z, max_hyp.pose.pose.orientation.w);
+            insert_seen_object(
+                0, max_hyp.hypothesis.class_id, max_hyp.hypothesis.score, detection.header.frame_id.c_str(), 0, 0,
+                detection.header.stamp.sec, detection.header.stamp.nanosec, detection.bbox.center.position.x,
+                detection.bbox.center.position.y, detection.bbox.center.position.z, detection.bbox.size.x,
+                detection.bbox.size.y, detection.bbox.size.z, max_hyp.pose.pose.orientation.x,
+                max_hyp.pose.pose.orientation.y, max_hyp.pose.pose.orientation.z, max_hyp.pose.pose.orientation.w);
 
             if (m_simple_echo)
+            {
                 obstacles.push_back(*(build_obstacle_message(
                     max_hyp.hypothesis.class_id,
                     (int)zones_t::get_singleton()->get_range_zone_id(detection.bbox.center.position.x, detection.bbox.center.position.z),
@@ -158,17 +169,22 @@ private:
                     detection.bbox.center.position.x, detection.bbox.center.position.y, detection.bbox.center.position.z,
                     detection.bbox.size.x, detection.bbox.size.y, detection.bbox.size.z,
                     max_hyp.pose.pose.orientation.x, max_hyp.pose.pose.orientation.y, max_hyp.pose.pose.orientation.z, max_hyp.pose.pose.orientation.w)));
+            }
         }
 
         if (m_simple_echo)
-            m_obstacles_pub_->publish(build_obstacleArray_message(
+        {
+            m_obstacles_pub->publish(build_obstacle_array_message(
                 obstacles, msg->header.frame_id, msg->header.stamp.sec, msg->header.stamp.nanosec));
+        }
         else if (!m_obstacles.empty())
-            m_obstacles_pub_->publish(build_obstacleArray_message(
+        {
+            m_obstacles_pub->publish(build_obstacle_array_message(
                 m_obstacles, msg->header.frame_id, msg->header.stamp.sec, msg->header.stamp.nanosec));
+        }
     }
 
-    danger_zone_msgs::msg::ObstacleArray::UniquePtr build_obstacleArray_message(
+    danger_zone_msgs::msg::ObstacleArray::UniquePtr build_obstacle_array_message(
         std::vector<danger_zone_msgs::msg::Obstacle> obstacles,
         std::string frame_id, int32_t sec, uint32_t nsec) const
     {
@@ -180,34 +196,36 @@ private:
         obstacle_array->header.stamp.nanosec = nsec;
 
         for (const auto& obstacle : obstacles)
+        {
             obstacle_array->obstacles.push_back(obstacle);
+        }
 
         return obstacle_array;
     }
 
     danger_zone_msgs::msg::Obstacle::UniquePtr build_obstacle_message(
         std::string type_name, uint roi, uint direction,
-        double posx, double posy, double posz,
-        double sizex, double sizey, double sizez,
-        double orientx, double orienty, double orientz, double orientw) const
+        double pos_x, double pos_y, double pos_z,
+        double size_x, double size_y, double size_z,
+        double orient_x, double orient_y, double orient_z, double orient_w) const
     {
         danger_zone_msgs::msg::Obstacle::UniquePtr obst(new danger_zone_msgs::msg::Obstacle);
 
         geometry_msgs::msg::Point::UniquePtr point(new geometry_msgs::msg::Point);
-        point->x = posx;
-        point->y = posy;
-        point->z = posz;
+        point->x = pos_x;
+        point->y = pos_y;
+        point->z = pos_z;
 
         geometry_msgs::msg::Vector3::UniquePtr size(new geometry_msgs::msg::Vector3);
-        size->x = sizex;
-        size->y = sizey;
-        size->z = sizez;
+        size->x = size_x;
+        size->y = size_y;
+        size->z = size_z;
 
         geometry_msgs::msg::Quaternion::UniquePtr orient(new geometry_msgs::msg::Quaternion);
-        orient->x = orientx;
-        orient->y = orienty;
-        orient->z = orientz;
-        orient->w = orientw;
+        orient->x = orient_x;
+        orient->y = orient_y;
+        orient->z = orient_z;
+        orient->w = orient_w;
 
         geometry_msgs::msg::Pose::UniquePtr pose(new geometry_msgs::msg::Pose);
         pose->position = *point;
@@ -225,27 +243,27 @@ private:
         return obst;
     }
 
-    danger_zone_msgs::msg::ObstacleArray::UniquePtr build_obstacleArray_message(
+    danger_zone_msgs::msg::ObstacleArray::UniquePtr build_obstacle_array_message(
         std::string type_name, uint roi, uint direction,
-        double posx, double posy, double posz,
-        double sizex, double sizey, double sizez,
-        double orientx, double orienty, double orientz, double orientw,
+        double pos_x, double pos_y, double pos_z,
+        double size_x, double size_y, double size_z,
+        double orient_x, double orient_y, double orient_z, double orient_w,
         std::string frame_id, int32_t sec, uint32_t nsec) const
     {
         std::vector<danger_zone_msgs::msg::Obstacle> obstacles;
         obstacles.push_back(*(build_obstacle_message(
-            type_name, roi, direction, posx, posy, posz,
-            sizex, sizey, sizez, orientx, orienty, orientz, orientw)));
+            type_name, roi, direction, pos_x, pos_y, pos_z,
+            size_x, size_y, size_z, orient_x, orient_y, orient_z, orient_w)));
 
-        return build_obstacleArray_message(obstacles, frame_id, sec, nsec);
+        return build_obstacle_array_message(obstacles, frame_id, sec, nsec);
     }
 
-    void send_test_obstacleArray_message() const
+    void send_test_obstacle_array_message() const
     {
-        auto obstacle_array = build_obstacleArray_message(
+        auto obstacle_array = build_obstacle_array_message(
             "theType", 1, 1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, "theFrame", 1, 1);
 
-        m_obstacles_pub_->publish(std::move(obstacle_array));
+        m_obstacles_pub->publish(std::move(obstacle_array));
     }
 };
 

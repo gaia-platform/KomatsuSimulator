@@ -44,16 +44,16 @@ public:
      * @param[in] std::string : type_name : the name of the class of object detected
      * @param[in] uint : roi : the roi code
      * @param[in] uint : direction : the direction code
-     * @param[in] double : posx : the object position X
-     * @param[in] double : posy : the object position Y
-     * @param[in] double : posz : the object position Z
-     * @param[in] double : sizex : the object size X
-     * @param[in] double : sizey : the object size Y
-     * @param[in] double : sizez : the object size Z
-     * @param[in] double : orientx : the object orientation quaternion X
-     * @param[in] double : orienty : the object orientation quaternion Y
-     * @param[in] double : orientz : the object orientation quaternion Y
-     * @param[in] double : orientw : the object orientation quaternion W
+     * @param[in] double : pos_x : the object position X
+     * @param[in] double : pos_y : the object position Y
+     * @param[in] double : pos_z : the object position Z
+     * @param[in] double : size_x : the object size X
+     * @param[in] double : size_y : the object size Y
+     * @param[in] double : size_z : the object size Z
+     * @param[in] double : orient_x : the object orientation quaternion X
+     * @param[in] double : orient_y : the object orientation quaternion Y
+     * @param[in] double : orient_z : the object orientation quaternion Y
+     * @param[in] double : orient_w : the object orientation quaternion W
      * @param[in] std::string : frame_id : the ROS frame name
      * @param[in] int32_t : sec : the time in seconds
      * @param[in] uint32_t : nsec : the number of nanoseconds since sec
@@ -63,9 +63,9 @@ public:
      */
     virtual void cb_send_obstacle_array_message(
         std::string type_name, uint roi, uint direction,
-        double posx, double posy, double posz,
-        double sizex, double sizey, double sizez,
-        double orientx, double orienty, double orientz, double orientw,
+        double pos_x, double pos_y, double pos_z,
+        double size_x, double size_y, double size_z,
+        double orient_x, double orient_y, double orient_z, double orient_w,
         std::string frame_id, int32_t sec, uint32_t nsec)
         = 0;
 

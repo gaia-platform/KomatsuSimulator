@@ -1,9 +1,6 @@
-#include <atomic>
-#include <algorithm>
-#include <string.h>
-#include <memory>
 #include <cmath>
-#include "idanger_zone.hpp"
+
+#include "danger_zone.hpp"
 
 #define RoiZoneCodeRed 0
 #define RoiZoneCodeYellow 1
@@ -19,28 +16,28 @@
 
 //*****************************************************************************
 //*
-//* args: 
+//* args:
 //*   double x : one axis
-//*   double y : the other axis  
+//*   double y : the other axis
 //*
 //*****************************************************************************
 
-double get_range(double x, double y) 
+double get_range(double x, double y)
 {
-    return std::sqrt(x*x + y*y);
+    return std::sqrt(x * x + y * y);
 }
 
 //*****************************************************************************
 //*
-//* args: 
+//* args:
 //*   double z : front +
 //*   double x : right +
- //*
+//*
 //*****************************************************************************
 
-/*  static double get_direction(double z, double x) 
+/*  static double get_direction(double z, double x)
   {
-    return std::atan2(z, x); 
+    return std::atan2(z, x);
   }*/
 
 double red_zone_range = 10.0;
@@ -57,37 +54,40 @@ ruleset danger_zone_ruleset
         double range = get_range(dobject.pos_x, dobject.pos_z);
 
         // find the direction of the object relative to the sensor
-        //double direction = get_direction(dobject.pos_z, dobject.pos_x);
+        // double direction = get_direction(dobject.pos_z, dobject.pos_x);
 
         // set roi zone to default value
         uint roi_zone = RoiZoneCodeDefault;
         uint direction_zone = DirectionZoneCodeDefault;
-        
-        if( red_zone_range > range )
+
+        if (red_zone_range > range)
+        {
             roi_zone = RoiZoneCodeRed;
-        else if( yellow_zone_range > range )
+        }
+        else if (yellow_zone_range > range)
+        {
             roi_zone = RoiZoneCodeYellow;
-        else if( green_zone_range > range )
+        }
+        else if (green_zone_range > range)
+        {
             roi_zone = RoiZoneCodeGreen;
+        }
 
-
-        //TODO : get direction code
+        // TODO : get direction code
 
         /*cbc->cb_send_obstacleArray_message(
         std::string type_name, uint roi, uint direction,
-        double posx, double posy, double posz, 
-        double sizex, double sizey, double sizez, 
-        double orientx, double orienty, double orientz, double orientw,
-        std::string frame_id, int32_t sec, uint32_t nsec 
+        double pos_x, double pos_y, double pos_z,
+        double size_x, double size_y, double size_z,
+        double orient_x, double orient_y, double orient_z, double orient_w,
+        std::string frame_id, int32_t sec, uint32_t nsec
         )*/
 
-        iDangerZone::get_callback_class()->cb_send_obstacleArray_message(
+        danger_zone_t::get_callback_class()->cb_send_obstacle_array_message(
             dobject.class_id, roi_zone, direction_zone,
-            dobject.pos_x, dobject.pos_y, dobject.pos_z,  
-            dobject.size_x, dobject.size_y, dobject.size_z,  
+            dobject.pos_x, dobject.pos_y, dobject.pos_z,
+            dobject.size_x, dobject.size_y, dobject.size_z,
             dobject.orient_x, dobject.orient_y, dobject.orient_z, dobject.orient_w,
-            dobject.frame_id, dobject.seconds, dobject.nseconds 
-        );
-    }  
+            dobject.frame_id, dobject.seconds, dobject.nseconds);
+    }
 }
-
