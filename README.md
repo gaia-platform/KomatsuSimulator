@@ -87,9 +87,9 @@ To install ROS-TCP-Endpoint:
 
 ### KomatsuSimulator
 
-KomatsuSimulator has two projects: 1) a Unity based simulator and 2) a ROS project. In order to use KomatsuSimulator one must always install ROS2 and Git the KomatsuSimulator repo. If one prefers to avoid building the Unity simulator then one may download the GaiaMineSimVx.x.x.x.zip binary from one of the releases, typically the latest release. Downloading and using the simulator binary does not eliminate the need to install ROS2 and Git the KomatsuSimulator repo. The releases can be found here : https://github.com/gaia-platform/KomatsuSimulator/releases
+KomatsuSimulator has two projects: 1) a Unity based simulator and 2) a ROS project. In order to use KomatsuSimulator one must always install ROS2 and Git the KomatsuSimulator repo. If one prefers to avoid building the Unity simulator then one may download the GaiaMineSimVx.x.x.x.zip binary from one of the releases, typically the latest release. Downloading and using the simulator binary does not eliminate the need to install ROS2 and Git the KomatsuSimulator repo. The releases can be found here: https://github.com/gaia-platform/KomatsuSimulator/releases
 
-To install KomatsuSimulator :
+To install KomatsuSimulator:
 
 1. Create a directory for development. Here we will assume it is '~/dev', feel free to use any location you wish.
     ```bash
@@ -126,7 +126,7 @@ To install KomatsuSimulator :
     echo 'source ~/dev/KomatsuSimulator/Ros/install/local_setup.bash' >> ~/.bashrc
     ```
 
-8. To avoid building the Unity simulator :
+8. To avoid building the Unity simulator:
    1. Download GaiaMineSimVx.x.x.x.zip from the latest release at https://github.com/gaia-platform/KomatsuSimulator/releases
    2. Unzip in a location of your choice
    3. Run GaiaMineSim to verify operation.
