@@ -34,10 +34,16 @@ endif()
 # --- find dependencies ---
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_components REQUIRED)
+find_package(rclcpp_action REQUIRED)
+#find_package(rclcpp_server REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(vision_msgs REQUIRED)
 find_package(danger_zone_msgs REQUIRED)
+find_package(rosbag2_cpp REQUIRED)
+find_package(rosbag2_snapshot_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
 
 set(DANGER_ZONE_INCLUDES ${PROJECT_SOURCE_DIR}/inc ${CMAKE_CURRENT_SOURCE_DIR}/inc)
 set(DANGER_ZONE_DB_NAME danger_zone)
@@ -64,7 +70,6 @@ translate_ruleset(
 add_executable(danger_zone src/danger_zone.cpp)
 
 target_add_gaia_generated_sources(danger_zone)
-ament_target_dependencies(danger_zone rclcpp std_msgs sensor_msgs vision_msgs danger_zone_msgs)
 target_include_directories(danger_zone PRIVATE ${GAIA_INC} ${DANGER_ZONE_INCLUDES})
 target_link_libraries(danger_zone ${GAIA_LIB})
 
