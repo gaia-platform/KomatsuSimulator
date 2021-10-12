@@ -85,7 +85,7 @@ public:
 
   void cb_trigger_log( int start_sec, uint32_t start_nsec, 
         int end_sec, uint32_t end_nsec, std::string file_name, 
-        std::vector<std::string>topics)
+        std::vector<std::string>topics) override
   {
     //TODO: we need to debounce this, figure out how to properly handle overlaps
 
@@ -96,7 +96,7 @@ public:
   }
 
   void cb_trigger_log( int seconds_past, int seconds_forward, 
-        std::string file_name, std::vector<std::string>topics)
+        std::string file_name, std::vector<std::string>topics) override
   {
     auto base_time = get_clock()->now();
     auto base_sec = base_time.seconds();

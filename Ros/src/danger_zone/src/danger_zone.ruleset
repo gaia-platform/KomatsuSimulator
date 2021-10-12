@@ -81,20 +81,19 @@ ruleset danger_zone_ruleset
 
         //TODO : get direction code
 
-        iDangerZone::get_callback_class()->cb_send_obstacleArray_message(
+        danger_zone_t::get_callback_class()->cb_send_obstacle_array_message(
             dobject.class_id, roi_zone, direction_zone,
             dobject.pos_x, dobject.pos_y, dobject.pos_z,
             dobject.size_x, dobject.size_y, dobject.size_z,
             dobject.orient_x, dobject.orient_y, dobject.orient_z, dobject.orient_w,
             dobject.frame_id, dobject.seconds, dobject.nseconds);
-        );
 
         //TODO: we need to debounce this somewhere
         //TODO: we need to make unique file names, maybe append datetime
 
         //Trigger a logging event
         if(roi_zone == RoiZoneCodeRed)
-            iDangerZone::get_callback_class()->cb_trigger_log( 
+            danger_zone_t::get_callback_class()->cb_trigger_log( 
                 5, 25, log_file_base_name, topics);
     }  
 }
