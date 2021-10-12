@@ -11,7 +11,7 @@ table detected (
 )
 
 table dobject (
-    id int32 unique,
+    object_id string,
     class_id string,
     score float,
     frame_id string,
