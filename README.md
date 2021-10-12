@@ -96,7 +96,7 @@ To install KomatsuSimulator:
     mkdir ~/dev
     ```
 
-2. Move the the dev directory.
+2. Move into the the `~/dev` directory.
     ```bash
     cd ~/dev
     ```
@@ -106,7 +106,7 @@ To install KomatsuSimulator:
     git clone https://github.com/gaia-platform/KomatsuSimulator.git
     ```
 
-4. move to the KomatsuSimulator ROS2 workspace.
+4. Move into the KomatsuSimulator ROS2 workspace.
     ```bash
     cd ~/dev/KomatsuSimulator/Ros
     ```
@@ -116,12 +116,12 @@ To install KomatsuSimulator:
     rosdep install -y -i --from-paths .
     ```
 
-6. Build the [workspace] directory.
+6. Build the `~/dev/KomatsuSimulator/Ros` directory.
     ```bash
     colcon build
     ```
 
-7. Source the [workspace] directory in .bashrc (not required but highly recommended).
+7. Source the `~/dev/KomatsuSimulator/Ros` directory in .bashrc (not required but highly recommended).
     ```bash
     echo 'source ~/dev/KomatsuSimulator/Ros/install/local_setup.bash' >> ~/.bashrc
     ```
@@ -160,7 +160,7 @@ There are several levels of development possible. It is possible to work in only
    - Start danger_zone: `ros2 launch danger_zone node_launch.py`.
    - Leave terminal open.
 
-4. Now everything is running. Watch the simulator run, look ROS messages, etc.
+4. Now everything is running. Watch the simulator run, look at ROS messages, etc.
 
 5. Stop danger_zone.
    - Go in the danger_zone terminal: `<ctrl>C`.
@@ -168,7 +168,7 @@ There are several levels of development possible. It is possible to work in only
 The Gaia schema and rules are in the danger_zone ROS2 project. Standard ROS2 dev practices apply.
 
 ## Releases
-If you prefer to not install and build with Unity, you download the Simulator binaries [here](https://github.com/gaia-platform/KomatsuSimulator/releases)
+If you prefer to not install and build with Unity, you can download the Simulator binaries [here](https://github.com/gaia-platform/KomatsuSimulator/releases)
 
 ## Unity setup
 1. Install the latest 20x LTS build of the Unity Editor.
