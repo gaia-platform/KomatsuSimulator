@@ -12,7 +12,7 @@ Install in order:
 
 ### ROS2
 
-ROS is available in two major versions. ROS and ROS2. ROS2 is available in several releases, GRover requires 'Galatic' or newer.
+ROS is available in two major versions. ROS and ROS2. ROS2 is available in several releases, KomatsuSimulator requires 'Galatic' or newer.
 
 To install ROS2 Galactic:
 
