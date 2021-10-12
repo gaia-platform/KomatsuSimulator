@@ -100,13 +100,13 @@ To install KomatsuSimulator :
     ```bash
     echo 'source ~/dev/KomatsuSimulator/Ros/install/local_setup.bash' >> ~/.bashrc
     ```
-To avoid building the Unity simulator :
-1. Download GaiaMineSimVx.x.x.x.zip from the latest release at https://github.com/gaia-platform/KomatsuSimulator/releases
-2. Unzip in a location of your choice
-3. Run GaiaMineSim to verify operation.
-    ```bash
-    ./Builds/GaiaMineSim.x86_64
-    ```
+8. To avoid building the Unity simulator :
+   1. Download GaiaMineSimVx.x.x.x.zip from the latest release at https://github.com/gaia-platform/KomatsuSimulator/releases
+   2. Unzip in a location of your choice
+   3. Run GaiaMineSim to verify operation.
+       ```bash
+       ./Builds/GaiaMine.x86_64
+       ```
 
 # USE
 
@@ -119,26 +119,25 @@ There are several levels of development possible. It is possible to work in only
 ## 1. Develop only Gaia schema and rules
 
 1. Start ros-unity bridge.
-   - open a terminal
-   - Start ROS-TCP-Endpoint: ```ros2 launch danger_zone bridge_launch.py``` 
-   - leave terminal open
+   - Open a terminal.
+   - Start ROS-TCP-Endpoint: `ros2 launch danger_zone bridge_launch.py`.
+   - Leave terminal open.
 
 2. Start simulator.
    - Open terminal
-   - move to install location of simulator
-   - `./GaiaMineSim.x86_64`
-   - leave terminal open
+   - Move to install location of simulator
+   - Start the simulator: `./Builds/GaiaMine.x86_64`.
+   - Leave terminal open.
    
 3. Start danger zone.
-   - open a terminal
-   - Start danger_zone: ```ros2 launch danger_zone node_launch.py```
-   - leave terminal open
+   - Open a terminal.
+   - Start danger_zone: `ros2 launch danger_zone node_launch.py`.
+   - Leave terminal open.
 
 4. Now everything is running. Watch the simulator run, look ROS messages, etc. 
 
-5. To stop danger zone.
-   - find danger zone terminal
-   - ```<ctrl>C```
+5. Stop danger_zone.
+   - Go in the danger_zone terminal: `<ctrl>C`.
 
 The Gaia schema and rules are in the danger_zone ROS2 project. Standard ROS2 dev practices apply.
 

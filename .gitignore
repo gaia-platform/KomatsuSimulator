@@ -102,4 +102,5 @@ KomatsuSimulator/Assets/Resources/ROSConnectionPrefab.prefab.meta
 
 .komatsu_db/
 logs/
+.idea
 
