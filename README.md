@@ -30,27 +30,41 @@ Knowledge of ROS2 is not required in order to use KomatsuSim at the most basic l
 
 To install ROS-TCP-Endpoint : 
 
-1. Create a ROS workspace (https://docs.ros.org/en/foxy/Tutorials/Workspace/Creating-A-Workspace.html). We suggest ~/ros2_ws as a good location for the workspace. Further instruction will assume that location.
+1. Create a ROS workspace (https://docs.ros.org/en/foxy/Tutorials/Workspace/Creating-A-Workspace.html). We suggest `~/ros2_ws` as a good location for the workspace. Further instruction will assume that location.
 
-2. Move to the workspace 'src' directory
+   ```bash
+   mkdir -p ~/ros2_ws/src
+   ```
 
-```cd ~/ros2_ws/src```
+3. Move to the workspace 'src' directory.
 
-3. clone ROS2 branch of https://github.com/Unity-Technologies/ROS-TCP-Endpoint.git into the [workspace]/src directory
+   ```bash
+   cd ~/ros2_ws/src
+   ```
 
-```git clone -b ROS2 https://github.com/Unity-Technologies/ROS-TCP-Endpoint.git```
+4. clone ROS2 branch of https://github.com/Unity-Technologies/ROS-TCP-Endpoint.git into `~/ros2_ws/src`.
 
-4. Move to the workspace directory
+   ```bash
+   git clone -b ROS2 https://github.com/Unity-Technologies/ROS-TCP-Endpoint.git
+   ````
 
-```cd ~/ros2_ws```
+5. Move to the workspace directory.
 
-5. build the [workspace] directory
+   ```bash
+   cd ~/ros2_ws
+   ```
 
-```colcon build```
+6. Build the workspace with colcon.
 
-6.  Source the [workspace] directory in .bashrc (not required but highly recommended)
+   ```bash
+   colcon build
+   ```
 
-```sudo echo 'source ~/ros2_ws/install/local_setup.bash' >> ~/.bashrc```
+7. Source the [workspace] directory in .bashrc (not required but highly recommended).
+
+   ```bash
+   echo 'source ~/ros2_ws/install/local_setup.bash' >> ~/.bashrc
+   ```
 
 ### KomatsuSimulator
 
@@ -84,10 +98,10 @@ To install KomatsuSimulator :
     ```
 7. Source the [workspace] directory in .bashrc (not required but highly recommended).
     ```bash
-    sudo echo 'source ~/dev/KomatsuSimulator/Ros/install/local_setup.bash' >> ~/.bashrc
+    echo 'source ~/dev/KomatsuSimulator/Ros/install/local_setup.bash' >> ~/.bashrc
     ```
 To avoid building the Unity simulator :
-1. Download GaiaMineSimVx.x.x.x.zip from latest release at https://github.com/gaia-platform/KomatsuSimulator/releases
+1. Download GaiaMineSimVx.x.x.x.zip from the latest release at https://github.com/gaia-platform/KomatsuSimulator/releases
 2. Unzip in a location of your choice
 3. Run GaiaMineSim to verify operation.
     ```bash
