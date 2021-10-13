@@ -16,6 +16,7 @@ public class ImagePublisher : MonoBehaviour
 
     //private MessageTypes.Sensor.CompressedImage message;
     private Texture2D texture2D;
+    private Texture2D texture2DFlipped;
     private Rect rect;
     private const int isBigEndian = 1;
     private const int step = 3;
@@ -27,7 +28,7 @@ public class ImagePublisher : MonoBehaviour
     /// Arg original: incoming texture
     /// Returns: void
     //*************************************************************************
-    public static void FlipTextureVerticallyInplace(Texture2D original)
+    public void FlipTextureVerticallyInplace(Texture2D original)
     {
         var originalPixels = original.GetPixels();
 
@@ -53,25 +54,18 @@ public class ImagePublisher : MonoBehaviour
     /// Arg original: incoming texture
     /// Returns: Flipped texture
     //*************************************************************************
-   public static Texture2D FlipTextureVertically(Texture2D original)
+   public Texture2D FlipTextureVertically(Texture2D original)
     {
-        Texture2D flipped = new Texture2D(
-            original.width, original.height, original.format, false);
-
         int xN = original.width;
         int yN = original.height;
 
         for (int i = 0; i < xN; i++)
-        {
             for (int j = 0; j < yN; j++)
-            {
-                flipped.SetPixel(i, yN - j - 1, original.GetPixel(i, j));
-            }
-        }
+                texture2DFlipped.SetPixel(i, yN - j - 1, original.GetPixel(i, j));
 
-        flipped.Apply();
+        texture2DFlipped.Apply();
 
-        return flipped;
+        return texture2DFlipped;
     }
 
     //************************************************************************
@@ -105,6 +99,7 @@ public class ImagePublisher : MonoBehaviour
     {
         ImageCamera.enabled = true;
         texture2D = new Texture2D(resolutionWidth, resolutionHeight, TextureFormat.RGB24, false);
+        texture2DFlipped = new Texture2D(resolutionWidth, resolutionHeight, TextureFormat.RGB24, false);
         rect = new Rect(0, 0, resolutionWidth, resolutionHeight);
         ImageCamera.targetTexture = new RenderTexture(resolutionWidth, resolutionHeight, 24);
     }
@@ -121,7 +116,7 @@ public class ImagePublisher : MonoBehaviour
 
     //************************************************************************
     /// Description: Update message, send to ROS
-    /// Returns: void
+    /// Returns: void               
     //*************************************************************************
     public IEnumerator UpdateMessage()
     {
