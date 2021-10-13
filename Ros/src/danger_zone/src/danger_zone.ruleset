@@ -89,11 +89,11 @@ ruleset danger_zone_ruleset
             d_object.orient_x, d_object.orient_y, d_object.orient_z, d_object.orient_w,
             d_object.frame_id, d_object.seconds, d_object.nseconds);
 
-        // TODO: we need to debounce this somewhere
-        // TODO: we need to make unique file names, maybe append datetime
+        // TODO: we need to debounce this somewhere.
+        // TODO: we need to make unique file names, maybe append datetime.
 
         // Trigger a logging event.
-        if(roi_zone == RoiZoneCodeRed)
+        if (roi_zone == RoiZoneCodeRed)
         {
             danger_zone_t::get_callback_class()->cb_trigger_log(
                 5, 25, log_file_base_name, topics);
