@@ -10,10 +10,10 @@
 #define DirectionZoneCodeDefault 6
 
 // set these to what you want to log, add or subtract at will
-std::vector<std::string> topics{"/image", "/lidar"}; 
+std::vector<std::string> topics{"/image", "/lidar"};
 
 // set this to an existing directory + desired log name
-std::string log_file_base_name = "~/logs/retrolog";  
+std::string log_file_base_name = "~/logs/retrolog";
 
 /*void show_message(const std::string message)
 {
@@ -79,7 +79,7 @@ ruleset danger_zone_ruleset
             roi_zone = RoiZoneCodeGreen;
         }
 
-        //TODO : get direction code
+        // TODO : get direction code
 
         danger_zone_t::get_callback_class()->cb_send_obstacle_array_message(
             dobject.class_id, roi_zone, direction_zone,
@@ -88,12 +88,14 @@ ruleset danger_zone_ruleset
             dobject.orient_x, dobject.orient_y, dobject.orient_z, dobject.orient_w,
             dobject.frame_id, dobject.seconds, dobject.nseconds);
 
-        //TODO: we need to debounce this somewhere
-        //TODO: we need to make unique file names, maybe append datetime
+        // TODO: we need to debounce this somewhere
+        // TODO: we need to make unique file names, maybe append datetime
 
-        //Trigger a logging event
-        if(roi_zone == RoiZoneCodeRed)
-            danger_zone_t::get_callback_class()->cb_trigger_log( 
+        // Trigger a logging event
+        if (roi_zone == RoiZoneCodeRed)
+        {
+            danger_zone_t::get_callback_class()->cb_trigger_log(
                 5, 25, log_file_base_name, topics);
-    }  
+        }
+    }
 }

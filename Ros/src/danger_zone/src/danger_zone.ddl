@@ -10,6 +10,11 @@ table detected (
     dobjects references dobject[]
 )
 
+table object (
+    object_id string,
+    class_id string
+)
+
 table dobject (
     -- This id arrives from the simulation and it is a non-unique string.
     -- It most likely denotes the ID of an object within the simulation
@@ -34,4 +39,29 @@ table dobject (
     orient_z float,
     orient_w float,
     detected references detected
+)
+
+
+
+--
+-- Actions
+--
+-- Gaia rules are executed within a database transaction. If the transaction fail,
+-- the rules engine will retry it as many times as specified in the gaia_log.conf
+-- (3 times by default). For this reason rules need to be idempotent: their effect
+-- on the database must be the same given the same initial database state.
+--
+-- Idempotency is broken as soon as non-transactional code is mixed with transactional
+-- code. Sending ROS messages is an example of non-transactional code. For this reason
+-- it is ideal to separate code that deal with the database from the code that deals with
+-- external world. You can do this by creating rules which only purpose is to deal with
+-- the external world and that are triggered by specific "action" records.
+
+table send_obstacle_array_msg_action (
+
+)
+
+
+table send_trigger_log_action (
+
 )

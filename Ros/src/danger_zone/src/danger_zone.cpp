@@ -11,9 +11,9 @@
 #include <memory>
 #include <mutex>
 
+#include "../inc/snapshot_client.hpp"
 #include <danger_zone_msgs/msg/obstacle.hpp>
 #include <danger_zone_msgs/msg/obstacle_array.hpp>
-#include "../inc/snapshot_client.hpp"
 #include <rclcpp/rclcpp.hpp>
 #include <vision_msgs/msg/detection3_d.hpp>
 #include <vision_msgs/msg/detection3_d_array.hpp>
@@ -84,28 +84,23 @@ public:
         // m_obstacles_pub_->publish(build_obstacle_array_message(obstacles, frame_id,  sec, nsec));
     }
 
-  void cb_trigger_log( int start_sec, uint32_t start_nsec, 
-        int end_sec, uint32_t end_nsec, std::string file_name, 
-        std::vector<std::string>topics) override
-  {
-    //TODO: we need to debounce this, figure out how to properly handle overlaps
+    void cb_trigger_log(int start_sec, uint32_t start_nsec, int end_sec, uint32_t end_nsec, std::string file_name, std::vector<std::string> topics) override
+    {
+        // TODO: we need to debounce this, figure out how to properly handle overlaps
 
-    auto sc = new SnapshotClient();
-    sc->connect(this, m_snapshot_service_name);
-    sc->send_request( start_sec, start_nsec, 
-      end_sec, end_nsec, file_name, topics);
-  }
+        auto sc = new SnapshotClient();
+        sc->connect(this, m_snapshot_service_name);
+        sc->send_request(start_sec, start_nsec, end_sec, end_nsec, file_name, topics);
+    }
 
-  void cb_trigger_log( int seconds_past, int seconds_forward, 
-        std::string file_name, std::vector<std::string>topics) override
-  {
-    auto base_time = get_clock()->now();
-    auto base_sec = base_time.seconds();
-    auto base_nsec = base_time.nanoseconds();
-    
-    cb_trigger_log(base_sec - seconds_past, base_nsec, 
-      base_sec + seconds_forward, base_nsec, file_name, topics);
-  }
+    void cb_trigger_log(int seconds_past, int seconds_forward, std::string file_name, std::vector<std::string> topics) override
+    {
+        auto base_time = get_clock()->now();
+        auto base_sec = base_time.seconds();
+        auto base_nsec = base_time.nanoseconds();
+
+        cb_trigger_log(base_sec - seconds_past, base_nsec, base_sec + seconds_forward, base_nsec, file_name, topics);
+    }
 
 private:
     bool m_simple_echo = false;
@@ -118,7 +113,7 @@ private:
     // Mutex to lock down detection3d_callback.
     std::mutex m_mtx;
 
-    // The list of Gaia processed obstacles, cleared a dnrefilled with each detection3d_callback.
+    // The list of Gaia processed obstacles, cleared and refilled with each detection3d_callback.
     std::vector<danger_zone_msgs::msg::Obstacle> m_obstacles;
 
     void insert_seen_object(
@@ -129,29 +124,25 @@ private:
     {
         gaia::db::begin_transaction();
 
-//        gaia_log::app().info(
-//            "insert_seen_object: {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}",
-//            object_id, class_id, score, frame_id, range_id, direction_id, seconds,
-//            nseconds, pos_x, pos_y, pos_z, size_x, size_y, size_z, orient_x, orient_y, orient_z, orient_w);
+        if (gaia_log::app().is_trace_enabled())
+        {
+            gaia_log::app().trace(
+                "insert_seen_object: object_id:'{}' class_id:'{}' score:{} frame_id:{} range_id:{} {} {} {} {} {} {} {} {} {} {} {} {} {}",
+                object_id, class_id, score, frame_id, range_id, direction_id, seconds,
+                nseconds, pos_x, pos_y, pos_z, size_x, size_y, size_z, orient_x, orient_y, orient_z, orient_w);
+        }
 
-        // add detected object row to DB
-        auto id = gaia::danger_zone::dobject_t::insert_row(
+        // Add detected object row to DB.
+        gaia::danger_zone::dobject_t::insert_row(
             object_id.c_str(), class_id.c_str(), score, frame_id, range_id, direction_id, seconds, nseconds,
             pos_x, pos_y, pos_z, size_x, size_y, size_z,
             orient_x, orient_y, orient_z, orient_w);
 
-        unused(id);
-
         gaia::db::commit_transaction();
     }
-    
+
     void detection3d_callback(const vision_msgs::msg::Detection3DArray::SharedPtr msg)
     {
-        // TODO : just a test, remove this
-        // send_test_obstacleArray_message();
-
-        // std::unique_lock<std::mutex> lck (mtx,std::defer_lock);
-
         // prevent two threads from operating on this method simultaneously
         std::lock_guard<std::mutex> lck(m_mtx);
 
@@ -181,10 +172,10 @@ private:
 
             if (max_hyp.hypothesis.class_id == "")
             {
-                return; // TODO : Log this?
+                gaia_log::app().warn("Detected object with no class_id!");
+                return;
             }
 
-            // Note: detection.id.c_str() is non-unique ATM, it doe snot seem an ID either.
             insert_seen_object(
                 detection.id.c_str(), max_hyp.hypothesis.class_id, max_hyp.hypothesis.score, detection.header.frame_id.c_str(), 0, 0,
                 detection.header.stamp.sec, detection.header.stamp.nanosec, detection.bbox.center.position.x,
@@ -275,28 +266,28 @@ private:
         return obst;
     }
 
-    danger_zone_msgs::msg::ObstacleArray::UniquePtr build_obstacle_array_message(
-        std::string type_name, uint roi, uint direction,
-        double pos_x, double pos_y, double pos_z,
-        double size_x, double size_y, double size_z,
-        double orient_x, double orient_y, double orient_z, double orient_w,
-        std::string frame_id, int32_t sec, uint32_t nsec) const
-    {
-        std::vector<danger_zone_msgs::msg::Obstacle> obstacles;
-        obstacles.push_back(*(build_obstacle_message(
-            type_name, roi, direction, pos_x, pos_y, pos_z,
-            size_x, size_y, size_z, orient_x, orient_y, orient_z, orient_w)));
+    //    danger_zone_msgs::msg::ObstacleArray::UniquePtr build_obstacle_array_message(
+    //        std::string type_name, uint roi, uint direction,
+    //        double pos_x, double pos_y, double pos_z,
+    //        double size_x, double size_y, double size_z,
+    //        double orient_x, double orient_y, double orient_z, double orient_w,
+    //        std::string frame_id, int32_t sec, uint32_t nsec) const
+    //    {
+    //        std::vector<danger_zone_msgs::msg::Obstacle> obstacles;
+    //        obstacles.push_back(*(build_obstacle_message(
+    //            type_name, roi, direction, pos_x, pos_y, pos_z,
+    //            size_x, size_y, size_z, orient_x, orient_y, orient_z, orient_w)));
+    //
+    //        return build_obstacle_array_message(obstacles, frame_id, sec, nsec);
+    //    }
 
-        return build_obstacle_array_message(obstacles, frame_id, sec, nsec);
-    }
-
-    void send_test_obstacle_array_message() const
-    {
-        auto obstacle_array = build_obstacle_array_message(
-            "theType", 1, 1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, "theFrame", 1, 1);
-
-        m_obstacles_pub->publish(std::move(obstacle_array));
-    }
+    //    void send_test_obstacle_array_message() const
+    //    {
+    //        auto obstacle_array = build_obstacle_array_message(
+    //            "theType", 1, 1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, "theFrame", 1, 1);
+    //
+    //        m_obstacles_pub->publish(std::move(obstacle_array));
+    //    }
 };
 
 int main(int argc, char* argv[])
