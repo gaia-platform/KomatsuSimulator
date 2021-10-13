@@ -9,27 +9,27 @@
 #include <vector>
 
 /**
- * @brief Interface used to expose danger_zone core methods inside a Gaia ruleset rules
+ * @brief Interface used to expose danger_zone core methods inside a Gaia ruleset rules.
  */
 
 class danger_zone_t
 {
 protected:
-// 1) We ignore -Wc++17-extensions here to quiet down the Gaia translator
-// 2) We mention GCC but this works for Clang as well
+// 1) We ignore -Wc++17-extensions here to quiet down the Gaia translator.
+// 2) We mention GCC but this works for Clang as well.
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wc++17-extensions"
     // inline static const std::shared_ptr<ismartpallet> campus_ruleset_p_campus = nullptr;
 
-    // The pointer to the live instance of the campus core class
-    // TODO : This is not an example to good coding practice, need to make safe and modern
+    // The pointer to the live instance of the campus core class.
+    // TODO: This is not an example to good coding practice, need to make safe and modern.
     inline static danger_zone_t* danger_zone_ptr = nullptr;
 #pragma GCC diagnostic pop
 
 public:
     /**
      * Class factory, this is the only method allowed for obtaining an instance of the
-     * class withing a ruleset rule
+     * class withing a ruleset rule.
      *
      * @return danger_zone_t*
      * @throws
@@ -45,7 +45,7 @@ public:
     // }
 
     /**
-     * Call this from within a ruleset rule to send a ROS2 obstacleArray message
+     * Call this from within a ruleset rule to send a ROS2 obstacleArray message.
      *
      * @param[in] std::string : type_name : the name of the class of object detected
      * @param[in] uint : roi : the roi code
@@ -76,7 +76,7 @@ public:
         = 0;
 
     /**
-     * Call this from within a ruleset rule to trigger a log event
+     * Call this from within a ruleset rule to trigger a log event.
      *
      * @param[in] int start_sec
      * @param[in] uint32_t start_nsec
@@ -93,7 +93,7 @@ public:
         std::vector<std::string>topics) = 0;
 
     /**
-     * Call this from within a ruleset rule to trigger a log event
+     * Call this from within a ruleset rule to trigger a log event.
      *
      * @param[in] int seconds_past
      * @param[in] int seconds_forward
@@ -107,7 +107,7 @@ public:
         std::string file_name, std::vector<std::string>topics) = 0;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @throws
      * @exceptsafe yes
@@ -115,7 +115,7 @@ public:
     danger_zone_t() = default;
 
     /**
-     * Destructor, to get rid of annoying build warnings
+     * Destructor, to get rid of annoying build warnings.
      *
      * @throws
      * @exceptsafe yes
@@ -123,7 +123,7 @@ public:
     virtual ~danger_zone_t() = default;
 
     /**
-     * Unit test, needs to be implemented
+     * Unit test, needs to be implemented.
      *
      * @throws
      * @exceptsafe yes

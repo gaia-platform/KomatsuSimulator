@@ -67,7 +67,7 @@ public:
             type_name, roi, direction, pos_x, pos_y, pos_z,
             size_x, size_y, size_z, orient_x, orient_y, orient_z, orient_w)));
 
-        // TODO: get this out of the thread
+        // TODO: get this out of the thread.
         m_obstacles_pub->publish(build_obstacle_array_message(obstacles, frame_id, sec, nsec));
     }
 
@@ -85,7 +85,7 @@ public:
 
         unused(frame_id, sec, nsec);
 
-        // TODO: get this out of the thread
+        // TODO: get this out of the thread.
         // m_obstacles_pub_->publish(build_obstacle_array_message(obstacles, frame_id,  sec, nsec));
     }
 
@@ -93,7 +93,7 @@ public:
         int end_sec, uint32_t end_nsec, std::string file_name,
         std::vector<std::string>topics) override
   {
-    //TODO: we need to debounce this, figure out how to properly handle overlaps
+    // TODO: we need to debounce this, figure out how to properly handle overlaps
 
     auto sc = new SnapshotClient();
     sc->connect(this, m_snapshot_service_name);
@@ -150,11 +150,6 @@ private:
 
     void detection3d_callback(const vision_msgs::msg::Detection3DArray::SharedPtr msg)
     {
-        // TODO: just a test, remove this
-        // send_test_obstacleArray_message();
-
-        // std::unique_lock<std::mutex> lck (mtx,std::defer_lock);
-
         // Prevent two threads from operating on this method simultaneously.
         std::lock_guard<std::mutex> lck(m_mtx);
 
@@ -165,7 +160,7 @@ private:
 
         for (const vision_msgs::msg::Detection3D& detection : msg->detections)
         {
-            // TODO: (markwest) Commented, to get past build.
+            // TODO: (Mark West) Commented, to get past build.
             // RCLCPP_INFO(this->get_logger(), "I saw: '%s'", detection.id.c_str());
             // RCLCPP_INFO(this->get_logger(), "I saw: '%s'", "something");
 
@@ -184,7 +179,7 @@ private:
 
             if (max_hyp.hypothesis.class_id == "")
             {
-                // TODO : Log this?
+                // TODO: Log this?
                 return;
             }
 
