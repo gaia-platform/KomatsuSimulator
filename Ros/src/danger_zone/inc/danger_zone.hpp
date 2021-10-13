@@ -1,3 +1,8 @@
+/////////////////////////////////////////////
+// Copyright (c) Gaia Platform LLC
+// All rights reserved.
+/////////////////////////////////////////////
+
 #pragma once
 
 #include <string>
@@ -18,7 +23,7 @@ protected:
 
     // The pointer to the live instance of the campus core class
     // TODO : This is not an example to good coding practice, need to make safe and modern
-    inline static danger_zone_t* danger_zone_p = nullptr;
+    inline static danger_zone_t* danger_zone_ptr = nullptr;
 #pragma GCC diagnostic pop
 
 public:
@@ -32,12 +37,12 @@ public:
      */
     static danger_zone_t* get_callback_class()
     {
-        return danger_zone_p;
+        return danger_zone_ptr;
     }
 
-    /*static std::shared_ptr<ismartpallet> get_callback_classy(){
-        return std::make_shared<i_Campus>(campus_ruleset_p_campus);
-    }*/
+    // static std::shared_ptr<ismartpallet> get_callback_classy(){
+    //     return std::make_shared<i_Campus>(campus_ruleset_p_campus);
+    // }
 
     /**
      * Call this from within a ruleset rule to send a ROS2 obstacleArray message
@@ -72,7 +77,7 @@ public:
 
     /**
      * Call this from within a ruleset rule to trigger a log event
-     * 
+     *
      * @param[in] int start_sec
      * @param[in] uint32_t start_nsec
      * @param[in] int end_sec
@@ -80,25 +85,25 @@ public:
      * @param[in] std::string file_name
      * @param[in] std::vector<std::string>topics
      * @return void
-     * @throws 
+     * @throws
      * @exceptsafe yes
-     */       
-    virtual void cb_trigger_log( int start_sec, uint32_t start_nsec, 
-        int end_sec, uint32_t end_nsec, std::string file_name, 
+     */
+    virtual void cb_trigger_log(int start_sec, uint32_t start_nsec,
+        int end_sec, uint32_t end_nsec, std::string file_name,
         std::vector<std::string>topics) = 0;
 
     /**
      * Call this from within a ruleset rule to trigger a log event
-     * 
+     *
      * @param[in] int seconds_past
      * @param[in] int seconds_forward
      * @param[in] std::string file_name
      * @param[in] std::vector<std::string>topics
      * @return void
-     * @throws 
+     * @throws
      * @exceptsafe yes
-     */    
-    virtual void cb_trigger_log( int seconds_past, int seconds_forward, 
+     */
+    virtual void cb_trigger_log(int seconds_past, int seconds_forward,
         std::string file_name, std::vector<std::string>topics) = 0;
 
     /**
