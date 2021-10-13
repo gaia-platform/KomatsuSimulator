@@ -41,6 +41,16 @@ public class DetectorGroundTruthSensor : MonoBehaviour
         return new RosMessageTypes.BuiltinInterfaces.TimeMsg((int)span.TotalSeconds, (uint)(span.Ticks * 100));
     }
 
+    private string RemoveParenNumber(string nameIn)
+    {
+        var li = nameIn.LastIndexOf('(');
+
+        if(0 > li)
+            return nameIn;
+
+        return nameIn.Substring(0,li).Trim();
+    }
+
     public RosMessageTypes.Vision.Detection3DArrayMsg FindAllObjects(string tagName)
     {
         RosMessageTypes.Vision.Detection3DArrayMsg detectedObjectArray =
@@ -111,11 +121,12 @@ public class DetectorGroundTruthSensor : MonoBehaviour
             detectedObjectArray.detections[index].header = new RosMessageTypes.Std.HeaderMsg(rosTime, rosFrame);
             detectedObjectArray.detections[index].bbox = new RosMessageTypes.Vision.BoundingBox3DMsg(center, size);
             detectedObjectArray.detections[index].results = new RosMessageTypes.Vision.ObjectHypothesisWithPoseMsg[1];
+            detectedObjectArray.detections[index].id = go.name;
 
             //*** TODO : game object name is not correct here. We want an object type, like 'person' or 'truck'. Maybe we 
             //*** can use a tag for this.
 
-            var hyp = new RosMessageTypes.Vision.ObjectHypothesisMsg(go.name, 1.0);
+            var hyp = new RosMessageTypes.Vision.ObjectHypothesisMsg(RemoveParenNumber(go.name), 1.0);
             var pwc = new RosMessageTypes.Geometry.PoseWithCovarianceMsg(center, covariance);
 
             detectedObjectArray.detections[index].results[0] =
