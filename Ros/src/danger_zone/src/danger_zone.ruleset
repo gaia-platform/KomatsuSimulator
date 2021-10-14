@@ -51,6 +51,30 @@ double red_zone_range = 10.0;
 double yellow_zone_range = 20.0;
 double green_zone_range = 1000.0;
 
+uint get_roi_zone(double pos_x, double pos_z)
+{
+    // Find the distance from the sensor to the detected object.
+    double range = get_range(pos_x, pos_z);
+
+    // Set roi zone to default value.
+    uint roi_zone = RoiZoneCodeDefault;
+
+    if (range < red_zone_range)
+    {
+        roi_zone = RoiZoneCodeRed;
+    }
+    else if (range < yellow_zone_range)
+    {
+        roi_zone = RoiZoneCodeYellow;
+    }
+    else if (range < green_zone_range)
+    {
+        roi_zone = RoiZoneCodeGreen;
+    }
+
+    return roi_zone;
+}
+
 // Here we define our declarative rules.
 //
 ruleset danger_zone_ruleset
@@ -62,30 +86,10 @@ ruleset danger_zone_ruleset
 
     on_insert(d_object)
     {
-        // Find the distance from the sensor to the detected object.
-        double range = get_range(d_object.pos_x, d_object.pos_z);
-
-        // Find the direction of the object relative to the sensor.
-        // double direction = get_direction(d_object.pos_z, d_object.pos_x);
-
-        // Set roi zone to default value.
-        uint roi_zone = RoiZoneCodeDefault;
-        uint direction_zone = DirectionZoneCodeDefault;
-
-        if (red_zone_range > range)
-        {
-            roi_zone = RoiZoneCodeRed;
-        }
-        else if (yellow_zone_range > range)
-        {
-            roi_zone = RoiZoneCodeYellow;
-        }
-        else if (green_zone_range > range)
-        {
-            roi_zone = RoiZoneCodeGreen;
-        }
+        uint roi_zone = get_roi_zone(d_object.pos_x, d_object.pos_z);
 
         // TODO: get direction code
+        uint direction_zone = DirectionZoneCodeDefault;
 
         danger_zone_t::get_callback_class()->cb_send_obstacle_array_message(
             d_object.class_id, roi_zone, direction_zone,

@@ -125,29 +125,10 @@ private:
     // Mutex to lock down detection3d_callback.
     std::mutex m_mtx;
 
-    // The list of Gaia processed obstacles, cleared a dnrefilled with each detection3d_callback.
+    // The list of Gaia processed obstacles.
     std::vector<danger_zone_msgs::msg::Obstacle> m_obstacles;
 
-    gaia::common::gaia_id_t insert_seen_object(
-        std::string object_id, std::string class_id, float score, const char* frame_id,
-        int32_t range_id, int32_t direction_id, int32_t seconds, int32_t nseconds,
-        float pos_x, float pos_y, float pos_z, float size_x, float size_y, float size_z,
-        float orient_x, float orient_y, float orient_z, float orient_w) const
-    {
-        // gaia_log::app().info(
-        //     "insert_seen_object: {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}",
-        //     object_id, class_id, score, frame_id, range_id, direction_id, seconds,
-        //     nseconds, pos_x, pos_y, pos_z, size_x, size_y, size_z, orient_x, orient_y, orient_z, orient_w);
-
-        // Add detected object row to DB.
-        auto detected_object_id = gaia::danger_zone::d_object_t::insert_row(
-            object_id.c_str(), class_id.c_str(), score, frame_id, range_id, direction_id, seconds, nseconds,
-            pos_x, pos_y, pos_z, size_x, size_y, size_z,
-            orient_x, orient_y, orient_z, orient_w);
-
-        return detected_object_id;
-    }
-
+private:
     void detection3d_callback(const vision_msgs::msg::Detection3DArray::SharedPtr msg)
     {
         // Prevent two threads from operating on this method simultaneously.
@@ -189,8 +170,8 @@ private:
             }
 
             // Note: detection.id.c_str() is non-unique ATM, it does not seem an ID either.
-            auto db_detected_object_id = insert_seen_object(
-                detection.id.c_str(), max_hyp.hypothesis.class_id, max_hyp.hypothesis.score,
+            auto db_detected_object_id = gaia::danger_zone::d_object_t::insert_row(
+                detection.id.c_str(), max_hyp.hypothesis.class_id.c_str(), max_hyp.hypothesis.score,
                 detection.header.frame_id.c_str(), 0, 0,
                 detection.header.stamp.sec, detection.header.stamp.nanosec,
                 detection.bbox.center.position.x, detection.bbox.center.position.y,
