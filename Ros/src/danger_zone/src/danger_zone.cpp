@@ -88,7 +88,7 @@ public:
 
     void cb_trigger_log(int start_sec, uint32_t start_nsec, int end_sec, uint32_t end_nsec, std::string file_name, std::vector<std::string> topics) override
     {
-        // TODO: we need to debounce this, figure out how to properly handle overlaps
+        // TODO: we need to debounce this, figure out how to properly handle overlaps.
 
         auto sc = new SnapshotClient();
         sc->connect(this, m_snapshot_service_name);
@@ -106,9 +106,12 @@ public:
 
 private:
     bool m_simple_echo = false;
+
     const std::string m_detected_topic_name = "/komatsu/detections";
     const std::string m_obstacles_topic_name = "/komatsu/obstacles";
-    const std::string m_snapshot_service_name = "trigger_snapshot"; // name found in snapshotter.cpp
+    // Name found in snapshotter.cpp.
+    const std::string m_snapshot_service_name = "trigger_snapshot";
+
     rclcpp::Subscription<vision_msgs::msg::Detection3DArray>::SharedPtr m_detection3d_subscription;
     rclcpp::Publisher<danger_zone_msgs::msg::ObstacleArray>::SharedPtr m_obstacles_pub;
 
@@ -242,7 +245,7 @@ private:
         double size_x, double size_y, double size_z,
         double orient_x, double orient_y, double orient_z, double orient_w) const
     {
-        danger_zone_msgs::msg::Obstacle::UniquePtr obst(new danger_zone_msgs::msg::Obstacle);
+        danger_zone_msgs::msg::Obstacle::UniquePtr obstacle(new danger_zone_msgs::msg::Obstacle);
 
         geometry_msgs::msg::Point::UniquePtr point(new geometry_msgs::msg::Point);
         point->x = pos_x;
@@ -268,12 +271,12 @@ private:
         bbox->center = *pose;
         bbox->size = *size;
 
-        obst->type = type_name;
-        obst->roi = roi;
-        obst->direction = direction;
-        obst->bounds = *bbox;
+        obstacle->type = type_name;
+        obstacle->roi = roi;
+        obstacle->direction = direction;
+        obstacle->bounds = *bbox;
 
-        return obst;
+        return obstacle;
     }
 
     //    danger_zone_msgs::msg::ObstacleArray::UniquePtr build_obstacle_array_message(
