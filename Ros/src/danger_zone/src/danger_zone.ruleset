@@ -55,6 +55,11 @@ double green_zone_range = 1000.0;
 //
 ruleset danger_zone_ruleset
 {
+    on_insert(detection)
+    {
+        // TODO: collect detected objects, fire message, then delete the data from the database.
+    }
+
     on_insert(d_object)
     {
         // Find the distance from the sensor to the detected object.
