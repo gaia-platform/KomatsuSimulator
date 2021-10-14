@@ -1,3 +1,8 @@
+/////////////////////////////////////////////
+// Copyright (c) Gaia Platform LLC
+// All rights reserved.
+/////////////////////////////////////////////
+
 //*****************************************************************************
 //*
 //* Dependencies: Requires Gaia preview (without libc++) or later, Gaia March
@@ -38,8 +43,8 @@ public:
     subscriber_node_t()
         : Node("danger_zone_ros")
     {
-        // TODO : yes, I know, make this modern
-        danger_zone_p = static_cast<danger_zone_t*>(this);
+        // TODO: make this modern.
+        danger_zone_ptr = static_cast<danger_zone_t*>(this);
 
         m_detection3d_subscription = this->create_subscription<vision_msgs::msg::Detection3DArray>(
             m_detected_topic_name, 10, std::bind(&subscriber_node_t::detection3d_callback, this, _1));
@@ -48,7 +53,7 @@ public:
             m_obstacles_topic_name, 1);
     }
 
-    //*** iDangerZone interface ***
+    // danger_zone interface.
 
     void cb_send_obstacle_array_message_old(
         std::string type_name, uint roi, uint direction,
@@ -62,7 +67,7 @@ public:
             type_name, roi, direction, pos_x, pos_y, pos_z,
             size_x, size_y, size_z, orient_x, orient_y, orient_z, orient_w)));
 
-        // TODO : get this out of the thread
+        // TODO: get this out of the thread.
         m_obstacles_pub->publish(build_obstacle_array_message(obstacles, frame_id, sec, nsec));
     }
 
@@ -79,9 +84,6 @@ public:
             size_x, size_y, size_z, orient_x, orient_y, orient_z, orient_w)));
 
         unused(frame_id, sec, nsec);
-
-        // TODO : get this out of the thread
-        // m_obstacles_pub_->publish(build_obstacle_array_message(obstacles, frame_id,  sec, nsec));
     }
 
     void cb_trigger_log(int start_sec, uint32_t start_nsec, int end_sec, uint32_t end_nsec, std::string file_name, std::vector<std::string> topics) override
@@ -133,7 +135,7 @@ private:
         }
 
         // Add detected object row to DB.
-        gaia::danger_zone::dobject_t::insert_row(
+        gaia::danger_zone::d_object_t::insert_row(
             object_id.c_str(), class_id.c_str(), score, frame_id, range_id, direction_id, seconds, nseconds,
             pos_x, pos_y, pos_z, size_x, size_y, size_z,
             orient_x, orient_y, orient_z, orient_w);
@@ -143,17 +145,17 @@ private:
 
     void detection3d_callback(const vision_msgs::msg::Detection3DArray::SharedPtr msg)
     {
-        // prevent two threads from operating on this method simultaneously
+        // Prevent two threads from operating on this method simultaneously.
         std::lock_guard<std::mutex> lck(m_mtx);
 
-        // upon entry, clear all obstacles from list
+        // Upon entry, clear all obstacles from list.
         m_obstacles.clear();
 
         std::vector<danger_zone_msgs::msg::Obstacle> obstacles;
 
         for (const vision_msgs::msg::Detection3D& detection : msg->detections)
         {
-            // TODO MW : To get past build
+            // TODO: (Mark West) Commented, to get past build.
             // RCLCPP_INFO(this->get_logger(), "I saw: '%s'", detection.id.c_str());
             // RCLCPP_INFO(this->get_logger(), "I saw: '%s'", "something");
 
@@ -176,22 +178,30 @@ private:
                 return;
             }
 
+            // Note: detection.id.c_str() is non-unique ATM, it does not seem an ID either.
             insert_seen_object(
-                detection.id.c_str(), max_hyp.hypothesis.class_id, max_hyp.hypothesis.score, detection.header.frame_id.c_str(), 0, 0,
-                detection.header.stamp.sec, detection.header.stamp.nanosec, detection.bbox.center.position.x,
-                detection.bbox.center.position.y, detection.bbox.center.position.z, detection.bbox.size.x,
-                detection.bbox.size.y, detection.bbox.size.z, max_hyp.pose.pose.orientation.x,
-                max_hyp.pose.pose.orientation.y, max_hyp.pose.pose.orientation.z, max_hyp.pose.pose.orientation.w);
+                detection.id.c_str(), max_hyp.hypothesis.class_id, max_hyp.hypothesis.score,
+                detection.header.frame_id.c_str(), 0, 0,
+                detection.header.stamp.sec, detection.header.stamp.nanosec,
+                detection.bbox.center.position.x, detection.bbox.center.position.y,
+                detection.bbox.center.position.z,
+                detection.bbox.size.x, detection.bbox.size.y, detection.bbox.size.z,
+                max_hyp.pose.pose.orientation.x, max_hyp.pose.pose.orientation.y,
+                max_hyp.pose.pose.orientation.z, max_hyp.pose.pose.orientation.w);
 
             if (m_simple_echo)
             {
                 obstacles.push_back(*(build_obstacle_message(
                     max_hyp.hypothesis.class_id,
-                    static_cast<int>(zones_t::get_singleton()->get_range_zone_id(detection.bbox.center.position.x, detection.bbox.center.position.z)),
-                    static_cast<int>(zones_t::get_singleton()->get_direction_zone_id(detection.bbox.center.position.z, detection.bbox.center.position.x)),
-                    detection.bbox.center.position.x, detection.bbox.center.position.y, detection.bbox.center.position.z,
+                    static_cast<int>(zones_t::get_singleton()->get_range_zone_id(
+                        detection.bbox.center.position.x, detection.bbox.center.position.z)),
+                    static_cast<int>(zones_t::get_singleton()->get_direction_zone_id(
+                        detection.bbox.center.position.z, detection.bbox.center.position.x)),
+                    detection.bbox.center.position.x, detection.bbox.center.position.y,
+                    detection.bbox.center.position.z,
                     detection.bbox.size.x, detection.bbox.size.y, detection.bbox.size.z,
-                    max_hyp.pose.pose.orientation.x, max_hyp.pose.pose.orientation.y, max_hyp.pose.pose.orientation.z, max_hyp.pose.pose.orientation.w)));
+                    max_hyp.pose.pose.orientation.x, max_hyp.pose.pose.orientation.y,
+                    max_hyp.pose.pose.orientation.z, max_hyp.pose.pose.orientation.w)));
             }
         }
 
