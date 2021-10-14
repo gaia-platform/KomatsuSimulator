@@ -35,14 +35,10 @@ public:
      * @throws
      * @exceptsafe yes
      */
-    static danger_zone_t* get_callback_class()
+    static danger_zone_t* get_callback_instance()
     {
         return danger_zone_ptr;
     }
-
-    // static std::shared_ptr<ismartpallet> get_callback_classy(){
-    //     return std::make_shared<i_Campus>(campus_ruleset_p_campus);
-    // }
 
     /**
      * Call this from within a ruleset rule to send a ROS2 obstacleArray message.

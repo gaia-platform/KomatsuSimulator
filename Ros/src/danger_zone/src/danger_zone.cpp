@@ -141,6 +141,7 @@ private:
 
         gaia::db::begin_transaction();
 
+        // Create a detection record to reference all detected objects.
         auto db_detection_id = gaia::danger_zone::detection_t::insert_row(false);
         auto db_detection = gaia::danger_zone::detection_t::get(db_detection_id);
 
@@ -179,9 +180,9 @@ private:
                 detection.bbox.size.x, detection.bbox.size.y, detection.bbox.size.z,
                 max_hyp.pose.pose.orientation.x, max_hyp.pose.pose.orientation.y,
                 max_hyp.pose.pose.orientation.z, max_hyp.pose.pose.orientation.w);
-
             auto db_detected_object = gaia::danger_zone::d_object_t::get(db_detected_object_id);
 
+            // Add the detected object to our detection record.
             db_detection.d_objects().connect(db_detected_object);
 
             if (m_simple_echo)
