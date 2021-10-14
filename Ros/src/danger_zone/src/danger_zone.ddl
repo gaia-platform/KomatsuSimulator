@@ -5,14 +5,9 @@
 
 database danger_zone
 
-table detectron (
-    id string unique
-)
-
-table detected (
-    count int32,
-    changed int32,
-    d_objects references d_object[]
+table detection (
+    d_objects references d_object[],
+    dummy bool
 )
 
 table object (
@@ -60,7 +55,7 @@ table d_object (
     orient_z float,
     orient_w float,
 
-    detected references detected
+    detection references detection
 )
 
 
