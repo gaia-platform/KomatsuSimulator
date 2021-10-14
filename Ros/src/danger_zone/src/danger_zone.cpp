@@ -128,28 +128,24 @@ private:
     // The list of Gaia processed obstacles, cleared a dnrefilled with each detection3d_callback.
     std::vector<danger_zone_msgs::msg::Obstacle> m_obstacles;
 
-    void insert_seen_object(
+    gaia::common::gaia_id_t insert_seen_object(
         std::string object_id, std::string class_id, float score, const char* frame_id,
         int32_t range_id, int32_t direction_id, int32_t seconds, int32_t nseconds,
         float pos_x, float pos_y, float pos_z, float size_x, float size_y, float size_z,
         float orient_x, float orient_y, float orient_z, float orient_w) const
     {
-        gaia::db::begin_transaction();
-
         // gaia_log::app().info(
         //     "insert_seen_object: {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}",
         //     object_id, class_id, score, frame_id, range_id, direction_id, seconds,
         //     nseconds, pos_x, pos_y, pos_z, size_x, size_y, size_z, orient_x, orient_y, orient_z, orient_w);
 
         // Add detected object row to DB.
-        auto id = gaia::danger_zone::d_object_t::insert_row(
+        auto detected_object_id = gaia::danger_zone::d_object_t::insert_row(
             object_id.c_str(), class_id.c_str(), score, frame_id, range_id, direction_id, seconds, nseconds,
             pos_x, pos_y, pos_z, size_x, size_y, size_z,
             orient_x, orient_y, orient_z, orient_w);
 
-        unused(id);
-
-        gaia::db::commit_transaction();
+        return detected_object_id;
     }
 
     void detection3d_callback(const vision_msgs::msg::Detection3DArray::SharedPtr msg)
@@ -161,6 +157,11 @@ private:
         m_obstacles.clear();
 
         std::vector<danger_zone_msgs::msg::Obstacle> obstacles;
+
+        gaia::db::begin_transaction();
+
+        auto db_detection_id = gaia::danger_zone::detection_t::insert_row(false);
+        auto db_detection = gaia::danger_zone::detection_t::get(db_detection_id);
 
         for (const vision_msgs::msg::Detection3D& detection : msg->detections)
         {
@@ -184,11 +185,11 @@ private:
             if (max_hyp.hypothesis.class_id == "")
             {
                 // TODO: Log this?
-                return;
+                continue;
             }
 
             // Note: detection.id.c_str() is non-unique ATM, it does not seem an ID either.
-            insert_seen_object(
+            auto db_detected_object_id = insert_seen_object(
                 detection.id.c_str(), max_hyp.hypothesis.class_id, max_hyp.hypothesis.score,
                 detection.header.frame_id.c_str(), 0, 0,
                 detection.header.stamp.sec, detection.header.stamp.nanosec,
@@ -197,6 +198,10 @@ private:
                 detection.bbox.size.x, detection.bbox.size.y, detection.bbox.size.z,
                 max_hyp.pose.pose.orientation.x, max_hyp.pose.pose.orientation.y,
                 max_hyp.pose.pose.orientation.z, max_hyp.pose.pose.orientation.w);
+
+            auto db_detected_object = gaia::danger_zone::d_object_t::get(db_detected_object_id);
+
+            db_detection.d_objects().connect(db_detected_object);
 
             if (m_simple_echo)
             {
@@ -213,6 +218,8 @@ private:
                     max_hyp.pose.pose.orientation.z, max_hyp.pose.pose.orientation.w)));
             }
         }
+
+        gaia::db::commit_transaction();
 
         if (m_simple_echo)
         {
