@@ -56,15 +56,15 @@ ruleset objects_detection
 
     on_update(d_object.zone_id)
     {
-        object_t obj = *object_t::list()
+        auto obj = object_t::list()
                    .where(object_expr::id == d_object.object_id)
                    .begin();
 
-        if (obj.zone_id() != d_object.zone_id)
+        if (obj->zone_id() != d_object.zone_id)
         {
             zone_transition_event.insert(
-                object_id: obj.id(),
-                from_zone_id: obj.zone_id(),
+                object_id: obj->id(),
+                from_zone_id: obj->zone_id(),
                 to_zone_id: d_object.zone_id);
         }
     }
@@ -80,7 +80,7 @@ ruleset zone_transition : serial_group()
 {
     on_insert(event:zone_transition_event)
     {
-        object_t obj = *object_t::list()
+        auto obj = object_t::list()
             .where(object_expr::id == event.object_id)
             .begin();
 
@@ -89,7 +89,7 @@ ruleset zone_transition : serial_group()
             event.object_id, zones_t::zone_id_str(event.from_zone_id),
             zones_t::zone_id_str(event.to_zone_id));
 
-        object_writer obj_w = obj.writer();
+        object_writer obj_w = obj->writer();
         obj_w.zone_id = event.to_zone_id;
         obj_w.update_row();
     }
