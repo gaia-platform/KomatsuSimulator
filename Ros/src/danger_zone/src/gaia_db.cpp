@@ -15,8 +15,6 @@ void initialize_zones()
 {
     std::vector zones = {zones_t::c_green_zone, zones_t::c_yellow_zone, zones_t::c_red_zone};
 
-    gaia::db::begin_transaction();
-
     for (uint8_t zone_id : zones)
     {
         auto zone_iter = zone_t::list().where(zone_expr::id == zone_id);
@@ -27,8 +25,6 @@ void initialize_zones()
             zone_t::insert_row(zone_id);
         }
     }
-
-    gaia::db::commit_transaction();
 }
 
 object_t get_object(const char* object_id, const char* class_id)

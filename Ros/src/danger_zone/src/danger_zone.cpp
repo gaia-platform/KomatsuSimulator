@@ -225,7 +225,9 @@ int main(int argc, char* argv[])
 {
     gaia::system::initialize();
 
+    gaia::db::begin_transaction();
     initialize_zones();
+    gaia::db::commit_transaction();
 
     rclcpp::init(argc, argv);
     rclcpp::spin(std::make_shared<subscriber_node_t>());
