@@ -31,22 +31,15 @@ table detection (
 )
 
 table d_object (
-    -- Does not create a real relationship to the object to reduce contention on insertion/deletion.
+    -- Does not create a real relationship to the object, to reduce contention on insertion/deletion.
     object_id string,
 
     -- Detection score.
     score float,
 
-    -- Identifier of detection frame.
-    frame_id string,
-
     -- Range and direction detected.
     range_id int32,
     direction_id int32,
-
-    -- Seconds/nanoseconds of detection frame.
-    seconds int32,
-    nseconds int32,
 
     -- Position coordinates.
     pos_x float,
@@ -65,7 +58,7 @@ table d_object (
     orient_w float,
 
     -- Zone, numeric values gets 0 as default value,
-    -- which corresponds to zones_t::c_no_zone
+    -- which corresponds to zones_t::c_no_zone.
     zone_id uint8,
 
     detection references detection
