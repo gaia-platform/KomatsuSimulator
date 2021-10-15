@@ -5,8 +5,6 @@
 
 #include "zones.hpp"
 
-#include "gaia/logger.hpp"
-
 double zones_t::get_range(double x, double y)
 {
     return std::sqrt(x * x + y * y);
@@ -45,4 +43,14 @@ uint8_t zones_t::get_direction_zone_id(double z, double x)
     }
 
     return c_default_angle_id;
+}
+
+uint8_t zones_t::convert_zone_id_to_simulation_id(uint8_t zone_id)
+{
+    if (zone_id == c_no_zone)
+    {
+        return 4;
+    }
+
+    return zone_id - 1;
 }
