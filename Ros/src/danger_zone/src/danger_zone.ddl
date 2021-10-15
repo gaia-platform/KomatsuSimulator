@@ -71,6 +71,15 @@ table d_object (
     detection references detection
 )
 
+---
+--- Events
+---
+
+table zone_transition_event (
+    object_id string,
+    from_zone_id uint8,
+    to_zone_id uint8
+)
 
 --
 -- Actions

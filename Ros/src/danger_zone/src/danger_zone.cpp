@@ -114,6 +114,8 @@ public:
     subscriber_node_t()
         : Node("danger_zone_ros")
     {
+        init_zones();
+
         // TODO: make this modern.
         danger_zone_ptr = static_cast<danger_zone_t*>(this);
 
@@ -232,6 +234,26 @@ private:
         }
 
         return db_object;
+    }
+
+    void init_zones()
+    {
+        std::vector zones = {zones_t::c_green_zone, zones_t::c_yellow_zone, zones_t::c_red_zone};
+
+        gaia::db::begin_transaction();
+
+        for (uint8_t zone_id : zones)
+        {
+            auto zone_iter = zone_t::list().where(zone_expr::id == zone_id);
+
+            if (zone_iter.begin() == zone_iter.end())
+            {
+                gaia_log::app().info("Creating {} zone.", zones_t::zone_id_str(zone_id));
+                zone_t::insert_row(zone_id);
+            }
+        }
+
+        gaia::db::commit_transaction();
     }
 
 private:

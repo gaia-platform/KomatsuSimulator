@@ -23,7 +23,7 @@ const int c_log_seconds_forward = 25;
 
 using namespace gaia::danger_zone;
 
-ruleset danger_zone_ruleset
+ruleset objects_detection
 {
     on_insert(detection)
     {
@@ -62,14 +62,35 @@ ruleset danger_zone_ruleset
 
         if (obj.zone_id() != d_object.zone_id)
         {
-            gaia_log::app().info(
-                "Object:{} transitioning from zone:{} to zone:{}",
-                obj.id(), zones_t::zone_id_str(obj.zone_id()),
-                zones_t::zone_id_str(d_object.zone_id));
-
-            object_writer obj_w = obj.writer();
-            obj_w.zone_id = d_object.zone_id;
-            obj_w.update_row();
+            zone_transition_event.insert(
+                object_id: obj.id(),
+                from_zone_id: obj.zone_id(),
+                to_zone_id: d_object.zone_id);
         }
+    }
+}
+
+/**
+ * This ruleset handles the transition of object from one zone to
+ * another. The ruleset is marked as serial_group() to make the
+ * rules within it to run serially. This avoid transaction conflicts
+ * when adding/removing objects from the zone table.
+ */
+ruleset zone_transition : serial_group()
+{
+    on_insert(event:zone_transition_event)
+    {
+         object_t obj = *object_t::list()
+              .where(object_expr::id == event.object_id)
+              .begin();
+
+        gaia_log::app().info(
+            "Object:{} transitioning from zone:{} to zone:{}",
+            event.object_id, zones_t::zone_id_str(event.from_zone_id),
+            zones_t::zone_id_str(event.to_zone_id));
+
+        object_writer obj_w = obj.writer();
+        obj_w.zone_id = event.to_zone_id;
+        obj_w.update_row();
     }
 }
