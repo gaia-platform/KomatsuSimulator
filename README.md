@@ -172,7 +172,8 @@ There are several levels of development possible. It is possible to work in only
 4. Now everything is running. Watch the simulator run, look at ROS messages, etc.
 
 5. Stop danger_zone.
-   - Go in the danger_zone terminal: `<ctrl>C`.
+   - Go in the danger_zone terminal:
+        `<ctrl>C`
 
 The Gaia schema and rules are in the danger_zone ROS2 project. Standard ROS2 dev practices apply.
 
