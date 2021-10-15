@@ -3,21 +3,12 @@
 // All rights reserved.
 /////////////////////////////////////////////
 
-//*****************************************************************************
-//*
-//* Dependencies: Requires Gaia preview (without libc++) or later, Gaia March
-//* 2021 will not work
-//*
-//*****************************************************************************
-
 #include "danger_zone.hpp"
 
 #include <functional>
 #include <memory>
 #include <mutex>
 
-#include "../inc/snapshot_client.hpp"
-#include <danger_zone_msgs/msg/obstacle.hpp>
 #include <danger_zone_msgs/msg/obstacle_array.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <vision_msgs/msg/detection3_d.hpp>
@@ -28,9 +19,9 @@
 #include "gaia/system.hpp"
 
 #include "gaia_danger_zone.h"
-#include "zones.hpp"
+#include "snapshot_client.hpp"
 
-using std::placeholders::_1;
+using namespace gaia::danger_zone;
 
 template <typename... T_args>
 inline void unused(T_args&&...)
@@ -54,22 +45,6 @@ public:
     }
 
     // danger_zone interface.
-
-    void cb_send_obstacle_array_message_old(
-        std::string type_name, uint roi, uint direction,
-        double pos_x, double pos_y, double pos_z,
-        double size_x, double size_y, double size_z,
-        double orient_x, double orient_y, double orient_z, double orient_w,
-        std::string frame_id, int32_t sec, uint32_t nsec) const
-    {
-        std::vector<danger_zone_msgs::msg::Obstacle> obstacles;
-        obstacles.push_back(*(build_obstacle_message(
-            type_name, roi, direction, pos_x, pos_y, pos_z,
-            size_x, size_y, size_z, orient_x, orient_y, orient_z, orient_w)));
-
-        // TODO: get this out of the thread.
-        m_obstacles_pub->publish(build_obstacle_array_message(obstacles, frame_id, sec, nsec));
-    }
 
     void cb_send_obstacle_array_message(
         std::string type_name, uint roi, uint direction,
@@ -105,8 +80,6 @@ public:
     }
 
 private:
-    bool m_simple_echo = false;
-
     const std::string m_detected_topic_name = "/komatsu/detections";
     const std::string m_obstacles_topic_name = "/komatsu/obstacles";
     // Name found in snapshotter.cpp.
@@ -132,11 +105,30 @@ private:
         //     object_id, class_id, score, frame_id, range_id, direction_id, seconds,
         //     nseconds, pos_x, pos_y, pos_z, size_x, size_y, size_z, orient_x, orient_y, orient_z, orient_w);
 
+        auto object_iter = object_t::list().where(
+            object_expr::object_id == object_id
+            && object_expr::class_id == class_id);
+
+        object_t db_object;
+
+        if (object_iter.begin() == object_iter.end())
+        {
+            std::string db_object_id = class_id + " " + object_id;
+
+            db_object = object_t::get(
+                object_t::insert_row(db_object_id.c_str(), object_id.c_str(), class_id.c_str()));
+        }
+        else
+        {
+            db_object = *object_iter.begin();
+        }
+
         // Add detected object row to DB.
-        auto detected_object_id = gaia::danger_zone::d_object_t::insert_row(
-            object_id.c_str(), class_id.c_str(), score, frame_id, range_id, direction_id, seconds, nseconds,
-            pos_x, pos_y, pos_z, size_x, size_y, size_z,
-            orient_x, orient_y, orient_z, orient_w);
+        auto detected_object_id
+            = gaia::danger_zone::d_object_t::insert_row(
+                db_object.id(), score, frame_id, range_id, direction_id, seconds, nseconds,
+                pos_x, pos_y, pos_z, size_x, size_y, size_z,
+                orient_x, orient_y, orient_z, orient_w, 0);
 
         return detected_object_id;
     }
@@ -195,31 +187,11 @@ private:
             auto db_detected_object = gaia::danger_zone::d_object_t::get(db_detected_object_id);
 
             db_detection.d_objects().connect(db_detected_object);
-
-            if (m_simple_echo)
-            {
-                obstacles.push_back(*(build_obstacle_message(
-                    max_hyp.hypothesis.class_id,
-                    static_cast<int>(zones_t::get_singleton()->get_range_zone_id(
-                        detection.bbox.center.position.x, detection.bbox.center.position.z)),
-                    static_cast<int>(zones_t::get_singleton()->get_direction_zone_id(
-                        detection.bbox.center.position.z, detection.bbox.center.position.x)),
-                    detection.bbox.center.position.x, detection.bbox.center.position.y,
-                    detection.bbox.center.position.z,
-                    detection.bbox.size.x, detection.bbox.size.y, detection.bbox.size.z,
-                    max_hyp.pose.pose.orientation.x, max_hyp.pose.pose.orientation.y,
-                    max_hyp.pose.pose.orientation.z, max_hyp.pose.pose.orientation.w)));
-            }
         }
 
         gaia::db::commit_transaction();
 
-        if (m_simple_echo)
-        {
-            m_obstacles_pub->publish(build_obstacle_array_message(
-                obstacles, msg->header.frame_id, msg->header.stamp.sec, msg->header.stamp.nanosec));
-        }
-        else if (!m_obstacles.empty())
+        if (!m_obstacles.empty())
         {
             m_obstacles_pub->publish(build_obstacle_array_message(
                 m_obstacles, msg->header.frame_id, msg->header.stamp.sec, msg->header.stamp.nanosec));
@@ -247,8 +219,7 @@ private:
 
     danger_zone_msgs::msg::Obstacle::UniquePtr build_obstacle_message(
         std::string type_name, uint roi, uint direction,
-        double pos_x, double pos_y, double pos_z,
-        double size_x, double size_y, double size_z,
+        double pos_x, double pos_y, double pos_z, double size_x, double size_y, double size_z,
         double orient_x, double orient_y, double orient_z, double orient_w) const
     {
         danger_zone_msgs::msg::Obstacle::UniquePtr obstacle(new danger_zone_msgs::msg::Obstacle);
@@ -284,29 +255,6 @@ private:
 
         return obstacle;
     }
-
-    //    danger_zone_msgs::msg::ObstacleArray::UniquePtr build_obstacle_array_message(
-    //        std::string type_name, uint roi, uint direction,
-    //        double pos_x, double pos_y, double pos_z,
-    //        double size_x, double size_y, double size_z,
-    //        double orient_x, double orient_y, double orient_z, double orient_w,
-    //        std::string frame_id, int32_t sec, uint32_t nsec) const
-    //    {
-    //        std::vector<danger_zone_msgs::msg::Obstacle> obstacles;
-    //        obstacles.push_back(*(build_obstacle_message(
-    //            type_name, roi, direction, pos_x, pos_y, pos_z,
-    //            size_x, size_y, size_z, orient_x, orient_y, orient_z, orient_w)));
-    //
-    //        return build_obstacle_array_message(obstacles, frame_id, sec, nsec);
-    //    }
-
-    //    void send_test_obstacle_array_message() const
-    //    {
-    //        auto obstacle_array = build_obstacle_array_message(
-    //            "theType", 1, 1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, "theFrame", 1, 1);
-    //
-    //        m_obstacles_pub->publish(std::move(obstacle_array));
-    //    }
 };
 
 int main(int argc, char* argv[])

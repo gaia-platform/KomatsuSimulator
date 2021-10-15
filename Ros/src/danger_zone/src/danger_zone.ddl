@@ -11,19 +11,15 @@ table detection (
 )
 
 table object (
+    -- For now this ID is just a merge of class_id + object_id. Will change.
+    id string unique,
     object_id string,
     class_id string
 )
 
 table d_object (
-    -- This id arrives from the simulation and it is a non-unique string.
-    -- It most likely denotes the ID of an object within the simulation
-    -- and it can't be used as ID of an "observer object" because the same object
-    -- can be observed many times.
+    -- Does not create a real relationship to the object to reduce contention on insertion/deletion.
     object_id string,
-
-    -- Class of detected object.
-    class_id string,
 
     -- Detection score.
     score float,
@@ -54,6 +50,10 @@ table d_object (
     orient_y float,
     orient_z float,
     orient_w float,
+
+    -- Zone, numeric values gets 0 as default value,
+    -- which corresponds to zones_t::c_no_zone
+    zone uint8,
 
     detection references detection
 )

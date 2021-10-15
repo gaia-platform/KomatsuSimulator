@@ -1,9 +1,7 @@
-#*****************************************************************************
-#*
-#* Dependencies: Requires Gaia preview (without libc++) or later, Gaia March 
-#* 2021 will not work
-#*
-#*****************************************************************************
+#############################################
+# Copyright (c) Gaia Platform LLC
+# All rights reserved.
+#############################################
 
 cmake_minimum_required(VERSION 3.5)
 
@@ -70,6 +68,7 @@ translate_ruleset(
 add_executable(danger_zone
   src/danger_zone.cpp
   src/snapshot_client.cpp
+  src/zones.cpp
 )
 
 target_add_gaia_generated_sources(danger_zone)
