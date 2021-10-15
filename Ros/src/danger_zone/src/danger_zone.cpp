@@ -114,21 +114,6 @@ struct danger_zone_obstacles_t : public obstacles_t
 
         return obstacle;
     }
-
-    static danger_zone_msgs::msg::ObstacleArray::UniquePtr build_obstacle_array_message(
-        std::string type_name, uint roi, uint direction,
-        double pos_x, double pos_y, double pos_z,
-        double size_x, double size_y, double size_z,
-        double orient_x, double orient_y, double orient_z, double orient_w,
-        std::string frame_id, int32_t sec, uint32_t nsec)
-    {
-        std::vector<danger_zone_msgs::msg::Obstacle> obstacles;
-        obstacles.push_back(*(build_obstacle_message(
-            type_name, roi, direction, pos_x, pos_y, pos_z,
-            size_x, size_y, size_z, orient_x, orient_y, orient_z, orient_w)));
-
-        return build_obstacle_array_message(obstacles, frame_id, sec, nsec);
-    }
 };
 
 std::shared_ptr<obstacles_t> obstacles_t::new_instance()
@@ -235,14 +220,6 @@ private:
         }
 
         gaia::db::commit_transaction();
-    }
-
-    void send_test_obstacle_array_message() const
-    {
-        auto obstacle_array = danger_zone_obstacles_t::build_obstacle_array_message(
-            "theType", 1, 1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, "theFrame", 1, 1);
-
-        m_obstacles_pub->publish(std::move(obstacle_array));
     }
 
 private:
