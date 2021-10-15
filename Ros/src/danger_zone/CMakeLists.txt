@@ -69,6 +69,7 @@ add_executable(danger_zone
   src/danger_zone.cpp
   src/snapshot_client.cpp
   src/zones.cpp
+  src/gaia_db.cpp
 )
 
 target_add_gaia_generated_sources(danger_zone)
@@ -80,7 +81,7 @@ install(TARGETS
   danger_zone
   DESTINATION lib/${PROJECT_NAME})
 
-install(DIRECTORY 
+install(DIRECTORY
   launch
   DESTINATION share/${PROJECT_NAME})
 

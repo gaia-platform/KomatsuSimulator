@@ -19,6 +19,7 @@
 #include "gaia/system.hpp"
 
 #include "gaia_danger_zone.h"
+#include "gaia_db.hpp"
 #include "snapshot_client.hpp"
 #include "zones.hpp"
 
@@ -114,8 +115,6 @@ public:
     subscriber_node_t()
         : Node("danger_zone_ros")
     {
-        init_zones();
-
         // TODO: make this modern.
         danger_zone_ptr = static_cast<danger_zone_t*>(this);
 
@@ -192,12 +191,11 @@ private:
                 continue;
             }
 
-            object_t object = find_object(detection.id.c_str(), max_hyp.hypothesis.class_id.c_str());
+            object_t object = get_object(detection.id.c_str(), max_hyp.hypothesis.class_id.c_str());
 
             // Note: detection.id.c_str() is non-unique ATM, it does not seem an ID either.
             auto db_detected_object_id = gaia::danger_zone::d_object_t::insert_row(
-                object.id(), max_hyp.hypothesis.score, detection.header.frame_id.c_str(),
-                0, 0, detection.header.stamp.sec, detection.header.stamp.nanosec,
+                object.id(), max_hyp.hypothesis.score, 0, 0,
                 detection.bbox.center.position.x, detection.bbox.center.position.y,
                 detection.bbox.center.position.z,
                 detection.bbox.size.x, detection.bbox.size.y, detection.bbox.size.z,
@@ -208,49 +206,6 @@ private:
 
             // Add the detected object to our detection record.
             db_detection.d_objects().connect(db_detected_object);
-        }
-
-        gaia::db::commit_transaction();
-    }
-
-    object_t find_object(const char* object_id, const char* class_id)
-    {
-        auto object_iter = object_t::list().where(
-            object_expr::id == object_id);
-
-        object_t db_object;
-
-        if (object_iter.begin() == object_iter.end())
-        {
-            gaia_log::app().info("Found new object: {}", object_id);
-
-            // The object_id is in the form: 'Person (12)'.
-            db_object = object_t::get(
-                object_t::insert_row(object_id, class_id, zones_t::c_no_zone));
-        }
-        else
-        {
-            db_object = *object_iter.begin();
-        }
-
-        return db_object;
-    }
-
-    void init_zones()
-    {
-        std::vector zones = {zones_t::c_green_zone, zones_t::c_yellow_zone, zones_t::c_red_zone};
-
-        gaia::db::begin_transaction();
-
-        for (uint8_t zone_id : zones)
-        {
-            auto zone_iter = zone_t::list().where(zone_expr::id == zone_id);
-
-            if (zone_iter.begin() == zone_iter.end())
-            {
-                gaia_log::app().info("Creating {} zone.", zones_t::zone_id_str(zone_id));
-                zone_t::insert_row(zone_id);
-            }
         }
 
         gaia::db::commit_transaction();
@@ -269,6 +224,10 @@ private:
 int main(int argc, char* argv[])
 {
     gaia::system::initialize();
+
+    gaia::db::begin_transaction();
+    initialize_zones();
+    gaia::db::commit_transaction();
 
     rclcpp::init(argc, argv);
     rclcpp::spin(std::make_shared<subscriber_node_t>());

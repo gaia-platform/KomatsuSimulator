@@ -32,7 +32,7 @@ ruleset objects_detection
         for (detection->obj:d_object)
         {
             // Sets the zone using the distance from the sensor to the detected object.
-            // TODO: unclear why pos_z works better than pos_y (this is how it was at the beginning).s
+            // TODO: unclear why pos_z works better than pos_y (this is how it was at the beginning).
             obj.zone_id = zones_t::get_range_zone_id(obj.pos_x, obj.pos_z);
 
             // Find the direction of the object relative to the sensor.
@@ -42,7 +42,7 @@ ruleset objects_detection
             // TODO: the first argument is the class_id and is currently not used
             //  by the simulation. Putting a placeholder for now.
             obstacles->add(
-                "placeholder", obj.zone_id, direction_zone,
+                "_", obj.zone_id, direction_zone,
                 obj.pos_x, obj.pos_y, obj.pos_z,
                 obj.size_x, obj.size_y, obj.size_z,
                 obj.orient_x, obj.orient_y, obj.orient_z, obj.orient_w);

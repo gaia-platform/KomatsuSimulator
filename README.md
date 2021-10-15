@@ -146,24 +146,36 @@ There are several levels of development possible. It is possible to work in only
 
 1. Start ros-unity bridge.
    - Open a terminal.
-   - Start ROS-TCP-Endpoint: `ros2 launch danger_zone bridge_launch.py`.
+   - Start ROS-TCP-Endpoint:
+        ```bash
+        ros2 launch danger_zone bridge_launch.py
+        ```
    - Leave terminal open.
 
 2. Start simulator.
    - Open terminal
    - Move to install location of simulator
-   - Start the simulator: `./Builds/GaiaMine.x86_64`.
+   - Start the simulator:
+        ```bash
+        ./Builds/GaiaMine.x86_64
+        ```
    - Leave terminal open.
 
 3. Start danger zone.
    - Open a terminal.
-   - Start danger_zone: `ros2 launch danger_zone node_launch.py`.
+   - Start danger_zone:
+        ```bash
+        ros2 launch danger_zone node_launch.py
+        ```
    - Leave terminal open.
 
 4. Now everything is running. Watch the simulator run, look at ROS messages, etc.
 
 5. Stop danger_zone.
-   - Go in the danger_zone terminal: `<ctrl>C`.
+   - Go in the danger_zone terminal:
+        ```
+        <ctrl>C
+        ```
 
 The Gaia schema and rules are in the danger_zone ROS2 project. Standard ROS2 dev practices apply.
 
