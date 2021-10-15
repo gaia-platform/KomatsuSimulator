@@ -80,9 +80,9 @@ ruleset zone_transition : serial_group()
 {
     on_insert(event:zone_transition_event)
     {
-         object_t obj = *object_t::list()
-              .where(object_expr::id == event.object_id)
-              .begin();
+        object_t obj = *object_t::list()
+            .where(object_expr::id == event.object_id)
+            .begin();
 
         gaia_log::app().info(
             "Object:{} transitioning from zone:{} to zone:{}",
