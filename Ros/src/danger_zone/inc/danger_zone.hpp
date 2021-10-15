@@ -32,8 +32,8 @@ public:
      * Call this from within a Gaia rule to add an obstacle message.
      *
      * @param[in] std::string : type_name : the name of the class of object detected
-     * @param[in] uint : roi : the roi code
-     * @param[in] uint : direction : the direction code
+     * @param[in] uint8_t : roi : the roi code
+     * @param[in] uint8_t : direction : the direction code
      * @param[in] double : pos_x : the object position X
      * @param[in] double : pos_y : the object position Y
      * @param[in] double : pos_z : the object position Z
@@ -49,7 +49,7 @@ public:
      * @exceptsafe yes
      */
     virtual void add(
-        std::string type_name, uint roi, uint direction,
+        std::string type_name, uint8_t roi, uint8_t direction,
         double pos_x, double pos_y, double pos_z,
         double size_x, double size_y, double size_z,
         double orient_x, double orient_y, double orient_z, double orient_w)

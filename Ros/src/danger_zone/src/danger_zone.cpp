@@ -3,22 +3,13 @@
 // All rights reserved.
 /////////////////////////////////////////////
 
-//*****************************************************************************
-//*
-//* Dependencies: Requires Gaia preview (without libc++) or later, Gaia March
-//* 2021 will not work
-//*
-//*****************************************************************************
-
 #include "danger_zone.hpp"
 
 #include <functional>
 #include <memory>
 #include <mutex>
 
-#include <danger_zone_msgs/msg/obstacle.hpp>
 #include <danger_zone_msgs/msg/obstacle_array.hpp>
-#include "../inc/snapshot_client.hpp"
 #include <rclcpp/rclcpp.hpp>
 #include <vision_msgs/msg/detection3_d.hpp>
 #include <vision_msgs/msg/detection3_d_array.hpp>
@@ -28,14 +19,10 @@
 #include "gaia/system.hpp"
 
 #include "gaia_danger_zone.h"
+#include "snapshot_client.hpp"
 #include "zones.hpp"
 
-using std::placeholders::_1;
-
-template <typename... T_args>
-inline void unused(T_args&&...)
-{
-}
+using namespace gaia::danger_zone;
 
 struct danger_zone_obstacles_t : public obstacles_t
 {
@@ -44,7 +31,7 @@ struct danger_zone_obstacles_t : public obstacles_t
     // obstacles_t interface implementation.
 
     void add(
-        std::string type_name, uint roi, uint direction,
+        std::string type_name, uint8_t roi, uint8_t direction,
         double pos_x, double pos_y, double pos_z,
         double size_x, double size_y, double size_z,
         double orient_x, double orient_y, double orient_z, double orient_w) override
@@ -76,7 +63,7 @@ struct danger_zone_obstacles_t : public obstacles_t
     }
 
     static danger_zone_msgs::msg::Obstacle::UniquePtr build_obstacle_message(
-        std::string type_name, uint roi, uint direction,
+        std::string type_name, uint8_t roi, uint8_t direction,
         double pos_x, double pos_y, double pos_z,
         double size_x, double size_y, double size_z,
         double orient_x, double orient_y, double orient_z, double orient_w)
@@ -108,7 +95,7 @@ struct danger_zone_obstacles_t : public obstacles_t
         bbox->size = *size;
 
         obstacle->type = type_name;
-        obstacle->roi = roi;
+        obstacle->roi = zones_t::convert_zone_id_to_simulation_id(roi);
         obstacle->direction = direction;
         obstacle->bounds = *bbox;
 
@@ -199,20 +186,22 @@ private:
 
             if (max_hyp.hypothesis.class_id == "")
             {
-                // TODO: Log this?
+                gaia_log::app().warn("Detected object with no class_id!");
                 continue;
             }
 
+            object_t object = find_object(detection.id.c_str(), max_hyp.hypothesis.class_id.c_str());
+
             // Note: detection.id.c_str() is non-unique ATM, it does not seem an ID either.
             auto db_detected_object_id = gaia::danger_zone::d_object_t::insert_row(
-                detection.id.c_str(), max_hyp.hypothesis.class_id.c_str(), max_hyp.hypothesis.score,
-                detection.header.frame_id.c_str(), 0, 0,
-                detection.header.stamp.sec, detection.header.stamp.nanosec,
+                object.id(), max_hyp.hypothesis.score, detection.header.frame_id.c_str(),
+                0, 0, detection.header.stamp.sec, detection.header.stamp.nanosec,
                 detection.bbox.center.position.x, detection.bbox.center.position.y,
                 detection.bbox.center.position.z,
                 detection.bbox.size.x, detection.bbox.size.y, detection.bbox.size.z,
                 max_hyp.pose.pose.orientation.x, max_hyp.pose.pose.orientation.y,
-                max_hyp.pose.pose.orientation.z, max_hyp.pose.pose.orientation.w);
+                max_hyp.pose.pose.orientation.z, max_hyp.pose.pose.orientation.w,
+                zones_t::c_no_zone);
             auto db_detected_object = gaia::danger_zone::d_object_t::get(db_detected_object_id);
 
             // Add the detected object to our detection record.
@@ -220,6 +209,29 @@ private:
         }
 
         gaia::db::commit_transaction();
+    }
+
+    object_t find_object(const char* object_id, const char* class_id)
+    {
+        auto object_iter = object_t::list().where(
+            object_expr::object_id == object_id
+            && object_expr::class_id == class_id);
+
+        object_t db_object;
+
+        if (object_iter.begin() == object_iter.end())
+        {
+            std::string db_object_id = std::string(class_id) + " " + std::string(object_id);
+
+            db_object = object_t::get(
+                object_t::insert_row(db_object_id.c_str(), object_id, class_id));
+        }
+        else
+        {
+            db_object = *object_iter.begin();
+        }
+
+        return db_object;
     }
 
 private:

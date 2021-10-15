@@ -6,22 +6,12 @@
 
 #include <cmath>
 
+#include "gaia/logger.hpp"
+
 #include "danger_zone.hpp"
 #include "zones.hpp"
 
-#define RoiZoneCodeRed 0
-#define RoiZoneCodeYellow 1
-#define RoiZoneCodeGreen 2
-#define RoiZoneCodeDefault 3
-
 #define DirectionZoneCodeDefault 6
-
-const double c_red_zone_range = 10.0;
-const double c_yellow_zone_range = 20.0;
-const double c_green_zone_range = 1000.0;
-
-const int c_log_seconds_past = 5;
-const int c_log_seconds_forward = 25;
 
 // Set these to what you want to log, add or subtract at will.
 std::vector<std::string> topics{"/image", "/lidar"};
@@ -29,63 +19,51 @@ std::vector<std::string> topics{"/image", "/lidar"};
 // Set this to an existing directory + desired log name.
 std::string log_file_base_name = "~/logs/retrolog";
 
-// Helper functions.
-//
-uint get_roi_zone(double pos_x, double pos_z)
-{
-    // Find the distance from the sensor to the detected object.
-    double range = zones_t::get_range(pos_x, pos_z);
+const int c_log_seconds_past = 5;
+const int c_log_seconds_forward = 25;
 
-    // Set roi zone to default value.
-    uint roi_zone = RoiZoneCodeDefault;
-
-    if (range < c_red_zone_range)
-    {
-        roi_zone = RoiZoneCodeRed;
-    }
-    else if (range < c_yellow_zone_range)
-    {
-        roi_zone = RoiZoneCodeYellow;
-    }
-    else if (range < c_green_zone_range)
-    {
-        roi_zone = RoiZoneCodeGreen;
-    }
-
-    return roi_zone;
-}
-
-// Here we define our declarative rules.
-//
 ruleset danger_zone_ruleset
 {
     on_insert(detection)
     {
         std::shared_ptr<obstacles_t> obstacles = obstacles_t::new_instance();
 
-        for (detection->D:d_object)
+        for (detection->obj:d_object)
         {
-            uint roi_zone;
-            roi_zone = get_roi_zone(D.pos_x, D.pos_z);
+            // Sets the zone using the distance from the sensor to the detected object.
+            // TODO: unclear why pos_z works better than pos_y (this is how it was at the beginning).s
+            obj.zone = zones_t::get_range_zone_id(obj.pos_x, obj.pos_z);
+
+            gaia_log::app().info("Object:{} dist:{} zone:{}", obj.object_id, std::sqrt(obj.pos_x * obj.pos_x + obj.pos_y * obj.pos_y), obj.zone);
+
+            // Find the direction of the object relative to the sensor.
+            uint8_t direction_zone = DirectionZoneCodeDefault;
 
             // Create a message for each obstacle.
+            // TODO: the first argument is the class_id and is currently not used
+            //  by the simulation. Putting a placeholder for now.
             obstacles->add(
-                D.class_id, roi_zone, DirectionZoneCodeDefault,
-                D.pos_x, D.pos_y, D.pos_z,
-                D.size_x, D.size_y, D.size_z,
-                D.orient_x, D.orient_y, D.orient_z, D.orient_w);
+                "placeholder", obj.zone, direction_zone,
+                obj.pos_x, obj.pos_y, obj.pos_z,
+                obj.size_x, obj.size_y, obj.size_z,
+                obj.orient_x, obj.orient_y, obj.orient_z, obj.orient_w);
 
             // Trigger a logging event.
-            if (roi_zone == RoiZoneCodeRed)
-            {
-                danger_zone_t::get_instance()->trigger_log(
-                    c_log_seconds_past, c_log_seconds_forward, log_file_base_name, topics);
-            }
+//            if ( obj.zone == zones_t::c_red_zone)
+//            {
+//                danger_zone_t::get_instance()->trigger_log(
+//                    c_log_seconds_past, c_log_seconds_forward, log_file_base_name, topics);
+//            }
         }
 
         // Now that all obstacle messages have been collected, we can send them.
         danger_zone_t::get_instance()->send_obstacle_array_message(
             obstacles,
             detection.frame_id, detection.seconds, detection.nseconds);
+    }
+
+    on_update(d_object.zone)
+    {
+//         gaia_log::app().info("Object {} is in zone {}", d_object.object_id, d_object.zone);
     }
 }

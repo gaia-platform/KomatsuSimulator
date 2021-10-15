@@ -5,124 +5,66 @@
 
 #pragma once
 
-//*****************************************************************************
-//*
-//* Dependencies: Requires Gaia preview (without libc++) or later, Gaia March
-//* 2021 will not work
-//*
-//*****************************************************************************
-
 #include <cmath>
 
 #include <memory>
 
 class zones_t
 {
-private:
-    static inline std::shared_ptr<zones_t> m_singleton;
-
-    const double rad_per_deg = 0.0174533; //(pi / 180)
-    const double red_zone = 10.0;
-    const double yellow_zone = 20.0;
-    const double green_zone = 2000.0;
-
-    double m_range_id[3][2] = {
-        {red_zone, 0},
-        {yellow_zone, 1},
-        {green_zone, 2}};
-
-    double m_default_range_id = 4;
-
-    double m_direction_id[6][2] = {
-        {60 * rad_per_deg, 0},
-        {120 * rad_per_deg, 1},
-        {180 * rad_per_deg, 2},
-        {240 * rad_per_deg, 3},
-        {300 * rad_per_deg, 4},
-        {360 * rad_per_deg, 5}};
-
-    double m_default_angle_id = 6;
+public:
+    static constexpr uint8_t c_no_zone = 0;
+    static constexpr uint8_t c_red_zone = 1;
+    static constexpr uint8_t c_yellow_zone = 2;
+    static constexpr uint8_t c_green_zone = 3;
 
 public:
-    //*****************************************************************************
-    //*
-    //* args:
-    //*   double x : one axis
-    //*   double y : the other axis
-    //*
-    //*****************************************************************************
+    /**
+     * Return the zone_id based on the distance from the given coordinates.
+     */
+    static uint8_t get_range_zone_id(double x, double y);
 
-    static double get_range(double x, double y)
-    {
-        return std::sqrt(x * x + y * y);
-    }
+    /**
+     * Return the direction_id based on the distance from the given coordinates.
+     */
+    static uint8_t get_direction_zone_id(double z, double x);
 
-    //*****************************************************************************
-    //*
-    //* args:
-    //*   double x : one axis
-    //*   double y : the other axis
-    //*
-    //*****************************************************************************
+    /**
+     * In the app we use 0 to denote no_zone because Gaia DB assign 0
+     * to numeric values by default. The simulator though uses 0 to denote
+     * red area. This function converts from app to simulation id.
+     */
+    static uint8_t convert_zone_id_to_simulation_id(uint8_t zone_id);
 
-    u_int get_range_zone_id(double x, double y)
-    {
-        auto distance = get_range(x, y);
+private:
+    static constexpr double c_rad_per_deg = 0.0174533; //(pi / 180)
+    static constexpr double c_red_zone_radius = 10.0;
+    static constexpr double c_yellow_zone_radius = 20.0;
+    static constexpr double c_green_zone_radius = 2000.0;
 
-        for (auto rid : m_range_id)
-        {
-            if (distance < rid[0])
-            {
-                return rid[1];
-            }
-        }
+    static constexpr double c_range_id[3][2] = {
+        // The order is important.
+        {c_red_zone_radius, c_red_zone},
+        {c_yellow_zone_radius, c_yellow_zone},
+        {c_green_zone_radius, c_green_zone}};
 
-        return m_default_range_id;
-    }
+    static constexpr double c_direction_id[6][2] = {
+        {60 * c_rad_per_deg, 0},
+        {120 * c_rad_per_deg, 1},
+        {180 * c_rad_per_deg, 2},
+        {240 * c_rad_per_deg, 3},
+        {300 * c_rad_per_deg, 4},
+        {360 * c_rad_per_deg, 5}};
 
-    //*****************************************************************************
-    //*
-    //* args:
-    //*   double z : front +
-    //*   double x : right +
-    //*
-    //*****************************************************************************
+    static constexpr double c_default_angle_id = 6;
 
-    static double get_direction(double z, double x)
-    {
-        return std::atan2(z, x);
-    }
+private:
+    /**
+     * Find the distance from the sensor to the detected object.
+     */
+    static double get_range(double x, double y);
 
-    //*****************************************************************************
-    //*
-    //* args:
-    //*   double z : front +
-    //*   double x : right +
-    //*
-    //*****************************************************************************
-
-    u_int get_direction_zone_id(double z, double x)
-    {
-        auto angle = get_direction(z, x);
-
-        for (auto rid : m_direction_id)
-        {
-            if (angle < rid[0])
-            {
-                return rid[1];
-            }
-        }
-
-        return m_default_angle_id;
-    }
-
-    static std::shared_ptr<zones_t> get_singleton()
-    {
-        if (nullptr == m_singleton)
-        {
-            m_singleton = std::make_shared<zones_t>();
-        }
-
-        return m_singleton;
-    }
+    /**
+     * Find the direction of the object relative to the sensor.
+     */
+    static double get_direction(double z, double x);
 };
