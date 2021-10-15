@@ -8,6 +8,7 @@
 #include <cmath>
 
 #include <memory>
+#include <string>
 
 class zones_t
 {
@@ -34,6 +35,11 @@ public:
      * red area. This function converts from app to simulation id.
      */
     static uint8_t convert_zone_id_to_simulation_id(uint8_t zone_id);
+
+    /**
+     * Returns a string representation of a zone_id.
+     */
+    static std::string zone_id_str(uint8_t zone_id);
 
 private:
     static constexpr double c_rad_per_deg = 0.0174533; //(pi / 180)

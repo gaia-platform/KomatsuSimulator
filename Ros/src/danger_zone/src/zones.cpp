@@ -5,6 +5,8 @@
 
 #include "zones.hpp"
 
+#include <stdexcept>
+
 double zones_t::get_range(double x, double y)
 {
     return std::sqrt(x * x + y * y);
@@ -53,4 +55,21 @@ uint8_t zones_t::convert_zone_id_to_simulation_id(uint8_t zone_id)
     }
 
     return zone_id - 1;
+}
+
+std::string zones_t::zone_id_str(uint8_t zone_id)
+{
+    switch (zone_id)
+    {
+    case c_green_zone:
+        return "green";
+    case c_yellow_zone:
+        return "yellow";
+    case c_red_zone:
+        return "red";
+    case c_no_zone:
+        return "unknown";
+    }
+
+    throw std::runtime_error("Invalid zone_id: " + std::to_string(zone_id));
 }
