@@ -67,8 +67,6 @@ protected:
 // 2) We mention GCC but this works for Clang as well.
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wc++17-extensions"
-    // inline static const std::shared_ptr<ismartpallet> campus_ruleset_p_campus = nullptr;
-
     // The pointer to the live instance of the campus core class.
     // TODO: This is not an example to good coding practice, need to make safe and modern.
     inline static danger_zone_t* danger_zone_ptr = nullptr;
