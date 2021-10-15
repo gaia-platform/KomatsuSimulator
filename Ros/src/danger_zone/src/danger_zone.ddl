@@ -11,7 +11,7 @@ table zone (
 )
 
 table object (
-    -- For now this ID is just a merge of class_id + object_id. Will change.
+    -- For now this ID is just a merge of class_id + a number (taken as-is from the simulation).
     id string unique,
     class_id string,
     zone_id uint8,
