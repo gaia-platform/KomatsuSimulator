@@ -61,24 +61,31 @@ ruleset danger_zone_ruleset
 {
     on_insert(detection)
     {
+        std::shared_ptr<obstacles_t> obstacles = obstacles_t::new_instance();
+
         for (detection->D:d_object)
         {
             uint roi_zone;
             roi_zone = get_roi_zone(D.pos_x, D.pos_z);
 
-            danger_zone_t::get_callback_instance()->cb_send_obstacle_array_message(
+            // Create a message for each obstacle.
+            obstacles->add(
                 D.class_id, roi_zone, DirectionZoneCodeDefault,
                 D.pos_x, D.pos_y, D.pos_z,
                 D.size_x, D.size_y, D.size_z,
-                D.orient_x, D.orient_y, D.orient_z, D.orient_w,
-                detection.frame_id, detection.seconds, detection.nseconds);
+                D.orient_x, D.orient_y, D.orient_z, D.orient_w);
 
             // Trigger a logging event.
             if (roi_zone == RoiZoneCodeRed)
             {
-                danger_zone_t::get_callback_instance()->cb_trigger_log(
+                danger_zone_t::get_instance()->trigger_log(
                     c_log_seconds_past, c_log_seconds_forward, log_file_base_name, topics);
             }
         }
+
+        // Now that all obstacle messages have been collected, we can send them.
+        danger_zone_t::get_instance()->send_obstacle_array_message(
+            obstacles,
+            detection.frame_id, detection.seconds, detection.nseconds);
     }
 }

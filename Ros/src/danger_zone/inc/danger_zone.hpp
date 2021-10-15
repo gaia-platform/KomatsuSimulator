@@ -5,11 +5,59 @@
 
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
 
 /**
- * @brief Interface used to expose danger_zone core methods inside a Gaia ruleset rules.
+ * @brief Interface used to construct a collection of obstacle messages from inside Gaia rules.
+ */
+
+class obstacles_t
+{
+public:
+    /**
+     * Class factory, this is the only method allowed for obtaining an instance
+     * of this class within a Gaia rule.
+     *
+     * @return std::shared_ptr<obstacles_t>
+     * @throws
+     * @exceptsafe yes
+     */
+    static std::shared_ptr<obstacles_t> new_instance();
+
+    virtual ~obstacles_t() = default;
+
+    /**
+     * Call this from within a Gaia rule to add an obstacle message.
+     *
+     * @param[in] std::string : type_name : the name of the class of object detected
+     * @param[in] uint : roi : the roi code
+     * @param[in] uint : direction : the direction code
+     * @param[in] double : pos_x : the object position X
+     * @param[in] double : pos_y : the object position Y
+     * @param[in] double : pos_z : the object position Z
+     * @param[in] double : size_x : the object size X
+     * @param[in] double : size_y : the object size Y
+     * @param[in] double : size_z : the object size Z
+     * @param[in] double : orient_x : the object orientation quaternion X
+     * @param[in] double : orient_y : the object orientation quaternion Y
+     * @param[in] double : orient_z : the object orientation quaternion Y
+     * @param[in] double : orient_w : the object orientation quaternion W
+     * @return void
+     * @throws
+     * @exceptsafe yes
+     */
+    virtual void add(
+        std::string type_name, uint roi, uint direction,
+        double pos_x, double pos_y, double pos_z,
+        double size_x, double size_y, double size_z,
+        double orient_x, double orient_y, double orient_z, double orient_w)
+        = 0;
+};
+
+/**
+ * @brief Interface used to expose danger_zone core methods to Gaia rules.
  */
 
 class danger_zone_t
@@ -28,34 +76,22 @@ protected:
 
 public:
     /**
-     * Class factory, this is the only method allowed for obtaining an instance of the
-     * class withing a ruleset rule.
+     * Class factory, this is the only method allowed for obtaining an instance
+     * of this class within a Gaia rule.
      *
      * @return danger_zone_t*
      * @throws
      * @exceptsafe yes
      */
-    static danger_zone_t* get_callback_instance()
+    static danger_zone_t* get_instance()
     {
         return danger_zone_ptr;
     }
 
     /**
-     * Call this from within a ruleset rule to send a ROS2 obstacleArray message.
+     * Call this from within a Gaia rule to send a ROS2 obstacleArray message.
      *
-     * @param[in] std::string : type_name : the name of the class of object detected
-     * @param[in] uint : roi : the roi code
-     * @param[in] uint : direction : the direction code
-     * @param[in] double : pos_x : the object position X
-     * @param[in] double : pos_y : the object position Y
-     * @param[in] double : pos_z : the object position Z
-     * @param[in] double : size_x : the object size X
-     * @param[in] double : size_y : the object size Y
-     * @param[in] double : size_z : the object size Z
-     * @param[in] double : orient_x : the object orientation quaternion X
-     * @param[in] double : orient_y : the object orientation quaternion Y
-     * @param[in] double : orient_z : the object orientation quaternion Y
-     * @param[in] double : orient_w : the object orientation quaternion W
+     * @param[in] std::shared_ptr<obstacles_t> : obstacles : the collection of obstacles messages
      * @param[in] std::string : frame_id : the ROS frame name
      * @param[in] int32_t : sec : the time in seconds
      * @param[in] uint32_t : nsec : the number of nanoseconds since sec
@@ -63,11 +99,8 @@ public:
      * @throws
      * @exceptsafe yes
      */
-    virtual void cb_send_obstacle_array_message(
-        std::string type_name, uint roi, uint direction,
-        double pos_x, double pos_y, double pos_z,
-        double size_x, double size_y, double size_z,
-        double orient_x, double orient_y, double orient_z, double orient_w,
+    virtual void send_obstacle_array_message(
+        std::shared_ptr<obstacles_t> obstacles,
         std::string frame_id, int32_t sec, uint32_t nsec)
         = 0;
 
@@ -84,7 +117,7 @@ public:
      * @throws
      * @exceptsafe yes
      */
-    virtual void cb_trigger_log(int start_sec, uint32_t start_nsec,
+    virtual void trigger_log(int start_sec, uint32_t start_nsec,
         int end_sec, uint32_t end_nsec, std::string file_name,
         std::vector<std::string>topics) = 0;
 
@@ -99,7 +132,7 @@ public:
      * @throws
      * @exceptsafe yes
      */
-    virtual void cb_trigger_log(int seconds_past, int seconds_forward,
+    virtual void trigger_log(int seconds_past, int seconds_forward,
         std::string file_name, std::vector<std::string>topics) = 0;
 
     /**
