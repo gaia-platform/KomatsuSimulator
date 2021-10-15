@@ -55,22 +55,6 @@ public:
 
     // danger_zone interface.
 
-    void cb_send_obstacle_array_message_old(
-        std::string type_name, uint roi, uint direction,
-        double pos_x, double pos_y, double pos_z,
-        double size_x, double size_y, double size_z,
-        double orient_x, double orient_y, double orient_z, double orient_w,
-        std::string frame_id, int32_t sec, uint32_t nsec) const
-    {
-        std::vector<danger_zone_msgs::msg::Obstacle> obstacles;
-        obstacles.push_back(*(build_obstacle_message(
-            type_name, roi, direction, pos_x, pos_y, pos_z,
-            size_x, size_y, size_z, orient_x, orient_y, orient_z, orient_w)));
-
-        // TODO: get this out of the thread.
-        m_obstacles_pub->publish(build_obstacle_array_message(obstacles, frame_id, sec, nsec));
-    }
-
     void cb_send_obstacle_array_message(
         std::string type_name, uint roi, uint direction,
         double pos_x, double pos_y, double pos_z,
@@ -78,15 +62,15 @@ public:
         double orient_x, double orient_y, double orient_z, double orient_w,
         std::string frame_id, int32_t sec, uint32_t nsec) override
     {
-        // std::vector<danger_zone_msgs::msg::Obstacle> obstacles;
-        m_obstacles.push_back(*(build_obstacle_message(
+        // The list of Gaia processed obstacles.
+        std::vector<danger_zone_msgs::msg::Obstacle> obstacles;
+
+        obstacles.push_back(*(build_obstacle_message(
             type_name, roi, direction, pos_x, pos_y, pos_z,
             size_x, size_y, size_z, orient_x, orient_y, orient_z, orient_w)));
 
-        unused(frame_id, sec, nsec);
-
-        // TODO: get this out of the thread.
-        // m_obstacles_pub_->publish(build_obstacle_array_message(obstacles, frame_id,  sec, nsec));
+        m_obstacles_pub->publish(build_obstacle_array_message(
+            obstacles, frame_id, sec, nsec));
     }
 
     void cb_trigger_log(
@@ -112,8 +96,6 @@ public:
     }
 
 private:
-    bool m_simple_echo = false;
-
     const std::string m_detected_topic_name = "/komatsu/detections";
     const std::string m_obstacles_topic_name = "/komatsu/obstacles";
     // Name found in snapshotter.cpp.
@@ -125,32 +107,18 @@ private:
     // Mutex to lock down detection3d_callback.
     std::mutex m_mtx;
 
-    // The list of Gaia processed obstacles.
-    std::vector<danger_zone_msgs::msg::Obstacle> m_obstacles;
-
 private:
     void detection3d_callback(const vision_msgs::msg::Detection3DArray::SharedPtr msg)
     {
-        // Prevent two threads from operating on this method simultaneously.
-        std::lock_guard<std::mutex> lck(m_mtx);
-
-        // Upon entry, clear all obstacles from list.
-        m_obstacles.clear();
-
-        std::vector<danger_zone_msgs::msg::Obstacle> obstacles;
-
         gaia::db::begin_transaction();
 
         // Create a detection record to reference all detected objects.
-        auto db_detection_id = gaia::danger_zone::detection_t::insert_row(false);
+        auto db_detection_id = gaia::danger_zone::detection_t::insert_row(
+            msg->header.frame_id.c_str(), msg->header.stamp.sec, msg->header.stamp.nanosec);
         auto db_detection = gaia::danger_zone::detection_t::get(db_detection_id);
 
         for (const vision_msgs::msg::Detection3D& detection : msg->detections)
         {
-            // TODO: (Mark West) Commented, to get past build.
-            // RCLCPP_INFO(this->get_logger(), "I saw: '%s'", detection.id.c_str());
-            // RCLCPP_INFO(this->get_logger(), "I saw: '%s'", "something");
-
             vision_msgs::msg::ObjectHypothesisWithPose max_hyp;
 
             max_hyp.hypothesis.class_id = "";
@@ -184,35 +152,9 @@ private:
 
             // Add the detected object to our detection record.
             db_detection.d_objects().connect(db_detected_object);
-
-            if (m_simple_echo)
-            {
-                obstacles.push_back(*(build_obstacle_message(
-                    max_hyp.hypothesis.class_id,
-                    static_cast<int>(zones_t::get_singleton()->get_range_zone_id(
-                        detection.bbox.center.position.x, detection.bbox.center.position.z)),
-                    static_cast<int>(zones_t::get_singleton()->get_direction_zone_id(
-                        detection.bbox.center.position.z, detection.bbox.center.position.x)),
-                    detection.bbox.center.position.x, detection.bbox.center.position.y,
-                    detection.bbox.center.position.z,
-                    detection.bbox.size.x, detection.bbox.size.y, detection.bbox.size.z,
-                    max_hyp.pose.pose.orientation.x, max_hyp.pose.pose.orientation.y,
-                    max_hyp.pose.pose.orientation.z, max_hyp.pose.pose.orientation.w)));
-            }
         }
 
         gaia::db::commit_transaction();
-
-        if (m_simple_echo)
-        {
-            m_obstacles_pub->publish(build_obstacle_array_message(
-                obstacles, msg->header.frame_id, msg->header.stamp.sec, msg->header.stamp.nanosec));
-        }
-        else if (!m_obstacles.empty())
-        {
-            m_obstacles_pub->publish(build_obstacle_array_message(
-                m_obstacles, msg->header.frame_id, msg->header.stamp.sec, msg->header.stamp.nanosec));
-        }
     }
 
     danger_zone_msgs::msg::ObstacleArray::UniquePtr build_obstacle_array_message(

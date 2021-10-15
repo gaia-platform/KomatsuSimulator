@@ -7,7 +7,13 @@ database danger_zone
 
 table detection (
     d_objects references d_object[],
-    dummy bool
+
+    -- Identifier of detection frame.
+    frame_id string,
+
+    -- Seconds/nanoseconds of detection frame.
+    seconds int32,
+    nseconds int32
 )
 
 table d_object (

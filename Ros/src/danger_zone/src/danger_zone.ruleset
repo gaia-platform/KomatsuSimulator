@@ -16,16 +16,21 @@
 
 #define DirectionZoneCodeDefault 6
 
+const double c_red_zone_range = 10.0;
+const double c_yellow_zone_range = 20.0;
+const double c_green_zone_range = 1000.0;
+
+const int c_log_seconds_past = 5;
+const int c_log_seconds_forward = 25;
+
 // Set these to what you want to log, add or subtract at will.
 std::vector<std::string> topics{"/image", "/lidar"};
 
 // Set this to an existing directory + desired log name.
 std::string log_file_base_name = "~/logs/retrolog";
 
-double red_zone_range = 10.0;
-double yellow_zone_range = 20.0;
-double green_zone_range = 1000.0;
-
+// Helper functions.
+//
 uint get_roi_zone(double pos_x, double pos_z)
 {
     // Find the distance from the sensor to the detected object.
@@ -34,15 +39,15 @@ uint get_roi_zone(double pos_x, double pos_z)
     // Set roi zone to default value.
     uint roi_zone = RoiZoneCodeDefault;
 
-    if (range < red_zone_range)
+    if (range < c_red_zone_range)
     {
         roi_zone = RoiZoneCodeRed;
     }
-    else if (range < yellow_zone_range)
+    else if (range < c_yellow_zone_range)
     {
         roi_zone = RoiZoneCodeYellow;
     }
-    else if (range < green_zone_range)
+    else if (range < c_green_zone_range)
     {
         roi_zone = RoiZoneCodeGreen;
     }
@@ -66,13 +71,13 @@ ruleset danger_zone_ruleset
                 D.pos_x, D.pos_y, D.pos_z,
                 D.size_x, D.size_y, D.size_z,
                 D.orient_x, D.orient_y, D.orient_z, D.orient_w,
-                D.frame_id, D.seconds, D.nseconds);
+                detection.frame_id, detection.seconds, detection.nseconds);
 
             // Trigger a logging event.
             if (roi_zone == RoiZoneCodeRed)
             {
                 danger_zone_t::get_callback_instance()->cb_trigger_log(
-                    5, 25, log_file_base_name, topics);
+                    c_log_seconds_past, c_log_seconds_forward, log_file_base_name, topics);
             }
         }
     }
