@@ -5,6 +5,20 @@
 
 database danger_zone
 
+table zone (
+    id uint8 unique,
+    objects references object[]
+)
+
+table object (
+    -- For now this ID is just a merge of class_id + a number (taken as-is from the simulation).
+    id string unique,
+    class_id string,
+    zone_id uint8,
+    zone references zone
+        where object.zone_id = zone.id
+)
+
 table detection (
     d_objects references d_object[],
 
@@ -14,13 +28,6 @@ table detection (
     -- Seconds/nanoseconds of detection frame.
     seconds int32,
     nseconds int32
-)
-
-table object (
-    -- For now this ID is just a merge of class_id + object_id. Will change.
-    id string unique,
-    object_id string,
-    class_id string
 )
 
 table d_object (
@@ -59,12 +66,20 @@ table d_object (
 
     -- Zone, numeric values gets 0 as default value,
     -- which corresponds to zones_t::c_no_zone
-    zone uint8,
+    zone_id uint8,
 
     detection references detection
 )
 
+---
+--- Events
+---
 
+table zone_transition_event (
+    object_id string,
+    from_zone_id uint8,
+    to_zone_id uint8
+)
 
 --
 -- Actions

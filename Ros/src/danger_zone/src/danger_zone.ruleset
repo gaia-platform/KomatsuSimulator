@@ -4,10 +4,9 @@
 // All rights reserved.
 /////////////////////////////////////////////
 
-#include <cmath>
-
 #include "gaia/logger.hpp"
 
+#include "gaia_danger_zone.h"
 #include "danger_zone.hpp"
 #include "zones.hpp"
 
@@ -22,7 +21,9 @@ std::string log_file_base_name = "~/logs/retrolog";
 const int c_log_seconds_past = 5;
 const int c_log_seconds_forward = 25;
 
-ruleset danger_zone_ruleset
+using namespace gaia::danger_zone;
+
+ruleset objects_detection
 {
     on_insert(detection)
     {
@@ -32,9 +33,7 @@ ruleset danger_zone_ruleset
         {
             // Sets the zone using the distance from the sensor to the detected object.
             // TODO: unclear why pos_z works better than pos_y (this is how it was at the beginning).s
-            obj.zone = zones_t::get_range_zone_id(obj.pos_x, obj.pos_z);
-
-            gaia_log::app().info("Object:{} dist:{} zone:{}", obj.object_id, std::sqrt(obj.pos_x * obj.pos_x + obj.pos_y * obj.pos_y), obj.zone);
+            obj.zone_id = zones_t::get_range_zone_id(obj.pos_x, obj.pos_z);
 
             // Find the direction of the object relative to the sensor.
             uint8_t direction_zone = DirectionZoneCodeDefault;
@@ -43,17 +42,10 @@ ruleset danger_zone_ruleset
             // TODO: the first argument is the class_id and is currently not used
             //  by the simulation. Putting a placeholder for now.
             obstacles->add(
-                "placeholder", obj.zone, direction_zone,
+                "placeholder", obj.zone_id, direction_zone,
                 obj.pos_x, obj.pos_y, obj.pos_z,
                 obj.size_x, obj.size_y, obj.size_z,
                 obj.orient_x, obj.orient_y, obj.orient_z, obj.orient_w);
-
-            // Trigger a logging event.
-//            if ( obj.zone == zones_t::c_red_zone)
-//            {
-//                danger_zone_t::get_instance()->trigger_log(
-//                    c_log_seconds_past, c_log_seconds_forward, log_file_base_name, topics);
-//            }
         }
 
         // Now that all obstacle messages have been collected, we can send them.
@@ -62,8 +54,43 @@ ruleset danger_zone_ruleset
             detection.frame_id, detection.seconds, detection.nseconds);
     }
 
-    on_update(d_object.zone)
+    on_update(d_object.zone_id)
     {
-//         gaia_log::app().info("Object {} is in zone {}", d_object.object_id, d_object.zone);
+        auto obj = object_t::list()
+                   .where(object_expr::id == d_object.object_id)
+                   .begin();
+
+        if (obj->zone_id() != d_object.zone_id)
+        {
+            zone_transition_event.insert(
+                object_id: obj->id(),
+                from_zone_id: obj->zone_id(),
+                to_zone_id: d_object.zone_id);
+        }
+    }
+}
+
+/**
+ * This ruleset handles the transition of object from one zone to
+ * another. The ruleset is marked as serial_group() to make the
+ * rules within it to run serially. This avoid transaction conflicts
+ * when adding/removing objects from the zone table.
+ */
+ruleset zone_transition : serial_group()
+{
+    on_insert(event:zone_transition_event)
+    {
+        auto obj = object_t::list()
+            .where(object_expr::id == event.object_id)
+            .begin();
+
+        gaia_log::app().info(
+            "Object:{} transitioning from zone:{} to zone:{}",
+            event.object_id, zones_t::zone_id_str(event.from_zone_id),
+            zones_t::zone_id_str(event.to_zone_id));
+
+        object_writer obj_w = obj->writer();
+        obj_w.zone_id = event.to_zone_id;
+        obj_w.update_row();
     }
 }
