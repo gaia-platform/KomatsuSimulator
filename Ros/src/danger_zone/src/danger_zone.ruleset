@@ -94,5 +94,20 @@ ruleset zone_transition : serial_group()
         object_writer obj_w = obj->writer();
         obj_w.zone_id = event.to_zone_id;
         obj_w.update_row();
+
+        // TODO: Need to add logic to check whether logging was already being done.
+        if (strcmp(obj->class_id(), "Person") == 0)
+        {
+            if (event.from_zone_id == zones_t::c_green_zone)
+            {
+                danger_zone_t::get_instance()->trigger_log(
+                    c_log_seconds_past, c_log_seconds_forward, log_file_base_name, topics);
+            }
+        }
+        else if (event.to_zone_id == zones_t::c_red_zone)
+        {
+            danger_zone_t::get_instance()->trigger_log(
+                c_log_seconds_past, c_log_seconds_forward, log_file_base_name, topics);
+        }
     }
 }
