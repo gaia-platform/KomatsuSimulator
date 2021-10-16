@@ -21,8 +21,8 @@ void dump_detections();
 void dump_d_objects();
 void dump_zone_transition_events();
 
-// Dumps the content of all tables that are expected to change.
+// Dump the content of all tables that are expected to change.
 void dump_db_state();
 
-// Dumps the entire database, including tables whose content is not expected to change.
+// Dump the entire database, including tables whose content is not expected to change.
 void dump_db();

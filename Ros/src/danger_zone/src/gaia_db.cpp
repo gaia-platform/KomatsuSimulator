@@ -75,9 +75,12 @@ void dump_d_object(const d_object_t& d_object)
     printf("d_object score:         %f\n", d_object.score());
     printf("d_object range:         %d\n", d_object.range_id());
     printf("d_object direction:     %d\n", d_object.direction_id());
-    printf("d_object pos:           x = %f, y = %f, z = %f\n", d_object.pos_x(), d_object.pos_y(), d_object.pos_z());
-    printf("d_object size:          x = %f, y = %f, z = %f\n", d_object.size_x(), d_object.size_y(), d_object.size_z());
-    printf("d_object orient:        x = %f, y = %f, z = %f, w = %f\n", d_object.orient_x(), d_object.orient_y(), d_object.orient_z(), d_object.orient_w());
+    printf("d_object pos:           x = %f, y = %f, z = %f\n",
+        d_object.pos_x(), d_object.pos_y(), d_object.pos_z());
+    printf("d_object size:          x = %f, y = %f, z = %f\n",
+        d_object.size_x(), d_object.size_y(), d_object.size_z());
+    printf("d_object orient:        x = %f, y = %f, z = %f, w = %f\n",
+        d_object.orient_x(), d_object.orient_y(), d_object.orient_z(), d_object.orient_w());
     printf("d_object zone id:       %d\n", d_object.zone_id());
 }
 
