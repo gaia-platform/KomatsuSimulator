@@ -18,9 +18,9 @@ uint8_t zones_t::get_range_zone_id(double x, double y)
 
     for (auto range_id : c_range_id)
     {
-        if (range_id[0] > distance)
+        if (range_id[c_index_radius] > distance)
         {
-            return range_id[1];
+            return range_id[c_index_zone];
         }
     }
 

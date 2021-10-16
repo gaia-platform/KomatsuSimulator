@@ -32,7 +32,7 @@ ruleset objects_detection
         for (detection->obj:d_object)
         {
             // Sets the zone using the distance from the sensor to the detected object.
-            // TODO: unclear why pos_z works better than pos_y (this is how it was at the beginning).
+            // pos_y represents the vertical offset, so we need to use pos_x and pos_z for calculations.
             obj.zone_id = zones_t::get_range_zone_id(obj.pos_x, obj.pos_z);
 
             // Find the direction of the object relative to the sensor.
@@ -56,10 +56,12 @@ ruleset objects_detection
 
     on_update(d_object.zone_id)
     {
+        // Find the object corresponding to the detection.
         auto obj = object_t::list()
                    .where(object_expr::id == d_object.object_id)
                    .begin();
 
+        // If its zone changed, create a zone transition event.
         if (obj->zone_id() != d_object.zone_id)
         {
             zone_transition_event.insert(
@@ -71,9 +73,9 @@ ruleset objects_detection
 }
 
 /**
- * This ruleset handles the transition of object from one zone to
+ * This ruleset handles the transition of an object from one zone to
  * another. The ruleset is marked as serial_group() to make the
- * rules within it to run serially. This avoid transaction conflicts
+ * rules within it run serially. This avoids transaction conflicts
  * when adding/removing objects from the zone table.
  */
 ruleset zone_transition : serial_group()
@@ -86,11 +88,28 @@ ruleset zone_transition : serial_group()
 
         gaia_log::app().info(
             "Object:{} transitioning from zone:{} to zone:{}",
-            event.object_id, zones_t::zone_id_str(event.from_zone_id),
+            event.object_id,
+            zones_t::zone_id_str(event.from_zone_id),
             zones_t::zone_id_str(event.to_zone_id));
 
         object_writer obj_w = obj->writer();
         obj_w.zone_id = event.to_zone_id;
         obj_w.update_row();
+
+        // TODO: Need to add logic to check whether logging was already being done.
+        if (strcmp(obj->class_id(), "Person") == 0)
+        {
+            if (event.from_zone_id == zones_t::c_green_zone
+                && event.to_zone_id != zones_t::c_no_zone)
+            {
+                danger_zone_t::get_instance()->trigger_log(
+                    c_log_seconds_past, c_log_seconds_forward, log_file_base_name, topics);
+            }
+        }
+        else if (event.to_zone_id == zones_t::c_red_zone)
+        {
+            danger_zone_t::get_instance()->trigger_log(
+                c_log_seconds_past, c_log_seconds_forward, log_file_base_name, topics);
+        }
     }
 }
