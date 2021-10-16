@@ -88,7 +88,8 @@ ruleset zone_transition : serial_group()
 
         gaia_log::app().info(
             "Object:{} transitioning from zone:{} to zone:{}",
-            event.object_id, zones_t::zone_id_str(event.from_zone_id),
+            event.object_id,
+            zones_t::zone_id_str(event.from_zone_id),
             zones_t::zone_id_str(event.to_zone_id));
 
         object_writer obj_w = obj->writer();
@@ -98,7 +99,8 @@ ruleset zone_transition : serial_group()
         // TODO: Need to add logic to check whether logging was already being done.
         if (strcmp(obj->class_id(), "Person") == 0)
         {
-            if (event.from_zone_id == zones_t::c_green_zone)
+            if (event.from_zone_id == zones_t::c_green_zone
+                && event.to_zone_id != zones_t::c_no_zone)
             {
                 danger_zone_t::get_instance()->trigger_log(
                     c_log_seconds_past, c_log_seconds_forward, log_file_base_name, topics);

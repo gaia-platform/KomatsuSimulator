@@ -43,6 +43,9 @@ public:
 
 private:
     static constexpr double c_rad_per_deg = 0.0174533; //(pi / 180)
+
+    static constexpr int c_index_radius = 0;
+    static constexpr int c_index_zone = 1;
     static constexpr double c_red_zone_radius = 10.0;
     static constexpr double c_yellow_zone_radius = 20.0;
     static constexpr double c_green_zone_radius = 2000.0;
