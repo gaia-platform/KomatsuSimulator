@@ -227,7 +227,6 @@ int main(int argc, char* argv[])
 
     gaia::db::begin_transaction();
     initialize_zones();
-    dump_db();
     gaia::db::commit_transaction();
 
     rclcpp::init(argc, argv);
