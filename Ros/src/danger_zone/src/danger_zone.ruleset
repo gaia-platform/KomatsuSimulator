@@ -32,7 +32,7 @@ ruleset objects_detection
         for (detection->obj:d_object)
         {
             // Sets the zone using the distance from the sensor to the detected object.
-            // pos_y represent the vertical offset, so we need to use pos_x and pos_z for calculations.
+            // pos_y represents the vertical offset, so we need to use pos_x and pos_z for calculations.
             obj.zone_id = zones_t::get_range_zone_id(obj.pos_x, obj.pos_z);
 
             // Find the direction of the object relative to the sensor.

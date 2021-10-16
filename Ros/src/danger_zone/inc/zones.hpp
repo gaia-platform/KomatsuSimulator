@@ -42,7 +42,8 @@ public:
     static std::string zone_id_str(uint8_t zone_id);
 
 private:
-    static constexpr double c_rad_per_deg = 0.0174533; //(pi / 180)
+    //(pi / 180)
+    static constexpr double c_rad_per_deg = 0.0174533;
 
     static constexpr int c_index_radius = 0;
     static constexpr int c_index_zone = 1;
