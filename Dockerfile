@@ -51,22 +51,23 @@ RUN echo 'source /opt/ros/galactic/setup.bash' >> ~/.bashrc && rosdep update
 
 # Checkout ROS-TCP-Endpoint & rosbag2_snapshot.
 RUN cd src && \
-    git clone -b ROS2 https://github.com/Unity-Technologies/ROS-TCP-Endpoint.git  && \
+    git clone -b ROS2 https://github.com/Unity-Technologies/ROS-TCP-Endpoint.git && \
     git clone https://github.com/gaia-platform/rosbag2_snapshot.git
 
 # Build
 RUN source /opt/ros/galactic/setup.bash && colcon build && echo 'source ~/ros2_ws/install/local_setup.bash' >> ~/.bashrc
 
 # Copy the danger_zone project.
-COPY Ros/src/* src/
+COPY Ros/src/danger_zone_msgs src/danger_zone_msgs
+COPY Ros/src/danger_zone src/danger_zone
 
-# rosdep needs
+# rosdep needs root to install ros packages.
 USER root
 RUN source /opt/ros/galactic/setup.bash && rosdep update && rosdep install -y -i --from-paths .
 
 USER komatsu
-RUN source /opt/ros/galactic/setup.bash && colcon build
-
+RUN nohup bash -c "gaia_db_server --data-dir ~/.komatsu_db &" && sleep 1 && \
+    source /opt/ros/galactic/setup.bash && colcon build
 
 # Unless overridden, this is the command line that will be executed
 # when the container is run.
