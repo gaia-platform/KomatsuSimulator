@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.#include <iostream>
 
-#include "../inc/snapshot_client.hpp"
+#include "snapshot_client.hpp"
 
 template <typename... Args>
 inline void unused(Args&&...)
@@ -39,15 +39,12 @@ void SnapshotClient::connect(rclcpp::Node* caller, std::string service_name)
         return;
     }
 
-    m_caller_p = caller;
+    m_caller_ptr = caller;
     m_service_name = service_name;
 
-    m_snapshot_client = m_caller_p->create_client<TriggerSnapshot>(service_name);
+    m_snapshot_client = m_caller_ptr->create_client<TriggerSnapshot>(service_name);
 
-    if (m_verbose)
-    {
-        RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Service client created: %s", m_service_name.c_str());
-    }
+    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Service client created: %s", m_service_name.c_str());
 
     m_connected = true;
 }
@@ -79,10 +76,7 @@ bool SnapshotClient::send_request(int start_sec, uint32_t start_nsec, int end_se
         return false;
     }
 
-    if (m_verbose)
-    {
-        RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Service connected: %s", m_service_name.c_str());
-    }
+    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Service connected: %s", m_service_name.c_str());
 
     auto req = std::make_shared<TriggerSnapshot::Request>();
 
@@ -102,11 +96,7 @@ bool SnapshotClient::send_request(int start_sec, uint32_t start_nsec, int end_se
 
     auto result = m_snapshot_client->async_send_request(req);
 
-    if (m_verbose)
-    {
-        RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Service request sent: %s", m_service_name.c_str());
-    }
-
+    RCLCPP_DEBUG(rclcpp::get_logger("rclcpp"), "Service request sent: %s", m_service_name.c_str());
 
     /* TODO * enable?
 

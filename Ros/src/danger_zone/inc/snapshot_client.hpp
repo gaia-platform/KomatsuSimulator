@@ -14,42 +14,33 @@
 
 #pragma once
 
-//#include "rclcpp/rclcpp.hpp"
-//#include "rclcpp_action/rclcpp_action.hpp"
-//#include "rclcpp_service/rclcpp_service.hpp"
-//#include "nav2_msgs/action/navigate_to_pose.hpp"
-//#include "irule_ops.hpp"
+#include <memory>
 
 #include "rclcpp/rclcpp.hpp"
 #include <rosbag2_snapshot_msgs/srv/trigger_snapshot.hpp>
-#include <memory>
 
 using namespace std::chrono_literals;
 using std::placeholders::_1;
 using std::placeholders::_2;
 
-class SnapshotClient 
+class SnapshotClient
 {
 
 private:
+    using TriggerSnapshot = rosbag2_snapshot_msgs::srv::TriggerSnapshot;
+    std::shared_ptr<rclcpp::Client<SnapshotClient::TriggerSnapshot>> m_snapshot_client;
+    std::string m_service_name;
+    std::chrono::seconds m_service_wait_time = 1s;
 
-  using TriggerSnapshot = rosbag2_snapshot_msgs::srv::TriggerSnapshot;
-  std::shared_ptr<rclcpp::Client<SnapshotClient::TriggerSnapshot>> m_snapshot_client;
-  std::string m_service_name;
-  std::chrono::seconds m_service_wait_time = 1s;
-
-  rclcpp::Node* m_caller_p;
-  bool m_connected = false;
-  bool m_verbose = true;
+    rclcpp::Node* m_caller_ptr;
+    bool m_connected = false;
 
 public:
+    SnapshotClient();
 
-  SnapshotClient();
+    void connect(rclcpp::Node* caller, std::string service_name);
 
-  void connect(rclcpp::Node* caller, std::string service_name);
-
-  bool send_request( int start_sec, uint32_t start_nsec, 
-    int end_sec, uint32_t end_nsec, std::string file_name, 
-    std::vector<std::string>topics);
+    bool send_request(
+        int start_sec, uint32_t start_nsec, int end_sec, uint32_t end_nsec,
+        std::string file_name, std::vector<std::string> topics);
 };
-

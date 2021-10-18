@@ -111,5 +111,7 @@ ruleset zone_transition : serial_group()
             danger_zone_t::get_instance()->trigger_log(
                 c_log_seconds_past, c_log_seconds_forward, log_file_base_name, topics);
         }
+
+        event.remove();
     }
 }
