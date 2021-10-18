@@ -6,19 +6,19 @@
 
 ## Prerequisites
 
-Ubuntu20.04 or later. Other versions of Linux might work but are not supported.
+Ubuntu 20.04 or later. Other versions of Linux might work but are not supported.
 
 Install in order:
 
 ### ROS2
 
-ROS is available in two major versions. ROS and ROS2. ROS2 is available in several releases, KomatsuSimulator requires 'Galatic' or newer.
+ROS is available in two major versions: ROS and ROS2. ROS2 is available in several releases. KomatsuSimulator requires 'Galatic' or newer.
 
 To install ROS2 Galactic:
 
 1. Follow instructions here: [Installing ROS 2 via Debian Packages](https://docs.ros.org/en/galactic/Installation/Ubuntu-Install-Debians.html)
 
-2. Add the ROS environment to your shell init script `.bashrc` (not required but highly recommended). If you have a previous version of ROS installed be careful to not source them both (eg. remove `source /opt/ros/foxy/setup.bash` from your `~/bashrc`).
+2. Add the ROS environment to your shell init script, `.bashrc` (not required but highly recommended). If you have a previous version of ROS installed be careful to not source them both (eg. remove any `source /opt/ros/<version>/setup.bash` lines from your `~/bashrc`).
     ```bash
     echo 'source /opt/ros/galactic/setup.bash' >> ~/.bashrc
     ```
@@ -29,18 +29,14 @@ To install ROS2 Galactic:
     echo  'source /opt/ros/galactic/setup.zsh' >> ~/.zshrc
     ```
 
-3. Install colcon for compiling ROS2 projects:
+3. Install all necessary dependnecies
     ```bash
-    sudo apt install python3-colcon-common-extensions
+    sudo apt install python3-colcon-common-extensions python3-rosdep2 python3-vcstool
     ```
 
-4. Install python3-rosdep2 for managing ROS2 dependencies:
+    After installation, initialize and update `rosdep` with:
     ```bash
-    sudo apt install python3-rosdep2
-    ```
-
-    After installation, execute:
-    ```bash
+    sudo rosdep init
     rosdep update
     ```
 
@@ -87,7 +83,7 @@ To install ROS-TCP-Endpoint:
 
 ### KomatsuSimulator
 
-KomatsuSimulator has two projects: 1) a Unity based simulator and 2) a ROS project. In order to use KomatsuSimulator one must always install ROS2 and Git the KomatsuSimulator repo. If one prefers to avoid building the Unity simulator then one may download the GaiaMineSimVx.x.x.x.zip binary from one of the releases, typically the latest release. Downloading and using the simulator binary does not eliminate the need to install ROS2 and Git the KomatsuSimulator repo. The releases can be found here: https://github.com/gaia-platform/KomatsuSimulator/releases
+KomatsuSimulator has two projects: 1) a Unity-based simulator and 2) a ROS project. In order to use KomatsuSimulator, it is necessary to install ROS2 and `git clone` the KomatsuSimulator repository. If it is preferred to avoid building the Unity simulator then you can download the GaiaMineSimVx.x.x.x.zip binary from one of the releases, typically the latest release. Downloading and using the simulator binary does not eliminate the need to install ROS2 and `git clone` the KomatsuSimulator repo. The releases can be found here: https://github.com/gaia-platform/KomatsuSimulator/releases
 
 To install KomatsuSimulator:
 
