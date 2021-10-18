@@ -61,7 +61,7 @@ To install ROS-TCP-Endpoint:
     cd ~/ros2_ws/src
     ```
 
-3. clone ROS2 branch of https://github.com/Unity-Technologies/ROS-TCP-Endpoint.git into the `~/ros2_ws/src` directory:
+3. Clone ROS2 branch of https://github.com/Unity-Technologies/ROS-TCP-Endpoint.git into the `~/ros2_ws/src` directory:
 
     ```bash
     git clone -b ROS2 https://github.com/Unity-Technologies/ROS-TCP-Endpoint.git
@@ -83,6 +83,34 @@ To install ROS-TCP-Endpoint:
 
     ```bash
     echo 'source ~/ros2_ws/install/local_setup.bash' >> ~/.bashrc
+    ```
+
+### rosbag2_snapshot
+
+To install rosbag2_snapshot we can use the previously created workspace:
+
+1. Move into the `~/ros2_ws/src` directory:
+
+    ```bash
+    cd ~/ros2_ws/src
+    ```
+   
+2. Clone https://github.com/gaia-platform/rosbag2_snapshot.git into the `~/ros2_ws/src` directory:
+
+   ```bash
+   git clone https://github.com/gaia-platform/rosbag2_snapshot.git
+    ```
+
+4. Move to the `~/ros2_ws` directory:
+
+    ```bash
+    cd ~/ros2_ws
+    ```
+
+5. Build the `~/ros2_ws` directory:
+
+    ```bash
+    colcon build
     ```
 
 ### KomatsuSimulator
@@ -152,7 +180,15 @@ There are several levels of development possible. It is possible to work in only
         ```
    - Leave terminal open.
 
-2. Start simulator.
+2. Start the snapshotter.
+   - Open a terminal.
+   - Start snapshotter:
+        ```bash
+        ros2 run rosbag2_snapshot snapshotter
+        ```
+   - Leave terminal open.
+
+3. Start simulator.
    - Open terminal
    - Move to install location of simulator
    - Start the simulator:
@@ -161,7 +197,7 @@ There are several levels of development possible. It is possible to work in only
         ```
    - Leave terminal open.
 
-3. Start danger zone.
+4. Start danger zone.
    - Open a terminal.
    - Start danger_zone:
         ```bash
@@ -169,9 +205,9 @@ There are several levels of development possible. It is possible to work in only
         ```
    - Leave terminal open.
 
-4. Now everything is running. Watch the simulator run, look at ROS messages, etc.
+5. Now everything is running. Watch the simulator run, look at ROS messages, etc.
 
-5. Stop danger_zone.
+6. Stop danger_zone.
    - Go in the danger_zone terminal:
         ```
         <ctrl>C

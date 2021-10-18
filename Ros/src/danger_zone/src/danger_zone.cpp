@@ -123,6 +123,9 @@ public:
 
         m_obstacles_pub = this->create_publisher<danger_zone_msgs::msg::ObstacleArray>(
             m_obstacles_topic_name, 1);
+
+        m_snapshot_client = std::make_shared<SnapshotClient>();
+        m_snapshot_client->connect(this, m_snapshot_service_name);
     }
 
     // danger_zone_t interface implementation.
@@ -142,11 +145,7 @@ public:
         int start_sec, uint32_t start_nsec, int end_sec, uint32_t end_nsec,
         std::string file_name, std::vector<std::string> topics) override
     {
-        // TODO: we need to debounce this, figure out how to properly handle overlaps.
-
-        auto sc = new SnapshotClient();
-        sc->connect(this, m_snapshot_service_name);
-        sc->send_request(start_sec, start_nsec, end_sec, end_nsec, file_name, topics);
+        m_snapshot_client->send_request(start_sec, start_nsec, end_sec, end_nsec, file_name, topics);
     }
 
     void trigger_log(
@@ -219,6 +218,7 @@ private:
 
     rclcpp::Subscription<vision_msgs::msg::Detection3DArray>::SharedPtr m_detection3d_subscription;
     rclcpp::Publisher<danger_zone_msgs::msg::ObstacleArray>::SharedPtr m_obstacles_pub;
+    std::shared_ptr<SnapshotClient> m_snapshot_client;
 };
 
 int main(int argc, char* argv[])
