@@ -1,0 +1,13 @@
+repositories:
+  src/danger_zone:
+    type: git
+    url: https://github.com/gaia-platform/danger_zone.git
+    version: main
+  src/rosbag2_snapshot:
+    type: git
+    url: https://github.com/gaia-platform/rosbag2_snapshot.git
+    version: main
+  src/unity_tcp_endpoint:
+    type: git
+    url: https://github.com/Unity-Technologies/ROS-TCP-Endpoint.git
+    version: ROS2

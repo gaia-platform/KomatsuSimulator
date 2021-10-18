@@ -42,135 +42,98 @@ To install ROS2 Galactic:
 
 Knowledge of ROS2 is not required in order to use KomatsuSim at the most basic level. More information on ROS2 can be found at [ROS](https://www.ros.org/).
 
-### ROS-TCP-Endpoint
+### Create and Build a ROS2 Workspace
 
-To install ROS-TCP-Endpoint:
-
-1. Create a ROS workspace folder structure (https://docs.ros.org/en/foxy/Tutorials/Workspace/Creating-A-Workspace.html). We suggest `~/ros2_ws/src/`. Further instructions will assume that location.
+1. Create a ROS2 workspace folder structure (https://docs.ros.org/en/foxy/Tutorials/Workspace/Creating-A-Workspace.html). We suggest `~/ros2_ws/src/`. Further instructions will assume that location.
    ```bash
    mkdir -p ~/ros2_ws/src
    ```
 
-2. Move into the `~/ros2_ws/src` directory:
-
-    ```bash
-    cd ~/ros2_ws/src
-    ```
-
-3. Clone ROS2 branch of https://github.com/Unity-Technologies/ROS-TCP-Endpoint.git into the `~/ros2_ws/src` directory:
-
-    ```bash
-    git clone -b ROS2 https://github.com/Unity-Technologies/ROS-TCP-Endpoint.git
-    ```
-
-4. Move to the `~/ros2_ws` directory:
+2. Move into the `~/ros2_ws` directory:
 
     ```bash
     cd ~/ros2_ws
     ```
 
-5. Build the `~/ros2_ws` directory:
+3. Download the KomatsuSimulator `.repos` file which contains references to all necessary ROS2 repositories for building the project:
+
+    ```bash
+    wget https://github.com/gaia-platform/KomatsuSimulator/blob/main/komatsu.repos
+    ```
+
+4. Import the required repositories using the `vcs` tool:
+
+    ```bash
+    vcs import < komatsu.repos
+    ```
+
+5. Install all necessary dependencies using `rosdep`:
+
+   ```bash
+   rosdep install --from-paths src -i -y
+   ```
+
+6. Build the `~/ros2_ws` directory:
 
     ```bash
     colcon build
     ```
 
-6. Source the `~/ros2_ws` directory in .bashrc (not required but highly recommended):
+7. Source the `~/ros2_ws` directory in .bashrc (not required but highly recommended):
 
     ```bash
     echo 'source ~/ros2_ws/install/local_setup.bash' >> ~/.bashrc
     ```
 
-### rosbag2_snapshot
-
-To install rosbag2_snapshot we can use the previously created workspace:
-
-1. Move into the `~/ros2_ws/src` directory:
-
-    ```bash
-    cd ~/ros2_ws/src
-    ```
-   
-2. Clone https://github.com/gaia-platform/rosbag2_snapshot.git into the `~/ros2_ws/src` directory:
-
-   ```bash
-   git clone https://github.com/gaia-platform/rosbag2_snapshot.git
-    ```
-
-4. Move to the `~/ros2_ws` directory:
-
-    ```bash
-    cd ~/ros2_ws
-    ```
-
-5. Build the `~/ros2_ws` directory:
-
-    ```bash
-    colcon build
-    ```
-
 ### KomatsuSimulator
 
-KomatsuSimulator has two projects: 1) a Unity-based simulator and 2) a ROS project. In order to use KomatsuSimulator, it is necessary to install ROS2 and `git clone` the KomatsuSimulator repository. If it is preferred to avoid building the Unity simulator then the GaiaMineSimVx.x.x.x.zip binary can be downloaded from [the releases page](https://github.com/gaia-platform/KomatsuSimulator/releases). GAIA typically recommends downloading the latest release. Downloading and using the simulator binary does not eliminate the need to install ROS2 and `git clone` the KomatsuSimulator repo. The releases can be found here: 
+KomatsuSimulator has two projects: 1) a Unity-based simulator and 2) a ROS2 project.
+The instructions above handle the ROS2 components but it is also necessary to download the KomatsuSimulator Unity project.
+If it is preferred to avoid building the Unity simulator then the GaiaMineSimVx.x.x.x.zip binary can be downloaded from [the releases page](https://github.com/gaia-platform/KomatsuSimulator/releases).
+GAIA typically recommends downloading the latest release.
+Downloading and using the simulator binary does not eliminate the need to follow the ROS2 instructions above, it just avoids having to build the Unity project from source.
 
-To install KomatsuSimulator:
+#### Downloading and Using the Binary
 
-1. Create a directory for development. Here we will assume it is '~/dev', but feel free to use any location you wish.
+1. Download GaiaMineSimVx.x.x.x.zip from the latest release at https://github.com/gaia-platform/KomatsuSimulator/releases
+2. Unzip in a location of your choice
+3. Run GaiaMineSim to verify operation.
+   ```bash
+   ./Builds/GaiaMine.x86_64
+   ```
+
+#### Cloning and Building from Source
+
+1. Install the latest 20x LTS build of the Unity Editor.
+2. Follow the Unity instructions [here](https://github.com/Unity-Technologies/Unity-Robotics-Hub/blob/main/tutorials/ros_unity_integration/setup.md#-unity-setup) to install the Robotics package for Unity.
+
+3. Create a directory for development. Here we will assume it is '~/dev', but feel free to use any location you wish.
     ```bash
     mkdir ~/dev
     ```
 
-2. Move into the the `~/dev` directory.
+4. Move into the the `~/dev` directory.
     ```bash
     cd ~/dev
     ```
 
-3. Git the KomatsuSimulator repo.
+5. Clone the KomatsuSimulator repo.
     ```bash
     git clone https://github.com/gaia-platform/KomatsuSimulator.git
     ```
 
-4. Move into the KomatsuSimulator ROS2 workspace.
+6. Enter the KomatsuSimulator folder
     ```bash
-    cd ~/dev/KomatsuSimulator/Ros
+    cd KomatsuSimulator
     ```
 
-5. Install ROS project's depedencies.
-    ```bash
-    rosdep install -y -i --from-paths .
-    ```
+6. TODO(markwest): Please fill in build instructions when using source
 
-6. Build the `~/dev/KomatsuSimulator/Ros` directory.
-    ```bash
-    colcon build
-    ```
+# Usage
 
-7. Source the `~/dev/KomatsuSimulator/Ros` directory in .bashrc (not required but highly recommended).
-    ```bash
-    echo 'source ~/dev/KomatsuSimulator/Ros/install/local_setup.bash' >> ~/.bashrc
-    ```
-
-8. To avoid building the Unity simulator:
-   1. Download GaiaMineSimVx.x.x.x.zip from the latest release at https://github.com/gaia-platform/KomatsuSimulator/releases
-   2. Unzip in a location of your choice
-   3. Run GaiaMineSim to verify operation.
-       ```bash
-       ./Builds/GaiaMine.x86_64
-       ```
-
-# USE
-
-There are several levels of development possible. It is possible to work in only one level, with little to no involvement in the others.
-
-1. Develop only Gaia schema and rules.
-2. Develop danger zone ROS2 code.
-3. Develop GaiaMineSim Simulator environments, game objects, and code.
-
-## Develop only Gaia schema and rules
+## Startup all nodes at once
 
 You can use the `full_launch.py` script to launch all the ROS nodes at once. 
-
-### Startup all nodes at once
 
 1. Start all the ROS nodes
    - Open a terminal.
@@ -189,7 +152,7 @@ You can use the `full_launch.py` script to launch all the ROS nodes at once.
         ```
    - Leave terminal open.
 
-### Startup nodes independently
+## Startup nodes independently
 
 1. Start ros-unity bridge.
    - Open a terminal.
@@ -231,12 +194,14 @@ You can use the `full_launch.py` script to launch all the ROS nodes at once.
         ```
         <ctrl>C
         ```
+# Develoopment
 
-The Gaia schema and rules are in the danger_zone ROS2 project. Standard ROS2 dev practices apply.
+There are several levels of development possible. It is possible to work in only one level, with little to no involvement in the others.
 
-## Releases
-If it is preferred to not install and build with Unity, the Simulator binaries can be downloaded [here](https://github.com/gaia-platform/KomatsuSimulator/releases).
+1. Develop only Gaia schema and rules.
+2. Develop danger zone ROS2 code.
+3. Develop GaiaMineSim Simulator environments, game objects, and code.
 
-## Unity setup
-1. Install the latest 20x LTS build of the Unity Editor.
-2. Follow the Unity instructions [here](https://github.com/Unity-Technologies/Unity-Robotics-Hub/blob/main/tutorials/ros_unity_integration/setup.md#-unity-setup) to install the Robotics package for Unity.
+The Gaia schema and rules are in the [`danger_zone` ROS2 project](https://github.com/gaia-platform/danger_zone) which should be in the ROS2 workspace created earlier (e.g. `~/ros2_ws/src/danger_zone`). Standard [ROS2 developer best-practices](https://docs.ros.org/en/rolling/Contributing/Developer-Guide.html) apply.
+
+If you wish to develop the KomatsuSimulator Unity application, see the instructions above on Cloning and Building from Source.
