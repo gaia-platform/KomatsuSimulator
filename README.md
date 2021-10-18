@@ -49,37 +49,33 @@ Knowledge of ROS2 is not required in order to use KomatsuSim at the most basic l
    mkdir -p ~/ros2_ws/src
    ```
 
-2. Move into the `~/ros2_ws` directory:
+2. Move into the `~/ros2_ws/src` directory:
 
     ```bash
-    cd ~/ros2_ws
+    cd ~/ros2_ws/src
     ```
 
-3. Download the KomatsuSimulator `.repos` file which contains references to all necessary ROS2 repositories for building the project:
+3. Clone the required repositories to your ROS2 workspace:
 
     ```bash
-    wget https://github.com/gaia-platform/KomatsuSimulator/blob/main/komatsu.repos
+    git clone https://github.com/gaia-platform/danger_zone.git
+    git clone -b ROS2 https://github.com/Unity-Technologies/ROS-TCP-Endpoint.git
     ```
 
-4. Import the required repositories using the `vcs` tool:
-
-    ```bash
-    vcs import < komatsu.repos
-    ```
-
-5. Install all necessary dependencies using `rosdep`:
+4. Install all necessary dependencies using `rosdep`:
 
    ```bash
-   rosdep install --from-paths src -i -y
+   rosdep install --from-paths . -i -y
    ```
 
-6. Build the `~/ros2_ws` directory:
+5. Build the `~/ros2_ws` directory:
 
     ```bash
+    cd ..
     colcon build
     ```
 
-7. Source the `~/ros2_ws` directory in .bashrc (not required but highly recommended):
+6. Source the `~/ros2_ws` directory in .bashrc (not required but highly recommended):
 
     ```bash
     echo 'source ~/ros2_ws/install/local_setup.bash' >> ~/.bashrc
