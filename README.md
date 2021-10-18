@@ -75,10 +75,18 @@ Knowledge of ROS2 is not required in order to use KomatsuSim at the most basic l
     colcon build
     ```
 
-6. Source the `~/ros2_ws` directory in .bashrc (not required but highly recommended):
+6. Source the `~/ros2_ws` directory:
+
+    Option 1: add to your ~/.bashrc once (highly recommended):
 
     ```bash
-    echo 'source ~/ros2_ws/install/local_setup.bash' >> ~/.bashrc
+    echo 'source ~/ros2_ws/install/setup.bash' >> ~/.bashrc
+    source ~/.bashrc
+    ```
+
+    Option 2: source the directory in each new terminal:
+    ```bash
+    source ~/ros2_ws/install/setup.bash
     ```
 
 ### KomatsuSimulator
