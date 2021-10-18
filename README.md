@@ -59,6 +59,7 @@ Knowledge of ROS2 is not required in order to use KomatsuSim at the most basic l
 
     ```bash
     git clone https://github.com/gaia-platform/danger_zone.git
+    git clone https://github.com/gaia-platform/rosbag2_snapshot.git
     git clone -b ROS2 https://github.com/Unity-Technologies/ROS-TCP-Endpoint.git
     ```
 
