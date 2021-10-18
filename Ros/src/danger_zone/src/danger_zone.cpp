@@ -214,7 +214,7 @@ private:
     const std::string m_detected_topic_name = "/komatsu/detections";
     const std::string m_obstacles_topic_name = "/komatsu/obstacles";
     // Name found in snapshotter.cpp.
-    const std::string m_snapshot_service_name = "trigger_snapshot";
+    const std::string m_snapshot_service_name = "/trigger_snapshot";
 
     rclcpp::Subscription<vision_msgs::msg::Detection3DArray>::SharedPtr m_detection3d_subscription;
     rclcpp::Publisher<danger_zone_msgs::msg::ObstacleArray>::SharedPtr m_obstacles_pub;
