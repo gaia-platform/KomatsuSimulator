@@ -190,7 +190,7 @@ You can use the `full_launch.py` script to launch all the ROS nodes at once.
         ```
         <ctrl>C
         ```
-# Develoopment
+# Development
 
 There are several levels of development possible. It is possible to work in only one level, with little to no involvement in the others.
 
