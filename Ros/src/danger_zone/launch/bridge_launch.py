@@ -9,8 +9,8 @@ def generate_launch_description():
         name='unity_bridge',
         emulate_tty=True,
         parameters=[
-            {'/ROS_IP': '127.0.0.1'},
-            {'/ROS_TCP_PORT': 10000},
+            {'ROS_IP': '127.0.0.1'},
+            {'ROS_TCP_PORT': 10000},
         ]
     )
 

@@ -193,7 +193,7 @@ You can use the `full_launch.py` script to launch all the ROS nodes at once.
         ```
    - Leave terminal open.
 
-### Startup nodes singularly
+### Startup nodes independently
 
 1. Start ros-unity bridge.
    - Open a terminal.
