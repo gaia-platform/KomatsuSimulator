@@ -29,7 +29,7 @@ To install ROS2 Galactic:
     echo  'source /opt/ros/galactic/setup.zsh' >> ~/.zshrc
     ```
 
-3. Install all necessary dependnecies
+3. Install all necessary dependencies
     ```bash
     sudo apt install python3-colcon-common-extensions python3-rosdep2 python3-vcstool
     ```
