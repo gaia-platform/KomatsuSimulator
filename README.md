@@ -170,7 +170,30 @@ There are several levels of development possible. It is possible to work in only
 2. Develop danger zone ROS2 code.
 3. Develop GaiaMineSim Simulator environments, game objects, and code.
 
-## 1. Develop only Gaia schema and rules
+## Develop only Gaia schema and rules
+
+You can use the `full_launch.py` script to launch all the ROS nodes at once. 
+
+### Startup all nodes at once
+
+1. Start all the ROS nodes
+   - Open a terminal.
+   - Call the full_launch.py script
+        ```bash
+        ros2 launch danger_zone full_launch.py 
+        ```
+   - Leave terminal open.
+
+2. Start simulator.
+   - Open terminal
+   - Move to install location of simulator
+   - Start the simulator:
+        ```bash
+        ./Builds/GaiaMine.x86_64
+        ```
+   - Leave terminal open.
+
+### Startup nodes singularly
 
 1. Start ros-unity bridge.
    - Open a terminal.
