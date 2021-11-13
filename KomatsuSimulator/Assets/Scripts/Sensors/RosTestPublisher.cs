@@ -26,6 +26,7 @@ namespace Sensors
         void Update()
         {
             _elapsedTime += Time.deltaTime;
+            
             if (_elapsedTime > publishFrequency)
             {
                 Vector3 curPos = transform.position;

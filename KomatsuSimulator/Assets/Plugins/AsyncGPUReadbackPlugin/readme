@@ -1,0 +1,4 @@
+step 1: make
+step 2: copy build/libAsyncGPUReadbackPlugin.so to /Assets/Plugins (or /Assets/Plugins/x64) in your project.
+
+See https://github.com/Alabate/AsyncGPUReadbackPlugin 
