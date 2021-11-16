@@ -21,7 +21,7 @@ namespace Publishers
         public string RosFrameId = "lidar";
 
         /// <summary> The ROS topic name </summary>
-        public string RosTopic = "/points_raw";
+        public string RosTopic = "/lidar/points_raw";
 
         /// <summary> The lidar sensor to be published </summary>
         public Sensors.LidarSensor3D LidarSensor;
@@ -30,8 +30,6 @@ namespace Publishers
         /// <summary>
         /// Called by the Unity engine prior to first frame
         /// </summary>
-        /// <param name="a"></param>
-        /// <param name="b"></param>
         /// <returns>void</returns>
         //*********************************************************************
         void Start()
@@ -132,7 +130,7 @@ namespace Publishers
                 point_step = sizeof(float) * 3,
                 row_step = sizeof(float) * 12 * (uint)pointsInUnityCoordinates.Length,
                 data = _PointCloudData,
-                is_dense = false
+                is_dense = true
             };
 
             return pointCloud2Message;
