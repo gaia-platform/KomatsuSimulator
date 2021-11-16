@@ -17,7 +17,7 @@ public class DetectorGroundTruthSensor : MonoBehaviour
     void Start()
     {
         // get the ROS connection
-        m_Ros = Unity.Robotics.ROSTCPConnector.ROSConnection.instance;
+        m_Ros = Unity.Robotics.ROSTCPConnector.ROSConnection.GetOrCreateInstance();
 
         // register the publisher
         m_Ros.RegisterPublisher(rosTopic, RosMessageTypes.Vision.Detection3DArrayMsg.k_RosMessageName);
@@ -29,7 +29,7 @@ public class DetectorGroundTruthSensor : MonoBehaviour
         var msg = FindAllObjects(tagName);
 
         // publish
-        m_Ros.Send(rosTopic, msg);
+        m_Ros.Publish(rosTopic, msg);
     }
 
     // that's one way to do it, maybe we should align with ros /clock topic

@@ -18,7 +18,7 @@ public class RoiVisualizer : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        ROSConnection.instance.Subscribe<ObstacleArrayMsg>(ObstaclesTopicName, VisualizeObstacles);
+        ROSConnection.GetOrCreateInstance().Subscribe<ObstacleArrayMsg>(ObstaclesTopicName, VisualizeObstacles);
     }
 
     private void VisualizeObstacles(ObstacleArrayMsg obstacleArray)
