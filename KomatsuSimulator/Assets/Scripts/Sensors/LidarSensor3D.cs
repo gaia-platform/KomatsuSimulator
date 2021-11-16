@@ -150,13 +150,13 @@ namespace Sensors
 
                 HitPositions[i] = hit.point - Position;
             }
-            else if (ReferenceFrame == LidarSensor3D.ReferenceFrame.RightHanded_XBackward_YLeft_ZUp)
+            else if (ReferenceFrame == LidarSensor3D.ReferenceFrame.RightHanded_XForward_YRight_ZUp)
             {
                 if(CollectNormals)
-                    HitNormals[i] = new Vector3(-hit.normal.z, -hit.normal.x, hit.normal.y);
+                    HitNormals[i] = new Vector3(hit.normal.z, -hit.normal.x, hit.normal.y);
 
                 Vector3 pos = hit.point - Position;
-                HitPositions[i] = new Vector3(-pos.z, -pos.x, pos.y);
+                HitPositions[i] = new Vector3(pos.z, -pos.x, pos.y);
             }
         }
     };
@@ -169,11 +169,11 @@ namespace Sensors
 
         public enum ReferenceFrame
         {
-            RightHanded_XBackward_YLeft_ZUp,
+            RightHanded_XForward_YRight_ZUp, // ROS Standard
             LeftHanded_XRight_YUp_ZForward // Unity Standard
         };
 
-        public ReferenceFrame _referenceFrame = ReferenceFrame.LeftHanded_XRight_YUp_ZForward;
+        public ReferenceFrame _referenceFrame = ReferenceFrame.RightHanded_XForward_YRight_ZUp;
 
         [Header("FOV")]
         public float _verticalUpFovDegrees = 21.0f;
