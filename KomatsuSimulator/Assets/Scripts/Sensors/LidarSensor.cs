@@ -77,7 +77,7 @@ public class LidarSensor : MonoBehaviour
 
     private void InitializeMessage()
     {
-        mRos = Unity.Robotics.ROSTCPConnector.ROSConnection.instance;
+        mRos = Unity.Robotics.ROSTCPConnector.ROSConnection.GetOrCreateInstance();
         mRos.RegisterPublisher<RosMessageTypes.Sensor.PointCloud2Msg>(RosTopic);
     }
 
@@ -86,7 +86,7 @@ public class LidarSensor : MonoBehaviour
     /// Arg:
     /// Returns: 
     //*************************************************************************
-        
+
     void Start()
     {
         InitializeMessage();
@@ -97,7 +97,7 @@ public class LidarSensor : MonoBehaviour
     /// Arg:
     /// Returns: 
     //*************************************************************************
-    
+
     void Awake()
     {
         enabled = true;
@@ -117,7 +117,7 @@ public class LidarSensor : MonoBehaviour
     /// Arg:
     /// Returns: 
     //*************************************************************************
-    
+
     public void Reset()
     {
         Active.ForEach(req =>
@@ -166,15 +166,15 @@ public class LidarSensor : MonoBehaviour
         CurrentMinDistance = MinDistance;
         CurrentMaxDistance = MaxDistance;
     }
-    
+
     //************************************************************************
     /// Description: 
     /// Arg:
     /// Returns: 
     //*************************************************************************
-    
+
     void Update()
-    { 
+    {
 
         if (RayCount != CurrentRayCount ||
         MeasurementsPerRotation != CurrentMeasurementsPerRotation ||
@@ -251,7 +251,7 @@ public class LidarSensor : MonoBehaviour
     /// Arg:
     /// Returns: 
     //*************************************************************************
-    
+
     void OnDestroy()
     {
         Active.ForEach(req =>
@@ -274,7 +274,7 @@ public class LidarSensor : MonoBehaviour
     /// Arg:
     /// Returns: 
     //*************************************************************************
-    
+
     bool RenderLasers(int count, float angleStart, float angleUse)
     {
         bool pointCloudUpdated = false;
@@ -362,7 +362,7 @@ public class LidarSensor : MonoBehaviour
     /// Arg:
     /// Returns: 
     //*************************************************************************
-    
+
     void ReadLasers(ReadRequest req)
     {
         var data = req.Reader.GetData();
@@ -413,7 +413,7 @@ public class LidarSensor : MonoBehaviour
     /// Arg:
     /// Returns: 
     //*************************************************************************
-    
+
     void SendMessage(int currentEndIndex, float currentEndAngle)
     {
         // Lidar x is forward, y is left, z is up
@@ -487,22 +487,22 @@ public class LidarSensor : MonoBehaviour
         };
 
         uint point_step = 32;
-        uint row_step = (uint)(point_step * MeasurementsPerRotation);   
+        uint row_step = (uint)(point_step * MeasurementsPerRotation);
 
         RosMessageTypes.Sensor.PointCloud2Msg rosPC2 =
         new RosMessageTypes.Sensor.PointCloud2Msg()
-        { 
+        {
             header = new RosMessageTypes.Std.HeaderMsg(),
             height = (uint)RayCount,
             width = (uint)MeasurementsPerRotation,
             fields = fields,
             is_bigendian = false,
-            point_step = point_step, 
-            row_step = row_step, 
-            data = RosPointCloud, 
+            point_step = point_step,
+            row_step = row_step,
+            data = RosPointCloud,
             is_dense = true
         };
 
-        mRos.Send(RosTopic, rosPC2);
+        mRos.Publish(RosTopic, rosPC2);
     }
 }

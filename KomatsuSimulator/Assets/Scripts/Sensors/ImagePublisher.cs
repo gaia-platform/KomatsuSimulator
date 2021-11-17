@@ -110,7 +110,7 @@ public class ImagePublisher : MonoBehaviour
     //*************************************************************************
     private void InitializeMessage()
     {
-        mRos = Unity.Robotics.ROSTCPConnector.ROSConnection.instance;
+        mRos = Unity.Robotics.ROSTCPConnector.ROSConnection.GetOrCreateInstance();
         mRos.RegisterPublisher<RosMessageTypes.Sensor.ImageMsg>(RosTopic);
     }
 
@@ -144,7 +144,7 @@ public class ImagePublisher : MonoBehaviour
                 (uint)resolutionHeight, (uint)resolutionWidth, RosImageEncoding, 
                 isBigEndian, (uint)(step * resolutionWidth), imageData);
 
-        mRos.Send(RosTopic, rosImage);
+        mRos.Publish(RosTopic, rosImage);
     }
 
     //************************************************************************

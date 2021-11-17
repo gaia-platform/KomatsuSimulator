@@ -18,7 +18,7 @@ namespace Sensors
         // Start is called before the first frame update
         void Start()
         {
-            _ros = ROSConnection.instance;
+            _ros = ROSConnection.GetOrCreateInstance();
             _ros.RegisterPublisher<PointMsg>(topicName);
         }
 
@@ -32,7 +32,7 @@ namespace Sensors
                 Vector3 curPos = transform.position;
                 PointMsg msg = new PointMsg(curPos.x, curPos.y, curPos.z);
 
-                _ros.Send(topicName, msg);
+                _ros.Publish(topicName, msg);
 
                 _elapsedTime = 0;
             }
