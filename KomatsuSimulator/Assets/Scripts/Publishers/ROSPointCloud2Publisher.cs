@@ -149,16 +149,9 @@ namespace Publishers
         private Task OnPublishLidarScanDelegate(Sensors.LidarSensor3D lidar, string name,
             NativeArray<Vector3> positions, NativeArray<Vector3> normals)
         {
-            //*** TODO : move stamp generation to collection point, pass in with call ***
-            var timestamp = new Unity.Robotics.Core.TimeStamp(Unity.Robotics.Core.Clock.time);
-            var stamp = new RosMessageTypes.BuiltinInterfaces.TimeMsg
-            {
-                sec = timestamp.Seconds,
-                nanosec = timestamp.NanoSeconds,
-            }; 
-            //***********
             var rosPC2Msg = CreateXYZPointCloud(positions.ToArray());
-            rosPC2Msg.header.stamp = stamp;
+            //*** TODO : move stamp generation to collection point, pass in with call ***
+            rosPC2Msg.header.stamp = RosUtil.Utils.RosTime;
             rosPC2Msg.header.frame_id = RosFrameId;
 
             mRos.Publish(RosTopic, rosPC2Msg);
