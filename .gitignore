@@ -107,6 +107,8 @@ KomatsuSimulator/Assets/Resources/ROSConnectionPrefab.prefab.meta
 logs/
 .idea
 
+Builds/
+
 ### Include plugin .so files
 !KomatsuSimulator/Assets/Plugins/x64/libAsyncGPUReadbackPlugin.so
 !KomatsuSimulator/Assets/Plugins/x64/libAsyncTextureReader.so
